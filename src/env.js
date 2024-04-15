@@ -1,5 +1,6 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
+import { z } from "zod"
+
+import { createEnv } from "@t3-oss/env-nextjs"
 
 export const env = createEnv({
   /**
@@ -41,4 +42,4 @@ export const env = createEnv({
    * `SOME_VAR=''` will throw an error.
    */
   emptyStringAsUndefined: true,
-});
+})

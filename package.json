@@ -1,13 +1,25 @@
 {
   "name": "magi",
-  "version": "0.1.0",
+  "version": "0.0.1",
+  "description": "Magnus Index",
+  "author": "Philippe Fanaro",
+  "contributors": [
+    {
+      "name": "Philippe Fanaro",
+      "email": "philippefanaro@gmail.com"
+    }
+  ],
+  "keywords": [
+    "index",
+    "graph"
+  ],
   "private": true,
   "type": "module",
   "scripts": {
     "build": "next build",
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
-    "dev": "next dev",
+    "dev": "next dev --turbo",
     "lint": "next lint",
     "start": "next start"
   },
