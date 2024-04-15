@@ -1,12 +1,12 @@
-import { type Config } from "drizzle-kit";
+import { type Config } from "drizzle-kit"
 
-import { env } from "~/env";
+import { env } from "~/env"
 
 export default {
   schema: "./src/server/db/schema.ts",
   driver: "pg",
   dbCredentials: {
-    connectionString: env.DATABASE_URL,
+    connectionString: env.POSTGRES_URL,
   },
   tablesFilter: ["magi_*"],
-} satisfies Config;
+} satisfies Config
