@@ -37,17 +37,29 @@
       "@/*": [
         "./src/*"
       ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@components": [
+        "./src/components/exports"
+      ],
       "@server/*": [
-        "./src/lib/server/*"
+        "./src/server/*"
       ],
       "@server": [
-        "./src/lib/server/exports"
+        "./src/server/exports"
+      ],
+      "@shad/*": [
+        "./src/components/shad/*"
+      ],
+      "@shad": [
+        "./src/components/shad/exports"
       ],
       "@styles/*": [
-        "./src/lib/styles/*"
+        "./src/styles/*"
       ],
       "@styles": [
-        "./src/lib/styles/exports"
+        "./src/styles/exports"
       ],
     }
   },

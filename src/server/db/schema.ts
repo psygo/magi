@@ -17,12 +17,16 @@ export const createTable = pgTableCreator(
 export const users = createTable("users", {
   // IDs
   id: serial("id").primaryKey(),
-  clerkId: varchar("clerk_id", { length: 256 }).unique(),
+  clerkId: varchar("clerk_id", { length: 256 })
+    .unique()
+    .notNull(),
   nanoId: varchar("nano_id", { length: 256 })
     .unique()
     .notNull()
     .$defaultFn(() => standardNanoid()),
-  username: varchar("username", { length: 256 }).unique(),
+  username: varchar("username", { length: 256 })
+    .unique()
+    .notNull(),
   // Metadata
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
@@ -40,6 +44,7 @@ export const usersRelations = relations(
     nodes: many(nodes),
     edges: many(edges),
     votes: many(votes),
+    comments: many(comments),
   }),
 )
 
@@ -75,6 +80,7 @@ export const nodesRelations = relations(
     edges: many(edges, { relationName: "from" }),
     to: many(edges, { relationName: "to" }),
     votes: many(votes),
+    comments: many(comments),
   }),
 )
 
@@ -118,6 +124,7 @@ export const edgesRelations = relations(
       relationName: "to",
     }),
     votes: many(votes),
+    comments: many(comments),
   }),
 )
 
@@ -154,6 +161,44 @@ export const votesRelations = relations(
     }),
     edge: one(edges, {
       fields: [votes.edgeId],
+      references: [edges.id],
+    }),
+  }),
+)
+
+export const comments = createTable("comments", {
+  // IDs
+  id: serial("id").primaryKey(),
+  nanoId: varchar("nano_id", { length: 256 })
+    .unique()
+    .notNull()
+    .$defaultFn(() => standardNanoid()),
+  // Metadata
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at"),
+  // Data
+  content: varchar("content", { length: 4096 }),
+  // Relationships
+  commenterId: integer("commenter_id").notNull(),
+  nodeId: integer("node_id"),
+  edgeId: integer("edge_id"),
+})
+
+export const commentsRelations = relations(
+  comments,
+  ({ one }) => ({
+    creator: one(users, {
+      fields: [comments.commenterId],
+      references: [users.id],
+    }),
+    node: one(nodes, {
+      fields: [comments.nodeId],
+      references: [nodes.id],
+    }),
+    edge: one(edges, {
+      fields: [comments.edgeId],
       references: [edges.id],
     }),
   }),

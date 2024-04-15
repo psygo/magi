@@ -1,6 +1,10 @@
-import "@/styles/globals.css"
+import "@styles/globals.css"
 
 import { Inter } from "next/font/google"
+
+import { TopNav } from "@components"
+
+import { cn } from "../lib/utils"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,7 +23,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          inter.variable,
+        )}
+      >
+        <TopNav />
         {children}
       </body>
     </html>
