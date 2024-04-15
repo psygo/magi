@@ -1,6 +1,10 @@
 import { Button } from "@shad"
 
-export default function HomePage() {
+import { reset } from "@server/db/reset"
+
+export default async function HomePage() {
+  await reset()
+
   return (
     <main>
       <h1>Hello</h1>

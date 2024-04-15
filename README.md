@@ -11,3 +11,13 @@ This project has been set up with the [`create-t3-app`](https://create.t3.gg/) s
 - [Clerk](https://clerk.com) for authentication.
 - [PostHog](https://posthog.com) for analytics.
 - [Sentry](https://sentry.io) for error monitoring.
+
+## Dev
+
+## Env
+
+Locally, you can set things up with:
+
+```env
+POSTGRES_URL="postgresql://phili:password@localhost:5432/postgres?search_path=public"
+```
