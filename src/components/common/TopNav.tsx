@@ -12,7 +12,7 @@ export function TopNav() {
   return (
     <nav className="absolute top-0 w-screen p-3 flex justify-between">
       <DropdownMenu>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild>
           <Button>Open</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>

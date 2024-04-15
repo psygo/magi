@@ -4,7 +4,7 @@ import { Inter } from "next/font/google"
 
 import { TopNav } from "@components"
 
-import { cn } from "../lib/utils"
+import { cn } from "@styles"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,9 +24,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        suppressHydrationWarning
         className={cn(
-          "min-h-screen bg-background font-sans antialiased dark",
+          "dark min-h-screen bg-background font-sans antialiased",
           inter.variable,
         )}
       >

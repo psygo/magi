@@ -61,6 +61,12 @@
       "@styles": [
         "./src/styles/exports"
       ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@utils": [
+        "./src/utils/exports"
+      ],
     }
   },
   "include": [
