@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef } from "react"
 
-function useSetup() {
+function useScale() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   function getCanvas() {
@@ -16,6 +16,14 @@ function useSetup() {
 
   const setupCanvasScale = useCallback(() => {
     const scale = window.devicePixelRatio
+    const canvas = getCanvas()
+
+    const width = window.innerWidth
+    const height = window.innerHeight
+
+    canvas.width = width * scale
+    canvas.height = height * scale
+
     const ctx = getCtx()
     ctx.scale(scale, scale)
   }, [getCtx])
@@ -27,13 +35,31 @@ function useSetup() {
   return { canvasRef, getCanvas, getCtx }
 }
 
+function useDraw() {
+  const { canvasRef, getCtx } = useScale()
+
+  function drawRect(
+    e: React.MouseEvent<HTMLCanvasElement>,
+  ) {
+    const [x, y] = [e.clientX, e.clientY]
+    const ctx = getCtx()
+
+    ctx.rect(x, y, 20, 10)
+    ctx.fillStyle = "#fff"
+    ctx.fill()
+  }
+
+  return { canvasRef, drawRect }
+}
+
 export function Graph() {
-  const { canvasRef } = useSetup()
+  const { canvasRef, drawRect } = useDraw()
 
   return (
     <canvas
       ref={canvasRef}
       className="w-screen h-screen"
+      onClick={drawRect}
     ></canvas>
   )
 }

@@ -43,6 +43,12 @@
       "@components": [
         "./src/components/exports"
       ],
+      "@context/*": [
+        "./src/context/*"
+      ],
+      "@context": [
+        "./src/context/exports"
+      ],
       "@server/*": [
         "./src/server/*"
       ],
