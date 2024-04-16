@@ -1,14 +1,14 @@
-import { reset } from "@server/db/reset"
+import { db, nodes } from "@server"
 
 import { GraphProvider } from "@context"
 
 import { Graph } from "@components"
 
 export default async function HomePage() {
-  await reset()
+  const n = await db.select().from(nodes)
 
   return (
-    <GraphProvider>
+    <GraphProvider initialNodes={n}>
       <Graph />
     </GraphProvider>
   )

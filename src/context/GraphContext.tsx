@@ -4,19 +4,30 @@ import { createContext, useContext, useState } from "react"
 
 import { type WithReactChildren } from "@types"
 
+import { type SelectNode } from "@server"
+
 type GraphContext = {
-  nodes: Node[]
-  setNodes: React.Dispatch<React.SetStateAction<Node[]>>
+  nodes: SelectNode[]
+  setNodes: React.Dispatch<
+    React.SetStateAction<SelectNode[]>
+  >
 }
 
 const GraphContext = createContext<GraphContext | null>(
   null,
 )
 
+type GraphProviderProps = WithReactChildren & {
+  initialNodes?: SelectNode[]
+}
+
 export function GraphProvider({
+  initialNodes,
   children,
-}: WithReactChildren) {
-  const [nodes, setNodes] = useState<Node[]>([])
+}: GraphProviderProps) {
+  const [nodes, setNodes] = useState<SelectNode[]>(
+    initialNodes ?? [],
+  )
 
   return (
     <GraphContext.Provider

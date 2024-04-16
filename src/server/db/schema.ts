@@ -1,4 +1,8 @@
-import { relations, sql } from "drizzle-orm"
+import {
+  type InferSelectModel,
+  relations,
+  sql,
+} from "drizzle-orm"
 import {
   integer,
   pgTableCreator,
@@ -38,6 +42,9 @@ export const users = createTable("users", {
   imageUrl: varchar("image_url", { length: 1024 }),
 })
 
+export type SelectUsers = InferSelectModel<typeof users>
+export type InsertUsers = InferSelectModel<typeof users>
+
 export const usersRelations = relations(
   users,
   ({ many }) => ({
@@ -69,6 +76,9 @@ export const nodes = createTable("nodes", {
   // Relationships
   creatorId: integer("creator_id"),
 })
+
+export type SelectNode = InferSelectModel<typeof nodes>
+export type InsertNode = InferSelectModel<typeof nodes>
 
 export const nodesRelations = relations(
   nodes,
@@ -105,6 +115,9 @@ export const edges = createTable("edges", {
   fromId: integer("from_id"),
   toId: integer("to_id"),
 })
+
+export type SelectEdges = InferSelectModel<typeof edges>
+export type InsertEdges = InferSelectModel<typeof edges>
 
 export const edgesRelations = relations(
   edges,
@@ -148,6 +161,9 @@ export const votes = createTable("votes", {
   edgeId: integer("edge_id"),
 })
 
+export type SelectVotes = InferSelectModel<typeof votes>
+export type InsertVotes = InferSelectModel<typeof votes>
+
 export const votesRelations = relations(
   votes,
   ({ one }) => ({
@@ -185,6 +201,13 @@ export const comments = createTable("comments", {
   nodeId: integer("node_id"),
   edgeId: integer("edge_id"),
 })
+
+export type SelectComments = InferSelectModel<
+  typeof comments
+>
+export type InsertComments = InferSelectModel<
+  typeof comments
+>
 
 export const commentsRelations = relations(
   comments,
