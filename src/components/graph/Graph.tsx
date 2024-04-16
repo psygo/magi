@@ -78,15 +78,21 @@ function useDraw() {
     e: React.MouseEvent<HTMLCanvasElement>,
   ) {
     const [x, y] = [e.clientX, e.clientY]
+    const ctx = getCtx()
 
     nodes.forEach((n) => {
-      const ctx = getCtx()
       ctx.beginPath()
       ctx.rect(n.x, n.y, rectWidth, rectHeight)
 
-      ctx.fillStyle = ctx.isPointInPath(x, y)
-        ? "red"
-        : "blue"
+      console.log("client", e.clientX, e.clientY)
+      console.log("n", n.x, n.y)
+
+      const isPointInPath = ctx.isPointInPath(x, y)
+
+      if (isPointInPath) {
+        ctx.fillStyle = "red"
+      }
+
       ctx.fill()
     })
   }

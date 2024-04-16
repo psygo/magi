@@ -68,8 +68,8 @@ export const nodes = createTable("nodes", {
     .notNull(),
   updatedAt: timestamp("updated_at"),
   // Data
-  title: varchar("first_name", { length: 256 }).notNull(),
-  description: varchar("last_name", { length: 4096 }),
+  title: varchar("title", { length: 256 }).notNull(),
+  description: varchar("description", { length: 4096 }),
   imageUrl: varchar("image_url", { length: 1024 }),
   x: real("x").notNull(),
   y: real("y").notNull(),
@@ -107,8 +107,8 @@ export const edges = createTable("edges", {
     .notNull(),
   updatedAt: timestamp("updated_at"),
   // Data
-  title: varchar("first_name", { length: 256 }).notNull(),
-  description: varchar("last_name", { length: 4096 }),
+  title: varchar("title", { length: 256 }).notNull(),
+  description: varchar("description", { length: 4096 }),
   imageUrl: varchar("image_url", { length: 1024 }),
   // Relationships
   creatorId: integer("creator_id"),
