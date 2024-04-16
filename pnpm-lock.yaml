@@ -26,9 +26,6 @@ dependencies:
   drizzle-orm:
     specifier: ^0.29.4
     version: 0.29.5(@types/react@18.2.78)(pg@8.11.5)(postgres@3.4.4)(react@18.2.0)
-  lucide-react:
-    specifier: ^0.368.0
-    version: 0.368.0(react@18.2.0)
   nanoid:
     specifier: ^5.0.7
     version: 5.0.7
@@ -3552,14 +3549,6 @@ packages:
     dependencies:
       es5-ext: 0.10.64
     dev: true
-
-  /lucide-react@0.368.0(react@18.2.0):
-    resolution: {integrity: sha512-soryVrCjheZs8rbXKdINw9B8iPi5OajBJZMJ1HORig89ljcOcEokKKAgGbg3QWxSXel7JwHOfDFUdDHAKyUAMw==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
-    dev: false
 
   /map-obj@4.3.0:
     resolution: {integrity: sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==}
