@@ -33,7 +33,7 @@ export default function RootLayout({
           )}
         >
           <TopNav />
-          {children}
+          <main>{children}</main>
         </body>
       </html>
     </ClerkProvider>

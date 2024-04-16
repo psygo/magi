@@ -23,17 +23,14 @@ function LeftTopnav() {
 function RightTopnav() {
   return (
     <div className="flex gap-2 items-center">
-      <Button>Regen Data</Button>
-      <div className="flex items-center">
-        <SignedOut>
-          <Button>
-            <SignInButton />
-          </Button>
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-      </div>
+      <SignedOut>
+        <Button>
+          <SignInButton />
+        </Button>
+      </SignedOut>
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
     </div>
   )
 }
