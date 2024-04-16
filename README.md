@@ -19,5 +19,16 @@ This project has been set up with the [`create-t3-app`](https://create.t3.gg/) s
 Locally, you can set things up with:
 
 ```env
-POSTGRES_URL="postgresql://phili:password@localhost:5432/postgres?search_path=public"
+#-----------------------------------------------------------
+# 1. DB
+
+POSTGRES_URL=postgresql://phili:password@localhost:5432/postgres?search_path=public
+
+#-----------------------------------------------------------
+# 2. Clerk
+
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+
+#-----------------------------------------------------------
 ```

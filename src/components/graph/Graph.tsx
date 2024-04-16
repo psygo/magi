@@ -1,6 +1,12 @@
 "use client"
 
-import { useCallback, useEffect, useRef } from "react"
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
+import { NodeForm } from "./NodeForm"
 
 function useScale() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -38,28 +44,41 @@ function useScale() {
 function useDraw() {
   const { canvasRef, getCtx } = useScale()
 
-  function drawRect(
+  const [isCreatingNode, setIsCreatingNode] =
+    useState(false)
+
+  function drawNode(
     e: React.MouseEvent<HTMLCanvasElement>,
   ) {
+    setIsCreatingNode(true)
+
     const [x, y] = [e.clientX, e.clientY]
     const ctx = getCtx()
 
-    ctx.rect(x, y, 20, 10)
+    ctx.rect(x, y, 180, 90)
     ctx.fillStyle = "#fff"
     ctx.fill()
   }
 
-  return { canvasRef, drawRect }
+  return {
+    canvasRef,
+    drawNode,
+    isCreatingNode,
+    setIsCreatingNode,
+  }
 }
 
 export function Graph() {
-  const { canvasRef, drawRect } = useDraw()
+  const { canvasRef, drawNode, isCreatingNode } = useDraw()
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="w-screen h-screen"
-      onClick={drawRect}
-    ></canvas>
+    <>
+      <NodeForm open={isCreatingNode} />
+      <canvas
+        ref={canvasRef}
+        className="w-screen h-screen"
+        onClick={drawNode}
+      ></canvas>
+    </>
   )
 }
