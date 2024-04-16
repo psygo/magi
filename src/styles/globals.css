@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/*--------------------------------------------------------*/
+/* Clerk */
+
+.cl-avatarBox {
+  height: 35px;
+  width: 35px;
+}
+
+/*--------------------------------------------------------*/
+/* Shad UI */
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -74,3 +85,5 @@
     @apply bg-background text-foreground;
   }
 }
+
+/*--------------------------------------------------------*/
