@@ -37,6 +37,12 @@
       "@/*": [
         "./src/*"
       ],
+      "@actions/*": [
+        "./src/server/actions/*"
+      ],
+      "@actions": [
+        "./src/server/actions/exports"
+      ],
       "@components/*": [
         "./src/components/*"
       ],

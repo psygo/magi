@@ -21,6 +21,8 @@ import {
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
+import { postNode } from "@actions"
+
 import {
   nodeFormSchema,
   type NodeFormValidation,
@@ -37,10 +39,19 @@ export function NodeForm() {
     defaultValues: {
       title: selectedNode?.title ?? "",
       description: selectedNode?.description ?? "",
-      x: coords!.x,
-      y: coords!.y,
     },
   })
+
+  async function onSubmit(values: NodeFormValidation) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const newNode = await postNode(
+      values.title,
+      values.description ?? "",
+      coords!.x,
+      coords!.y,
+    )
+    console.log(newNode)
+  }
 
   return (
     <Sheet open={isCreatingNode}>
@@ -52,45 +63,62 @@ export function NodeForm() {
         <hr className="mt-6" />
 
         <Form {...nodeForm}>
-          <fieldset className="my-6 flex flex-col gap-4">
-            <FormField
-              control={nodeForm.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="A Great Title"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={nodeForm.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="A great description."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </fieldset>
+          <form
+            id="node-form"
+            onSubmit={nodeForm.handleSubmit(onSubmit)}
+            // action={async (formData) => {
+            //   // "use server"
+            //   await postNode(
+            //     formData.get("title")! as string,
+            //     (formData.get("description") as string) ??
+            //       "",
+            //     coords!.x,
+            //     coords!.y,
+            //   )
+            // }}
+          >
+            <fieldset className="my-6 flex flex-col gap-4">
+              <FormField
+                control={nodeForm.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="A Great Title"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={nodeForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="A great description."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </fieldset>
+          </form>
         </Form>
 
         <SheetFooter>
           <SheetClose asChild>
-            <Button type="submit">Create</Button>
+            <Button form="node-form" type="submit">
+              Create
+            </Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>

@@ -108,7 +108,7 @@ export function Graph() {
 
   return (
     <>
-      {/* <NodeForm /> */}
+      <NodeForm />
       <canvas
         ref={canvasRef}
         className="w-screen h-screen"
