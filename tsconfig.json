@@ -79,6 +79,12 @@
       "@utils": [
         "./src/utils/exports"
       ],
+      "@validation/*": [
+        "./src/validation/*"
+      ],
+      "@validation": [
+        "./src/validation/exports"
+      ],
     }
   },
   "include": [

@@ -1,7 +1,16 @@
+"use client"
+
 import {
   Button,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
   Input,
-  Label,
+  //   Label,
   Sheet,
   SheetClose,
   SheetContent,
@@ -11,13 +20,25 @@ import {
   SheetTitle,
 } from "@shad"
 
-type NodeFormProps = {
-  open?: boolean
-}
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-export function NodeForm({ open = false }: NodeFormProps) {
+import {
+  nodeFormSchema,
+  type NodeFormValidation,
+} from "@validation"
+
+import { useGraph } from "@context"
+
+export function NodeForm() {
+  const { isCreatingNode } = useGraph()
+
+  const nodeForm = useForm<NodeFormValidation>({
+    resolver: zodResolver(nodeFormSchema),
+  })
+
   return (
-    <Sheet open={open}>
+    <Sheet open={isCreatingNode}>
       <SheetContent className="pt-3">
         <SheetHeader>
           <SheetTitle>Create a Node</SheetTitle>
@@ -25,20 +46,31 @@ export function NodeForm({ open = false }: NodeFormProps) {
             Create a new content node.
           </SheetDescription>
         </SheetHeader>
-        <div className="flex flex-col gap-8 py-8">
-          <div className="flex flex-col gap-4">
-            <Label htmlFor="title" className="pl-3">
-              Title
-            </Label>
-            <Input id="title" value="A great title" />
-          </div>
-          <div className="flex flex-col gap-4">
-            <Label htmlFor="title" className="pl-3">
-              Description
-            </Label>
-            <Input id="title" value="A great description" />
-          </div>
-        </div>
+
+        <section className="my-6">
+          <Form {...nodeForm}>
+            <FormField
+              control={nodeForm.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="A great title"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    This is your display name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </Form>
+        </section>
+
         <SheetFooter>
           <SheetClose asChild>
             <Button type="submit">Create</Button>

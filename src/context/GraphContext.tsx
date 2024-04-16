@@ -11,6 +11,10 @@ type GraphContext = {
   setNodes: React.Dispatch<
     React.SetStateAction<SelectNode[]>
   >
+  isCreatingNode: boolean
+  setIsCreatingNode: React.Dispatch<
+    React.SetStateAction<boolean>
+  >
 }
 
 const GraphContext = createContext<GraphContext | null>(
@@ -28,12 +32,16 @@ export function GraphProvider({
   const [nodes, setNodes] = useState<SelectNode[]>(
     initialNodes ?? [],
   )
+  const [isCreatingNode, setIsCreatingNode] =
+    useState(false)
 
   return (
     <GraphContext.Provider
       value={{
         nodes,
         setNodes,
+        isCreatingNode,
+        setIsCreatingNode,
       }}
     >
       {children}
