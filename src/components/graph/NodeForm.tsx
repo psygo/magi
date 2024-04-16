@@ -29,10 +29,17 @@ import {
 import { useGraph } from "@context"
 
 export function NodeForm() {
-  const { isCreatingNode } = useGraph()
+  const { selectedNode, isCreatingNode, coords } =
+    useGraph()
 
   const nodeForm = useForm<NodeFormValidation>({
     resolver: zodResolver(nodeFormSchema),
+    defaultValues: {
+      title: selectedNode?.title ?? "",
+      description: selectedNode?.description ?? "",
+      x: coords!.x,
+      y: coords!.y,
+    },
   })
 
   return (

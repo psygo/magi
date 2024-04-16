@@ -6,6 +6,8 @@ import { type WithReactChildren } from "@types"
 
 import { type SelectNode } from "@server"
 
+type Coords = Pick<SelectNode, "x" | "y">
+
 type GraphContext = {
   nodes: SelectNode[]
   setNodes: React.Dispatch<
@@ -14,6 +16,14 @@ type GraphContext = {
   isCreatingNode: boolean
   setIsCreatingNode: React.Dispatch<
     React.SetStateAction<boolean>
+  >
+  selectedNode: SelectNode | null
+  setSelectedNode: React.Dispatch<
+    React.SetStateAction<SelectNode | null>
+  >
+  coords: Coords | null
+  setCoords: React.Dispatch<
+    React.SetStateAction<Coords | null>
   >
 }
 
@@ -34,6 +44,12 @@ export function GraphProvider({
   )
   const [isCreatingNode, setIsCreatingNode] =
     useState(false)
+  const [selectedNode, setSelectedNode] =
+    useState<SelectNode | null>(null)
+  const [coords, setCoords] = useState<Coords | null>({
+    x: 0,
+    y: 0,
+  })
 
   return (
     <GraphContext.Provider
@@ -42,6 +58,10 @@ export function GraphProvider({
         setNodes,
         isCreatingNode,
         setIsCreatingNode,
+        selectedNode,
+        setSelectedNode,
+        coords,
+        setCoords,
       }}
     >
       {children}

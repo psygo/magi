@@ -6,6 +6,9 @@ import { useGraph } from "@context"
 
 import { NodeForm } from "./NodeForm"
 
+const rectWidth = 180
+const rectHeight = 90
+
 function useScale() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -41,37 +44,76 @@ function useScale() {
 
 function useDraw() {
   const { canvasRef, getCtx } = useScale()
-  const { setIsCreatingNode } = useGraph()
+  const { nodes, setIsCreatingNode, setCoords } = useGraph()
 
-  function drawNode(
+  const drawNode = useCallback(
+    (x: number, y: number) => {
+      const ctx = getCtx()
+
+      ctx.rect(x, y, rectWidth, rectHeight)
+      ctx.fillStyle = "#fff"
+      ctx.fill()
+    },
+    [getCtx],
+  )
+
+  const drawInitialNodes = useCallback(() => {
+    nodes.forEach((n) => {
+      drawNode(n.x, n.y)
+    })
+  }, [drawNode, nodes])
+
+  function drawClickedNode(
     e: React.MouseEvent<HTMLCanvasElement>,
   ) {
     setIsCreatingNode(true)
 
     const [x, y] = [e.clientX, e.clientY]
-    const ctx = getCtx()
+    setCoords({ x, y })
 
-    ctx.rect(x, y, 180, 90)
-    ctx.fillStyle = "#fff"
-    ctx.fill()
+    drawNode(x, y)
   }
+
+  function highlightNode(
+    e: React.MouseEvent<HTMLCanvasElement>,
+  ) {
+    const [x, y] = [e.clientX, e.clientY]
+
+    nodes.forEach((n) => {
+      const ctx = getCtx()
+      ctx.beginPath()
+      ctx.rect(n.x, n.y, rectWidth, rectHeight)
+
+      ctx.fillStyle = ctx.isPointInPath(x, y)
+        ? "red"
+        : "blue"
+      ctx.fill()
+    })
+  }
+
+  useEffect(() => {
+    drawInitialNodes()
+  }, [drawInitialNodes])
 
   return {
     canvasRef,
-    drawNode,
+    drawClickedNode,
+    highlightNode,
   }
 }
 
 export function Graph() {
-  const { canvasRef, drawNode } = useDraw()
+  const { canvasRef, drawClickedNode, highlightNode } =
+    useDraw()
 
   return (
     <>
-      <NodeForm />
+      {/* <NodeForm /> */}
       <canvas
         ref={canvasRef}
         className="w-screen h-screen"
-        onClick={drawNode}
+        onClick={drawClickedNode}
+        onMouseMove={highlightNode}
       ></canvas>
     </>
   )
