@@ -4,20 +4,18 @@ import {
   Button,
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
   Input,
-  //   Label,
   Sheet,
   SheetClose,
   SheetContent,
-  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  Textarea,
 } from "@shad"
 
 import { useForm } from "react-hook-form"
@@ -42,13 +40,12 @@ export function NodeForm() {
       <SheetContent className="pt-3">
         <SheetHeader>
           <SheetTitle>Create a Node</SheetTitle>
-          <SheetDescription>
-            Create a new content node.
-          </SheetDescription>
         </SheetHeader>
 
-        <section className="my-6">
-          <Form {...nodeForm}>
+        <hr className="mt-6" />
+
+        <Form {...nodeForm}>
+          <fieldset className="my-6 flex flex-col gap-4">
             <FormField
               control={nodeForm.control}
               name="title"
@@ -57,19 +54,32 @@ export function NodeForm() {
                   <FormLabel>Title</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="A great title"
+                      placeholder="A Great Title"
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    This is your display name.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </Form>
-        </section>
+            <FormField
+              control={nodeForm.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="A great description."
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </fieldset>
+        </Form>
 
         <SheetFooter>
           <SheetClose asChild>
