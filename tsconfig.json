@@ -55,6 +55,12 @@
       "@context": [
         "./src/context/exports"
       ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@hooks": [
+        "./src/hooks/exports"
+      ],
       "@server/*": [
         "./src/server/*"
       ],
