@@ -15,6 +15,7 @@ import {
   SheetFooter,
   SheetHeader,
   SheetTitle,
+  SheetTrigger,
   Textarea,
 } from "@shad"
 
@@ -31,8 +32,12 @@ import {
 import { useGraph } from "@context"
 
 export function NodeForm() {
-  const { selectedNode, isCreatingNode, coords } =
-    useGraph()
+  const {
+    selectedNode,
+    isCreatingNode,
+    setIsCreatingNode,
+    coords,
+  } = useGraph()
 
   const nodeForm = useForm<NodeFormValidation>({
     resolver: zodResolver(nodeFormSchema),
@@ -43,18 +48,20 @@ export function NodeForm() {
   })
 
   async function onSubmit(values: NodeFormValidation) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-    const newNode = await postNode(
+    await postNode(
       values.title,
       values.description ?? "",
       coords!.x,
       coords!.y,
     )
-    console.log(newNode)
   }
 
   return (
-    <Sheet open={isCreatingNode}>
+    <Sheet
+      open={isCreatingNode}
+      onOpenChange={setIsCreatingNode}
+    >
+      <SheetTrigger></SheetTrigger>
       <SheetContent className="pt-3">
         <SheetHeader>
           <SheetTitle>Create a Node</SheetTitle>
@@ -66,16 +73,6 @@ export function NodeForm() {
           <form
             id="node-form"
             onSubmit={nodeForm.handleSubmit(onSubmit)}
-            // action={async (formData) => {
-            //   // "use server"
-            //   await postNode(
-            //     formData.get("title")! as string,
-            //     (formData.get("description") as string) ??
-            //       "",
-            //     coords!.x,
-            //     coords!.y,
-            //   )
-            // }}
           >
             <fieldset className="my-6 flex flex-col gap-4">
               <FormField

@@ -19,7 +19,8 @@ export function Graph() {
         onMouseMove={highlightNode}
       ></canvas>
     )
-  }, [canvasRef, drawClickedNode, highlightNode])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canvasRef])
 
   return (
     <>

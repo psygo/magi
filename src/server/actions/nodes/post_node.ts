@@ -9,7 +9,7 @@ export async function postNode(
   y: number,
 ) {
   try {
-    return await db.insert(nodes).values({
+    await db.insert(nodes).values({
       title,
       description,
       x,
