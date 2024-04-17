@@ -1,31 +1,52 @@
 "use client"
 
-import { useMemo } from "react"
+import { useRef } from "react"
 
-import { useDrawNodes } from "@hooks"
-
-import { NodeForm } from "./NodeForm"
+import { Excalidraw } from "@excalidraw/excalidraw"
+import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 export function Graph() {
-  const { canvasRef, drawClickedNode, highlightNode } =
-    useDrawNodes()
+  const excalidrawDivRef = useRef<HTMLDivElement>(null)
 
-  const Canvas = useMemo(() => {
-    return (
-      <canvas
-        ref={canvasRef}
-        className="absolute top-0 w-screen h-screen"
-        onClick={drawClickedNode}
-        onMouseMove={highlightNode}
-      ></canvas>
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canvasRef])
+  function getExcalidrawCanvas() {
+    const excalidrawCanvas: HTMLCanvasElement =
+      excalidrawDivRef.current!.querySelector(
+        "canvas.excalidraw__canvas.static",
+      )!
+
+    return excalidrawCanvas
+  }
+
+  function onChangeEx(exEls: readonly ExcalidrawElement[]) {
+    const excalidrawCanvas = getExcalidrawCanvas()
+    const ctx = excalidrawCanvas.getContext("2d")!
+
+    const lastEl = exEls[exEls.length - 1]
+
+    if (lastEl) {
+      ctx.roundRect(
+        lastEl.x + lastEl.width,
+        lastEl.y + lastEl.height,
+        180,
+        90,
+        10,
+      )
+      ctx.fillStyle = "red"
+      ctx.fill()
+    }
+  }
 
   return (
-    <>
-      <NodeForm />
-      {Canvas}
-    </>
+    <div
+      ref={excalidrawDivRef}
+      className="absolute top-0 w-screen h-screen"
+      onPointerUp={(e) => {
+        // Maybe something here could work...
+        // console.log(e)
+        // const excalidrawCanvas = getExcalidrawCanvas()
+      }}
+    >
+      <Excalidraw onChange={(exEls) => onChangeEx(exEls)} />
+    </div>
   )
 }

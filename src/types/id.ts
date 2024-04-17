@@ -8,3 +8,6 @@ export type ClerkId = z.infer<typeof clerkIdSchema>
 
 export const usernameSchema = z.string()
 export type Username = z.infer<typeof usernameSchema>
+
+export const emailSchema = z.string().email()
+export type Email = z.infer<typeof emailSchema>

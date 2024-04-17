@@ -1,12 +1,24 @@
-import { Webhook } from "svix"
-
-import { type WebhookEvent } from "@clerk/nextjs/server"
-import {} from "@clerk/nextjs"
+import "server-only"
 
 import { headers } from "next/headers"
 import { NextResponse } from "next/server"
 
-// import { type ClerkId } from "@types"
+import { Webhook } from "svix"
+
+import {
+  type WebhookEvent,
+  clerkClient,
+} from "@clerk/nextjs/server"
+
+import { eq } from "drizzle-orm"
+
+import {
+  type Username,
+  type ClerkId,
+  type Email,
+} from "@types"
+
+import { db, users } from "@server"
 
 const clerkWebhooksUserEventsSecret =
   process.env.CLERK_WEBHOOKS_USER_EVENTS!
@@ -42,18 +54,22 @@ export async function POST(req: Request) {
     const verifiedPayload = await validateRequest(req)
 
     if (verifiedPayload) {
-      // const data = verifiedPayload.data
       const type = verifiedPayload.type
+      let data
 
       switch (type) {
         case "user.created":
-          // await createUser(verifiedPayload.data.id)
+          data = verifiedPayload.data
+          await createUser(
+            data.id,
+            data.username!,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+            data.email_addresses[0]?.email_address!,
+          )
           break
         case "user.updated":
-          // await updateUser(data)
-          break
-        case "user.deleted":
-          // await deleteUser(data)
+          data = verifiedPayload.data
+          await updateUser(data.id, data.username!)
           break
         default:
           console.log(`${type} is not a managed event.`)
@@ -66,40 +82,48 @@ export async function POST(req: Request) {
   }
 }
 
-// async function createUser(clerkId: ClerkId) {
-// try {
-//     // const user = await prisma.user.create({
-//     //   data: {
-//     //     nanoid: standardNanoid(),
-//     //     clerkId: userData.id,
-//     //     username: userData.username!,
-//     //     email:
-//     //       userData.email_addresses.first().email_address,
-//     //   },
-//     // })
-//     // await clerkClient.users.updateUser(userData.id, {
-//     //   publicMetadata: {
-//     //     nanoid: user?.nanoid,
-//     //     isAdmin: false,
-//     //     isWriter: false,
-//     //   },
-//     // })
-//     // return user
-// } catch (e) {
-//   console.error(e)
-// }
-// }
+async function createUser(
+  clerkId: ClerkId,
+  username: Username,
+  email: Email,
+) {
+  try {
+    const newUserNanoId = await db
+      .insert(users)
+      .values({
+        clerkId,
+        username,
+        email,
+      })
+      .returning({ insertedNanoId: users.nanoId })
 
-// async function updateUser(userData: UserJSON) {
-//   try {
-//   } catch (e) {
-//     console.error(e)
-//   }
-// }
+    if (newUserNanoId)
+      await clerkClient.users.updateUser(clerkId, {
+        publicMetadata: {
+          nanoid: newUserNanoId,
+          isAdmin: false,
+          isWriter: false,
+        },
+      })
 
-// async function deleteUser(userData: UserJSON) {
-//   try {
-//   } catch (e) {
-//     console.error(e)
-//   }
-// }
+    return newUserNanoId
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+async function updateUser(
+  clerkId: ClerkId,
+  username: Username,
+) {
+  try {
+    await db
+      .update(users)
+      .set({
+        username,
+      })
+      .where(eq(users.clerkId, clerkId))
+  } catch (e) {
+    console.error(e)
+  }
+}

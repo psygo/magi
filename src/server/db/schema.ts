@@ -31,6 +31,9 @@ export const users = createTable("users", {
   username: varchar("username", { length: 256 })
     .unique()
     .notNull(),
+  email: varchar("email", { length: 256 })
+    .unique()
+    .notNull(),
   // Metadata
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
