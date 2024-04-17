@@ -1,6 +1,10 @@
 "use client"
 
-import { useCallback, useEffect } from "react"
+import {
+  type MouseEvent,
+  useCallback,
+  useEffect,
+} from "react"
 
 import { useGraph } from "@context"
 
@@ -40,7 +44,7 @@ export function useDrawNodes() {
   }, [drawNode, nodes])
 
   function drawClickedNode(
-    e: React.MouseEvent<HTMLCanvasElement>,
+    e: MouseEvent<HTMLCanvasElement>,
   ) {
     const [x, y] = [e.clientX, e.clientY]
 
@@ -53,15 +57,13 @@ export function useDrawNodes() {
     drawNode(x, y)
   }
 
-  function highlightNode(
-    e: React.MouseEvent<HTMLCanvasElement>,
-  ) {
+  function highlightNode(e: MouseEvent<HTMLCanvasElement>) {
     const [x, y] = [e.clientX, e.clientY]
     const ctx = getCtx()
 
     if (!ctx) return
 
-    nodes.forEach((n) => {
+    for (const n of nodes) {
       ctx.beginPath()
       ctx.roundRect(
         n.x,
@@ -71,18 +73,19 @@ export function useDrawNodes() {
         borderRadius,
       )
 
-      const pointIsWithinX =
-        x >= n.x && x <= n.x + rectWidth
-      const pointIsWithinY =
-        y >= n.y && y <= n.y + rectHeight
-      const pointIsInPath = pointIsWithinX && pointIsWithinY
+      if (isPointOnNode(x, y, n.x, n.y)) {
+        ctx.fillStyle = "red"
+        ctx.fill()
+        break
+      } else {
+        ctx.fillStyle = "white"
+        ctx.fill()
+      }
+    }
+  }
 
-      pointIsInPath
-        ? (ctx.fillStyle = "red")
-        : (ctx.fillStyle = "white")
-
-      ctx.fill()
-    })
+  function dragNode(e: MouseEvent<HTMLCanvasElement>) {
+    const [x, y] = [e.clientX, e.clientY]
   }
 
   function isPointOnNode(

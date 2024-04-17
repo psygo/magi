@@ -1,11 +1,11 @@
-import { db, nodes } from "@server"
+import { getNodes } from "@server"
 
 import { GraphProvider } from "@context"
 
 import { Graph } from "@components"
 
 export default async function HomePage() {
-  const n = await db.select().from(nodes)
+  const n = await getNodes()
 
   return (
     <GraphProvider initialNodes={n}>
