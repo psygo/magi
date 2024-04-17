@@ -71,15 +71,16 @@ export function useDrawNodes() {
 
     if (hoveredNode) {
       highlight(hoveredNode.x, hoveredNode.y, "red")
+      document.body.style.cursor = "pointer"
+    } else {
+      document.body.style.cursor = "auto"
     }
 
     nodes
       .filter((n) =>
         hoveredNode ? n.id !== hoveredNode.id : true,
       )
-      .forEach((n) => {
-        highlight(n.x, n.y, "white")
-      })
+      .forEach((n) => highlight(n.x, n.y, "white"))
   }
 
   function highlight(x: number, y: number, color: Color) {
@@ -94,6 +95,9 @@ export function useDrawNodes() {
 
   function dragNode(e: MouseEvent<HTMLCanvasElement>) {
     const [x, y] = [e.clientX, e.clientY]
+    const hoveredNode = nodes.find((n) =>
+      isPointOnNode(x, y, n.x, n.y),
+    )
   }
 
   function isPointOnNode(
