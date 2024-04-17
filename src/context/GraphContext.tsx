@@ -6,6 +6,8 @@ import { type WithReactChildren } from "@types"
 
 import { type SelectNode } from "@server"
 
+import { rectHeight, rectWidth } from "@styles"
+
 type Coords = Pick<SelectNode, "x" | "y">
 
 type GraphContext = {
@@ -25,6 +27,13 @@ type GraphContext = {
   setCoords: React.Dispatch<
     React.SetStateAction<Coords | null>
   >
+  isPointOnNode: (
+    x: number,
+    y: number,
+    nX: number,
+    nY: number,
+  ) => boolean
+  isPointOnAnyNode: (x: number, y: number) => boolean
 }
 
 const GraphContext = createContext<GraphContext | null>(
@@ -51,6 +60,23 @@ export function GraphProvider({
     y: 0,
   })
 
+  function isPointOnNode(
+    x: number,
+    y: number,
+    nX: number,
+    nY: number,
+  ) {
+    const pointIsWithinX = x >= nX && x <= nX + rectWidth
+    const pointIsWithinY = y >= nY && y <= nY + rectHeight
+    return pointIsWithinX && pointIsWithinY
+  }
+
+  function isPointOnAnyNode(x: number, y: number) {
+    return nodes
+      .map((n) => isPointOnNode(x, y, n.x, n.y))
+      .reduce((p, v) => p || v)
+  }
+
   return (
     <GraphContext.Provider
       value={{
@@ -62,6 +88,8 @@ export function GraphProvider({
         setSelectedNode,
         coords,
         setCoords,
+        isPointOnNode,
+        isPointOnAnyNode,
       }}
     >
       {children}

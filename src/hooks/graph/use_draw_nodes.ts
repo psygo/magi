@@ -12,13 +12,21 @@ import { useGraph } from "@context"
 
 import { useCanvas } from "@hooks"
 
-const rectWidth = 180
-const rectHeight = 90
-const borderRadius = 10
+import {
+  borderRadius,
+  rectHeight,
+  rectWidth,
+} from "@styles"
 
 export function useDrawNodes() {
   const { canvasRef, getCtx } = useCanvas()
-  const { nodes, setIsCreatingNode, setCoords } = useGraph()
+  const {
+    nodes,
+    setIsCreatingNode,
+    setCoords,
+    isPointOnNode,
+    isPointOnAnyNode,
+  } = useGraph()
 
   const drawNode = useCallback(
     (x: number, y: number) => {
@@ -91,30 +99,6 @@ export function useDrawNodes() {
     ctx.roundRect(x, y, rectWidth, rectHeight, borderRadius)
     ctx.fillStyle = color
     ctx.fill()
-  }
-
-  function dragNode(e: MouseEvent<HTMLCanvasElement>) {
-    const [x, y] = [e.clientX, e.clientY]
-    const hoveredNode = nodes.find((n) =>
-      isPointOnNode(x, y, n.x, n.y),
-    )
-  }
-
-  function isPointOnNode(
-    x: number,
-    y: number,
-    nX: number,
-    nY: number,
-  ) {
-    const pointIsWithinX = x >= nX && x <= nX + rectWidth
-    const pointIsWithinY = y >= nY && y <= nY + rectHeight
-    return pointIsWithinX && pointIsWithinY
-  }
-
-  function isPointOnAnyNode(x: number, y: number) {
-    return nodes
-      .map((n) => isPointOnNode(x, y, n.x, n.y))
-      .reduce((p, v) => p || v)
   }
 
   useEffect(() => {
