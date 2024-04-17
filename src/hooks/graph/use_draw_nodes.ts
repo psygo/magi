@@ -6,6 +6,8 @@ import {
   useEffect,
 } from "react"
 
+import { type Color } from "@types"
+
 import { useGraph } from "@context"
 
 import { useCanvas } from "@hooks"
@@ -63,25 +65,31 @@ export function useDrawNodes() {
 
     if (!ctx) return
 
-    for (const n of nodes) {
-      ctx.beginPath()
-      ctx.roundRect(
-        n.x,
-        n.y,
-        rectWidth,
-        rectHeight,
-        borderRadius,
-      )
+    const hoveredNode = nodes.find((n) =>
+      isPointOnNode(x, y, n.x, n.y),
+    )
 
-      if (isPointOnNode(x, y, n.x, n.y)) {
-        ctx.fillStyle = "red"
-        ctx.fill()
-        break
-      } else {
-        ctx.fillStyle = "white"
-        ctx.fill()
-      }
+    if (hoveredNode) {
+      highlight(hoveredNode.x, hoveredNode.y, "red")
     }
+
+    nodes
+      .filter((n) =>
+        hoveredNode ? n.id !== hoveredNode.id : true,
+      )
+      .forEach((n) => {
+        highlight(n.x, n.y, "white")
+      })
+  }
+
+  function highlight(x: number, y: number, color: Color) {
+    const ctx = getCtx()
+    if (!ctx) return
+
+    ctx.beginPath()
+    ctx.roundRect(x, y, rectWidth, rectHeight, borderRadius)
+    ctx.fillStyle = color
+    ctx.fill()
   }
 
   function dragNode(e: MouseEvent<HTMLCanvasElement>) {
@@ -91,13 +99,11 @@ export function useDrawNodes() {
   function isPointOnNode(
     x: number,
     y: number,
-    nodeX: number,
-    nodeY: number,
+    nX: number,
+    nY: number,
   ) {
-    const pointIsWithinX =
-      x >= nodeX && x <= nodeX + rectWidth
-    const pointIsWithinY =
-      y >= nodeY && y <= nodeY + rectHeight
+    const pointIsWithinX = x >= nX && x <= nX + rectWidth
+    const pointIsWithinY = y >= nY && y <= nY + rectHeight
     return pointIsWithinX && pointIsWithinY
   }
 

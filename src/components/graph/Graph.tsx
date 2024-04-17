@@ -14,7 +14,7 @@ export function Graph() {
     return (
       <canvas
         ref={canvasRef}
-        className="w-screen h-screen"
+        className="absolute top-0 w-screen h-screen"
         onClick={drawClickedNode}
         onMouseMove={highlightNode}
       ></canvas>
