@@ -1,8 +1,7 @@
-# Magi
+# Tasks
 
-1. [ ] Creating a node
-   1. [x] Draw Node where the mouse is
-   1. [ ] Drawing the Node pops up a form on the sidebar
-   1. [ ] The form updates the data in the node
-   1. [ ] That data is saved on the DB
-1. [ ] Move a node
+1. [ ] Nodes cannot occupy the same space (collision detection)
+2. [ ] Text on the node
+3. [ ] Hovering on the node shows up more info
+4. [ ] Drag a node
+5. [ ] Connect two nodes

@@ -1,13 +1,12 @@
 import { Webhook } from "svix"
 
-import {
-  // clerkClient,
-  type WebhookEvent,
-} from "@clerk/nextjs/server"
+import { type WebhookEvent } from "@clerk/nextjs/server"
 import {} from "@clerk/nextjs"
 
 import { headers } from "next/headers"
 import { NextResponse } from "next/server"
+
+// import { type ClerkId } from "@types"
 
 const clerkWebhooksUserEventsSecret =
   process.env.CLERK_WEBHOOKS_USER_EVENTS!
@@ -42,17 +41,13 @@ export async function POST(req: Request) {
   try {
     const verifiedPayload = await validateRequest(req)
 
-    console.log("before verification")
-
     if (verifiedPayload) {
-      const data = verifiedPayload.data
+      // const data = verifiedPayload.data
       const type = verifiedPayload.type
-
-      console.log("verified")
 
       switch (type) {
         case "user.created":
-          // await createUser(data)
+          // await createUser(verifiedPayload.data.id)
           break
         case "user.updated":
           // await updateUser(data)
@@ -71,8 +66,8 @@ export async function POST(req: Request) {
   }
 }
 
-// async function createUser(userData: UserJSON) {
-//   try {
+// async function createUser(clerkId: ClerkId) {
+// try {
 //     // const user = await prisma.user.create({
 //     //   data: {
 //     //     nanoid: standardNanoid(),
@@ -89,11 +84,10 @@ export async function POST(req: Request) {
 //     //     isWriter: false,
 //     //   },
 //     // })
-
 //     // return user
-//   } catch (e) {
-//     console.error(e)
-//   }
+// } catch (e) {
+//   console.error(e)
+// }
 // }
 
 // async function updateUser(userData: UserJSON) {
