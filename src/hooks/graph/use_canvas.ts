@@ -11,12 +11,14 @@ export function useCanvas() {
 
   const getCtx = useCallback(() => {
     const canvas = getCanvas()
-    return canvas.getContext("2d")!
+    if (canvas) return canvas.getContext("2d")!
   }, [])
 
   const setupCanvasScale = useCallback(() => {
     const scale = window.devicePixelRatio
     const canvas = getCanvas()
+
+    if (!canvas) return
 
     const width = window.innerWidth
     const height = window.innerHeight
@@ -25,7 +27,7 @@ export function useCanvas() {
     canvas.height = height * scale
 
     const ctx = getCtx()
-    ctx.scale(scale, scale)
+    ctx?.scale(scale, scale)
   }, [getCtx])
 
   useEffect(() => {

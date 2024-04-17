@@ -18,6 +18,8 @@ export function useDrawNodes() {
     (x: number, y: number) => {
       const ctx = getCtx()
 
+      if (!ctx) return
+
       ctx.roundRect(
         x,
         y,
@@ -40,9 +42,12 @@ export function useDrawNodes() {
   function drawClickedNode(
     e: React.MouseEvent<HTMLCanvasElement>,
   ) {
+    const [x, y] = [e.clientX, e.clientY]
+
+    if (isPointOnAnyNode(x, y)) return
+
     setIsCreatingNode(true)
 
-    const [x, y] = [e.clientX, e.clientY]
     setCoords({ x, y })
 
     drawNode(x, y)
@@ -53,6 +58,8 @@ export function useDrawNodes() {
   ) {
     const [x, y] = [e.clientX, e.clientY]
     const ctx = getCtx()
+
+    if (!ctx) return
 
     nodes.forEach((n) => {
       ctx.beginPath()
@@ -76,6 +83,25 @@ export function useDrawNodes() {
 
       ctx.fill()
     })
+  }
+
+  function isPointOnNode(
+    x: number,
+    y: number,
+    nodeX: number,
+    nodeY: number,
+  ) {
+    const pointIsWithinX =
+      x >= nodeX && x <= nodeX + rectWidth
+    const pointIsWithinY =
+      y >= nodeY && y <= nodeY + rectHeight
+    return pointIsWithinX && pointIsWithinY
+  }
+
+  function isPointOnAnyNode(x: number, y: number) {
+    return nodes
+      .map((n) => isPointOnNode(x, y, n.x, n.y))
+      .reduce((p, v) => p || v)
   }
 
   useEffect(() => {
