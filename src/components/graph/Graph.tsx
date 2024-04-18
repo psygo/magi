@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react"
 
-import { Excalidraw } from "@excalidraw/excalidraw"
+import dynamic from "next/dynamic"
+
 import {
   type NonDeletedExcalidrawElement,
   type ExcalidrawElement,
@@ -11,6 +12,17 @@ import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types
 import { type ImportedDataState } from "@excalidraw/excalidraw/types/data/types"
 
 import { Button } from "@shad"
+
+import { Progress } from "@components"
+
+const Excalidraw = dynamic(
+  async () =>
+    (await import("@excalidraw/excalidraw")).Excalidraw,
+  {
+    loading: () => <Progress />,
+    ssr: false,
+  },
+)
 
 export function Graph() {
   const [exEls, setExEls] = useState<
