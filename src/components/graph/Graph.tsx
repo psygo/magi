@@ -1,52 +1,68 @@
 "use client"
 
-import { useRef } from "react"
+import { useMemo, useState } from "react"
 
 import { Excalidraw } from "@excalidraw/excalidraw"
-import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
+import {
+  type NonDeletedExcalidrawElement,
+  type ExcalidrawElement,
+} from "@excalidraw/excalidraw/types/element/types"
+import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
+import { type ImportedDataState } from "@excalidraw/excalidraw/types/data/types"
+
+import { Button } from "@shad"
 
 export function Graph() {
-  const excalidrawDivRef = useRef<HTMLDivElement>(null)
+  const [exEls, setExEls] = useState<
+    ExcalidrawElement[] | NonDeletedExcalidrawElement[]
+  >([])
+  const [excalidrawAPI, setExcalidrawAPI] =
+    useState<ExcalidrawImperativeAPI>()
+  const [appState, setAppState] =
+    useState<ImportedDataState["appState"]>()
 
-  function getExcalidrawCanvas() {
-    const excalidrawCanvas: HTMLCanvasElement =
-      excalidrawDivRef.current!.querySelector(
-        "canvas.excalidraw__canvas.static",
-      )!
+  const Excal = useMemo(() => {
+    return (
+      <Excalidraw
+        excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        onChange={() => {
+          const els = excalidrawAPI?.getSceneElements()
+          setAppState(excalidrawAPI?.getAppState())
 
-    return excalidrawCanvas
-  }
-
-  function onChangeEx(exEls: readonly ExcalidrawElement[]) {
-    const excalidrawCanvas = getExcalidrawCanvas()
-    const ctx = excalidrawCanvas.getContext("2d")!
-
-    const lastEl = exEls[exEls.length - 1]
-
-    if (lastEl) {
-      ctx.roundRect(
-        lastEl.x + lastEl.width,
-        lastEl.y + lastEl.height,
-        180,
-        90,
-        10,
-      )
-      ctx.fillStyle = "red"
-      ctx.fill()
-    }
-  }
+          if (els) setExEls([...els])
+        }}
+      />
+    )
+  }, [excalidrawAPI])
 
   return (
-    <div
-      ref={excalidrawDivRef}
-      className="absolute top-0 w-screen h-screen"
-      onPointerUp={(e) => {
-        // Maybe something here could work...
-        // console.log(e)
-        // const excalidrawCanvas = getExcalidrawCanvas()
-      }}
-    >
-      <Excalidraw onChange={(exEls) => onChangeEx(exEls)} />
+    <div className="absolute top-0 w-screen h-screen">
+      <div>
+        {exEls.length > 0
+          ? exEls.map((exEl, i) => {
+              const zoom = appState!.zoom!.value
+              const [x, y] = [
+                exEl.x + appState!.scrollX! + exEl.width,
+                exEl.y + appState!.scrollY! + exEl.height,
+              ].map((n) => n * zoom)
+
+              return (
+                <Button
+                  key={i}
+                  style={{
+                    position: "absolute",
+                    zIndex: 50,
+                    left: x,
+                    top: y,
+                  }}
+                >
+                  Btn
+                </Button>
+              )
+            })
+          : null}
+      </div>
+      {Excal}
     </div>
   )
 }
