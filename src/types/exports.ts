@@ -1,3 +1,4 @@
+export * from "./excalidraw"
 export * from "./id"
 export * from "./loading"
 export * from "./theme"

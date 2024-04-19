@@ -4,14 +4,9 @@ import { useMemo, useState } from "react"
 
 import dynamic from "next/dynamic"
 
-import {
-  type NonDeletedExcalidrawElement,
-  type ExcalidrawElement,
-} from "@excalidraw/excalidraw/types/element/types"
 import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
-import { type ImportedDataState } from "@excalidraw/excalidraw/types/data/types"
 
-import { useTheme } from "@context"
+import { useCanvas, useTheme } from "@context"
 
 import { Button } from "@shad"
 
@@ -28,41 +23,53 @@ const Excalidraw = dynamic(
   },
 )
 
-export function Graph() {
+export function Canvas() {
   const { theme } = useTheme()
 
-  const [exEls, setExEls] = useState<
-    ExcalidrawElement[] | NonDeletedExcalidrawElement[]
-  >([])
+  const {
+    excalElements,
+    setExcalElements,
+    excalAppState,
+    setExcalAppState,
+  } = useCanvas()
+
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI>()
-  const [appState, setAppState] =
-    useState<ImportedDataState["appState"]>()
 
   const Excal = useMemo(() => {
     return (
       <Excalidraw
+        initialData={{
+          elements: excalElements,
+          appState: excalAppState,
+          scrollToContent: true,
+        }}
         theme={theme}
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
         onChange={() => {
           const els = excalidrawAPI?.getSceneElements()
-          setAppState(excalidrawAPI?.getAppState())
+          setExcalAppState(excalidrawAPI?.getAppState())
 
-          if (els) setExEls([...els])
+          if (els) setExcalElements([...els])
         }}
       />
     )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI, theme])
 
   return (
     <div className="absolute top-0 w-screen h-screen">
       <div>
-        {exEls.length > 0
-          ? exEls.map((exEl, i) => {
-              const zoom = appState!.zoom!.value
+        {excalElements.length > 0
+          ? excalElements.map((exEl, i) => {
+              const zoom = excalAppState!.zoom!.value
               const [x, y] = [
-                exEl.x + appState!.scrollX! + exEl.width,
-                exEl.y + appState!.scrollY! + exEl.height,
+                exEl.x +
+                  excalAppState!.scrollX! +
+                  exEl.width,
+                exEl.y +
+                  excalAppState!.scrollY! +
+                  exEl.height,
               ].map((n) => n * zoom)
 
               return (
