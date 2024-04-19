@@ -1,5 +1,7 @@
 # Tasks
 
+1. [ ] Stress test Excalidraw with the extra `<div>` layer
+
 1. [ ] Drag a node
 1. [ ] Infinite Canvas
    1. [ ] Zooming

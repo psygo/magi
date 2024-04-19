@@ -1,19 +1,14 @@
 import "@styles/globals.css"
 
-import { Inter } from "next/font/google"
+import { cookies } from "next/headers"
 
 import { ClerkProvider } from "@clerk/nextjs"
 
-import { type WithReactChildren } from "@types"
+import { type WithReactChildren, Theme } from "@types"
 
-import { TopNav } from "@components"
+import { ThemeProvider } from "@context"
 
-import { cn } from "@styles"
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+import { App } from "./App"
 
 export const metadata = {
   title: "Magnus Index",
@@ -23,19 +18,16 @@ export const metadata = {
 export default function RootLayout({
   children,
 }: WithReactChildren) {
+  const cookieStore = cookies()
+  const theme = cookieStore.get("theme")
+    ? cookieStore.get("theme")!.value
+    : Theme.light
+
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body
-          className={cn(
-            "min-h-screen bg-background font-sans antialiased",
-            inter.variable,
-          )}
-        >
-          <TopNav />
-          <main>{children}</main>
-        </body>
-      </html>
-    </ClerkProvider>
+    <ThemeProvider initialTheme={theme}>
+      <ClerkProvider>
+        <App>{children}</App>
+      </ClerkProvider>
+    </ThemeProvider>
   )
 }

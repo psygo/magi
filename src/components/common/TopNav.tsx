@@ -7,9 +7,11 @@ import {
 
 import { Button } from "@shad"
 
+import { ThemeButton } from "./ThemeButton"
+
 export function TopNav() {
   return (
-    <nav className="absolute top-0 w-screen p-3 flex justify-between">
+    <nav className="z-50 absolute top-1 w-screen p-4 flex justify-between">
       <LeftTopnav />
       <RightTopnav />
     </nav>
@@ -23,6 +25,7 @@ function LeftTopnav() {
 function RightTopnav() {
   return (
     <div className="flex gap-2 items-center">
+      <ThemeButton />
       <SignedOut>
         <Button>
           <SignInButton />

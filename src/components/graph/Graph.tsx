@@ -11,13 +11,17 @@ import {
 import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 import { type ImportedDataState } from "@excalidraw/excalidraw/types/data/types"
 
+import { useTheme } from "@context"
+
 import { Button } from "@shad"
 
 import { Progress } from "@components"
 
 const Excalidraw = dynamic(
-  async () =>
-    (await import("@excalidraw/excalidraw")).Excalidraw,
+  async () => {
+    const mod = await import("@excalidraw/excalidraw")
+    return mod.Excalidraw
+  },
   {
     loading: () => <Progress />,
     ssr: false,
@@ -25,6 +29,8 @@ const Excalidraw = dynamic(
 )
 
 export function Graph() {
+  const { theme } = useTheme()
+
   const [exEls, setExEls] = useState<
     ExcalidrawElement[] | NonDeletedExcalidrawElement[]
   >([])
@@ -36,6 +42,7 @@ export function Graph() {
   const Excal = useMemo(() => {
     return (
       <Excalidraw
+        theme={theme}
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
         onChange={() => {
           const els = excalidrawAPI?.getSceneElements()
@@ -45,7 +52,7 @@ export function Graph() {
         }}
       />
     )
-  }, [excalidrawAPI])
+  }, [excalidrawAPI, theme])
 
   return (
     <div className="absolute top-0 w-screen h-screen">
