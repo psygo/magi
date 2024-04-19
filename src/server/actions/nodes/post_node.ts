@@ -13,7 +13,10 @@ export async function postNode(
     await db.insert(nodes).values({
       title,
       description,
-      excalData,
+      excalData: {
+        ...excalData,
+        customData: {},
+      },
     })
   } catch (e) {
     console.error(e)

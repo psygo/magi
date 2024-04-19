@@ -2,9 +2,12 @@ import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/typ
 
 import { type ExcalAppState } from "@types"
 
+import { getNodes } from "@actions"
+
 import { CanvasProvider } from "@context"
 
 import { Canvas } from "@components"
+import { reset } from "../../server/exports"
 
 const initialElements: ExcalidrawElement[] = Array.from(
   { length: 10 },
@@ -47,14 +50,24 @@ const initialAppState: ExcalAppState = {
 }
 
 export default async function HomePage() {
-  return (
+  // await reset()
+  const nodes = await getNodes()
+
+  // console.log(nodes?.map((n) => n.excalData))
+
+  // return <></>
+
+  return nodes ? (
     <CanvasProvider
       initialData={{
-        elements: initialElements,
+        elements: nodes?.map(
+          (n) => n.excalData as ExcalidrawElement,
+        ),
         appState: initialAppState,
       }}
+      initialNodes={nodes}
     >
       <Canvas />
     </CanvasProvider>
-  )
+  ) : null
 }

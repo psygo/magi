@@ -4,7 +4,7 @@ import { sql } from "drizzle-orm"
 
 import { db } from "."
 import { mockUsers } from "./mock"
-import { users } from "./schema"
+import { nodes, users } from "./schema"
 
 export async function reset() {
   try {
@@ -20,6 +20,8 @@ async function deleteEverything() {
   try {
     // eslint-disable-next-line drizzle/enforce-delete-with-where
     await db.delete(users)
+    // eslint-disable-next-line drizzle/enforce-delete-with-where
+    await db.delete(nodes)
 
     const tableSchema = db._.schema
     if (!tableSchema) {

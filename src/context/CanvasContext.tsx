@@ -10,6 +10,8 @@ import {
   type ExcalAppState,
 } from "@types"
 
+import { type SelectNode } from "@server"
+
 type CanvasContext = {
   excalElements: ExcalidrawElement[]
   setExcalElements: React.Dispatch<
@@ -19,31 +21,38 @@ type CanvasContext = {
   setExcalAppState: React.Dispatch<
     React.SetStateAction<ExcalAppState>
   >
+  nodes: SelectNode[]
+  setNodes: React.Dispatch<
+    React.SetStateAction<SelectNode[]>
+  >
 }
 
 const CanvasContext = createContext<CanvasContext | null>(
   null,
 )
 
-type CanvasProviderProps = WithReactChildren & {
+export type CanvasProviderProps = WithReactChildren & {
   initialData?: ExcalidrawInitialDataState
+  initialNodes?: SelectNode[]
 }
 
-const defaultInitialData: ExcalidrawInitialDataState = {
-  elements: [],
-  appState: {
-    viewBackgroundColor: "#a5d8ff",
-    scrollX: 0,
-    scrollY: 0,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    zoom: { value: 1 },
-  },
-  scrollToContent: true,
-}
+export const defaultInitialData: ExcalidrawInitialDataState =
+  {
+    elements: [],
+    appState: {
+      viewBackgroundColor: "#a5d8ff",
+      scrollX: 0,
+      scrollY: 0,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      zoom: { value: 1 },
+    },
+    scrollToContent: true,
+  }
 
 export function CanvasProvider({
   initialData = defaultInitialData,
+  initialNodes = [],
   children,
 }: CanvasProviderProps) {
   const [excalElements, setExcalElements] = useState<
@@ -52,6 +61,9 @@ export function CanvasProvider({
   const [excalAppState, setExcalAppState] =
     useState<ExcalAppState>(initialData.appState)
 
+  const [nodes, setNodes] =
+    useState<SelectNode[]>(initialNodes)
+
   return (
     <CanvasContext.Provider
       value={{
@@ -59,6 +71,8 @@ export function CanvasProvider({
         setExcalElements,
         excalAppState,
         setExcalAppState,
+        nodes,
+        setNodes,
       }}
     >
       {children}

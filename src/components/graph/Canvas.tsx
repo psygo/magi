@@ -5,8 +5,17 @@ import { useMemo, useState } from "react"
 import dynamic from "next/dynamic"
 
 import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
+import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
-import { useCanvas, useTheme } from "@context"
+import "@utils/array"
+
+import { toDate } from "@utils"
+
+import { type ExcalAppState } from "@types"
+
+import { type SelectNode } from "@server"
+
+import { defaultInitialData, useTheme } from "@context"
 
 import { Button } from "@shad"
 
@@ -23,29 +32,42 @@ const Excalidraw = dynamic(
   },
 )
 
-export function Canvas() {
-  const { theme } = useTheme()
+type CanvasProps = {
+  initialNodes?: SelectNode[]
+}
 
-  const {
-    excalElements,
-    setExcalElements,
-    excalAppState,
-    setExcalAppState,
-  } = useCanvas()
+export function Canvas({ initialNodes = [] }: CanvasProps) {
+  const { theme } = useTheme()
 
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI>()
+
+  const initialElements = initialNodes.map((n) => {
+    return n.excalData as ExcalidrawElement
+  })
+  const initialAppState = defaultInitialData.appState
+
+  const [excalElements, setExcalElements] =
+    useState<ExcalidrawElement[]>(initialElements)
+  const [excalAppState, setExcalAppState] =
+    useState<ExcalAppState>(defaultInitialData.appState)
+
+  const [lastUpdated, setLastUpdated] = useState<Date>(
+    new Date(),
+  )
 
   const Excal = useMemo(() => {
     return (
       <Excalidraw
         initialData={{
-          elements: excalElements,
-          appState: excalAppState,
+          elements: initialElements,
+          appState: initialAppState,
           scrollToContent: true,
         }}
         theme={theme}
-        excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        excalidrawAPI={(api) => {
+          setExcalidrawAPI(api)
+        }}
         onChange={() => {
           const els = excalidrawAPI?.getSceneElements()
           setExcalAppState(excalidrawAPI?.getAppState())
@@ -57,12 +79,26 @@ export function Canvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI, theme])
 
+  function onExcalUpdate() {
+    const notUpdatedYet = excalElements.filter(
+      (el) => toDate(el.updated) > lastUpdated,
+    )
+
+    if (notUpdatedYet.length > 0) {
+      setLastUpdated(new Date())
+    }
+  }
+
   return (
-    <div className="absolute top-0 w-screen h-screen">
+    <div>
+      <div
+        className="absolute top-0 w-screen h-screen"
+        onPointerUp={onExcalUpdate}
+      >
+        {Excal}
+      </div>
       <div>
-        {excalElements.length > 0 &&
-        excalAppState!.scrollX &&
-        excalAppState!.scrollY
+        {excalElements.length > 0
           ? excalElements.map((exEl, i) => {
               const zoom = excalAppState!.zoom!.value
               const [x, y] = [
@@ -84,13 +120,12 @@ export function Canvas() {
                     top: y,
                   }}
                 >
-                  Btn
+                  B
                 </Button>
               )
             })
           : null}
       </div>
-      {Excal}
     </div>
   )
 }
