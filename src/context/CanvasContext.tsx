@@ -33,6 +33,8 @@ const defaultInitialData: ExcalidrawInitialDataState = {
   elements: [],
   appState: {
     viewBackgroundColor: "#a5d8ff",
+    scrollX: 0,
+    scrollY: 0,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     zoom: { value: 1 },

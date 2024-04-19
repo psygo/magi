@@ -20,6 +20,8 @@ import {
 
 import { db, users } from "@server"
 
+import "@utils/array"
+
 const clerkWebhooksUserEventsSecret =
   process.env.CLERK_WEBHOOKS_USER_EVENTS!
 
@@ -55,21 +57,25 @@ export async function POST(req: Request) {
 
     if (verifiedPayload) {
       const type = verifiedPayload.type
-      let data
 
       switch (type) {
         case "user.created":
-          data = verifiedPayload.data
+          const userCreatedData = verifiedPayload.data
+          const email =
+            userCreatedData.email_addresses[0]!
+              .email_address
           await createUser(
-            data.id,
-            data.username!,
-            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-            data.email_addresses[0]?.email_address!,
+            userCreatedData.id,
+            userCreatedData.username!,
+            email,
           )
           break
         case "user.updated":
-          data = verifiedPayload.data
-          await updateUser(data.id, data.username!)
+          const userUpdatedData = verifiedPayload.data
+          await updateUser(
+            userUpdatedData.id,
+            userUpdatedData.username!,
+          )
           break
         default:
           console.log(`${type} is not a managed event.`)
@@ -88,25 +94,28 @@ async function createUser(
   email: Email,
 ) {
   try {
-    const newUserNanoId = await db
+    const usersData = await db
       .insert(users)
       .values({
         clerkId,
         username,
         email,
       })
-      .returning({ insertedNanoId: users.nanoId })
+      .returning({ id: users.id, nanoId: users.nanoId })
 
-    if (newUserNanoId)
+    if (usersData) {
+      const userData = usersData.first()
+
       await clerkClient.users.updateUser(clerkId, {
         publicMetadata: {
-          nanoid: newUserNanoId,
+          nanoid: userData.nanoId,
+        },
+        privateMetadata: {
+          id: userData.id,
           isAdmin: false,
-          isWriter: false,
         },
       })
-
-    return newUserNanoId
+    }
   } catch (e) {
     console.error(e)
   }

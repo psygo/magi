@@ -5,8 +5,8 @@ import {
 } from "drizzle-orm"
 import {
   integer,
+  json,
   pgTableCreator,
-  real,
   serial,
   timestamp,
   varchar,
@@ -74,8 +74,7 @@ export const nodes = createTable("nodes", {
   title: varchar("title", { length: 256 }).notNull(),
   description: varchar("description", { length: 4096 }),
   imageUrl: varchar("image_url", { length: 1024 }),
-  x: real("x").notNull(),
-  y: real("y").notNull(),
+  excalData: json("excal_data"),
   // Relationships
   creatorId: integer("creator_id"),
 })
@@ -113,6 +112,7 @@ export const edges = createTable("edges", {
   title: varchar("title", { length: 256 }).notNull(),
   description: varchar("description", { length: 4096 }),
   imageUrl: varchar("image_url", { length: 1024 }),
+  excalData: json("excal_data"),
   // Relationships
   creatorId: integer("creator_id"),
   fromId: integer("from_id"),

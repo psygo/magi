@@ -8,6 +8,7 @@ export async function mockUsers() {
     await db.insert(users).values({
       clerkId: "psygo",
       username: "psygo",
+      email: "philippe@fanaro.com",
       firstName: "Philippe",
       lastName: "Fanaro",
     })

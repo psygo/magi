@@ -60,7 +60,9 @@ export function Canvas() {
   return (
     <div className="absolute top-0 w-screen h-screen">
       <div>
-        {excalElements.length > 0
+        {excalElements.length > 0 &&
+        excalAppState!.scrollX &&
+        excalAppState!.scrollY
           ? excalElements.map((exEl, i) => {
               const zoom = excalAppState!.zoom!.value
               const [x, y] = [
