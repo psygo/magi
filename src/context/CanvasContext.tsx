@@ -2,13 +2,13 @@
 
 import { createContext, useContext, useState } from "react"
 
-import { type ExcalidrawInitialDataState } from "@excalidraw/excalidraw/types/types"
+import {
+  type AppState,
+  type ExcalidrawInitialDataState,
+} from "@excalidraw/excalidraw/types/types"
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
-import {
-  type WithReactChildren,
-  type ExcalAppState,
-} from "@types"
+import { type WithReactChildren } from "@types"
 
 import { type SelectNode } from "@server"
 
@@ -17,13 +17,9 @@ type CanvasContext = {
   setExcalElements: React.Dispatch<
     React.SetStateAction<ExcalidrawElement[]>
   >
-  excalAppState: ExcalAppState
+  excalAppState: AppState
   setExcalAppState: React.Dispatch<
-    React.SetStateAction<ExcalAppState>
-  >
-  nodes: SelectNode[]
-  setNodes: React.Dispatch<
-    React.SetStateAction<SelectNode[]>
+    React.SetStateAction<AppState>
   >
 }
 
@@ -36,33 +32,28 @@ export type CanvasProviderProps = WithReactChildren & {
   initialNodes?: SelectNode[]
 }
 
-export const defaultInitialData: ExcalidrawInitialDataState =
-  {
-    elements: [],
-    appState: {
-      viewBackgroundColor: "#a5d8ff",
-      scrollX: 0,
-      scrollY: 0,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      zoom: { value: 1 },
-    },
-    scrollToContent: true,
-  }
+export const initialAppState: AppState = {
+  viewBackgroundColor: "#a5d8ff",
+  scrollX: 0,
+  scrollY: 0,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  zoom: { value: 1 },
+}
 
 export function CanvasProvider({
-  initialData = defaultInitialData,
   initialNodes = [],
   children,
 }: CanvasProviderProps) {
   const [excalElements, setExcalElements] = useState<
     ExcalidrawElement[]
-  >([...initialData.elements!])
+  >(
+    initialNodes.map(
+      (n) => n.excalData as ExcalidrawElement,
+    ),
+  )
   const [excalAppState, setExcalAppState] =
-    useState<ExcalAppState>(initialData.appState)
-
-  const [nodes, setNodes] =
-    useState<SelectNode[]>(initialNodes)
+    useState<AppState>(initialAppState)
 
   return (
     <CanvasContext.Provider
@@ -71,8 +62,6 @@ export function CanvasProvider({
         setExcalElements,
         excalAppState,
         setExcalAppState,
-        nodes,
-        setNodes,
       }}
     >
       {children}

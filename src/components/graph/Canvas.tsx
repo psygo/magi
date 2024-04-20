@@ -4,25 +4,19 @@ import { useMemo, useState } from "react"
 
 import dynamic from "next/dynamic"
 
-import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
-import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
+import { ArrowDown, ArrowUp, Info } from "lucide-react"
 
-import "@utils/array"
+import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 
 import { toDate } from "@utils"
 
-import { type ExcalAppState } from "@types"
+import { postNodes } from "@actions"
 
-import { type SelectNode } from "@server"
-
-import { postNode } from "@actions"
-
-import { defaultInitialData, useTheme } from "@context"
+import { useCanvas, useTheme } from "@context"
 
 import { Button } from "@shad"
 
 import { Progress } from "@components"
-import { ArrowDown, ArrowUp, Info } from "lucide-react"
 
 const Excalidraw = dynamic(
   async () => {
@@ -35,25 +29,18 @@ const Excalidraw = dynamic(
   },
 )
 
-type CanvasProps = {
-  initialNodes?: SelectNode[]
-}
-
-export function Canvas({ initialNodes = [] }: CanvasProps) {
+export function Canvas() {
   const { theme } = useTheme()
 
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI>()
 
-  const initialElements = initialNodes.map((n) => {
-    return n.excalData as ExcalidrawElement
-  })
-  const initialAppState = defaultInitialData.appState
-
-  const [excalElements, setExcalElements] =
-    useState<ExcalidrawElement[]>(initialElements)
-  const [excalAppState, setExcalAppState] =
-    useState<ExcalAppState>(defaultInitialData.appState)
+  const {
+    excalElements,
+    setExcalElements,
+    excalAppState,
+    setExcalAppState,
+  } = useCanvas()
 
   const [lastUpdated, setLastUpdated] = useState<Date>(
     new Date(),
@@ -63,8 +50,8 @@ export function Canvas({ initialNodes = [] }: CanvasProps) {
     return (
       <Excalidraw
         initialData={{
-          elements: initialElements,
-          appState: initialAppState,
+          elements: excalElements,
+          appState: excalAppState,
           scrollToContent: true,
         }}
         theme={theme}
@@ -74,7 +61,7 @@ export function Canvas({ initialNodes = [] }: CanvasProps) {
         onChange={() => {
           const els =
             excalidrawAPI?.getSceneElementsIncludingDeleted()
-          setExcalAppState(excalidrawAPI?.getAppState())
+          setExcalAppState(excalidrawAPI!.getAppState())
 
           if (els) setExcalElements([...els])
         }}
@@ -84,18 +71,12 @@ export function Canvas({ initialNodes = [] }: CanvasProps) {
   }, [excalidrawAPI, theme])
 
   async function onExcalUpdate() {
-    const notUpdatedYet = excalElements
-      .filter((el) => toDate(el.updated) > lastUpdated)
-      .first()
+    const notUpdatedYet = excalElements.filter(
+      (el) => toDate(el.updated) > lastUpdated,
+    )
 
     if (notUpdatedYet) {
-      const newNodeData = await postNode(
-        "",
-        "",
-        notUpdatedYet,
-      )
-      // always post but then select distinct id ordered by
-      // date when getting the data back?
+      await postNodes(notUpdatedYet)
 
       setLastUpdated(new Date())
     }
@@ -106,17 +87,18 @@ export function Canvas({ initialNodes = [] }: CanvasProps) {
       <div
         className="absolute top-0 w-screen h-screen"
         onPointerUp={onExcalUpdate}
+        onKeyUp={onExcalUpdate}
       >
         {Excal}
       </div>
       <div>
         {excalElements.length > 0 &&
           excalElements.map((exEl, i) => {
-            const zoom = excalAppState!.zoom!.value
+            const zoom = excalAppState.zoom.value
             const [x, y] = [
-              exEl.x + excalAppState!.scrollX! - 15,
+              exEl.x + excalAppState.scrollX - 15,
               exEl.y +
-                excalAppState!.scrollY! +
+                excalAppState.scrollY +
                 exEl.height -
                 10,
             ].map((n) => n * zoom)

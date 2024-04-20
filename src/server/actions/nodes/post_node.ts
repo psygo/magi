@@ -7,21 +7,40 @@ import "@utils/array"
 import { db, nodes } from "@server"
 
 export async function postNode(
-  title: string,
-  description: string,
   excalData: ExcalidrawElement,
 ) {
   try {
     const nodeData = await db
       .insert(nodes)
       .values({
-        title,
-        description,
+        title: "",
+        description: "",
         excalData: {
           ...excalData,
           customData: {},
         },
       })
+      .returning({ id: nodes.id })
+
+    return nodeData.first()
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+export async function postNodes(
+  excalElements: ExcalidrawElement[],
+) {
+  try {
+    const nodeData = await db
+      .insert(nodes)
+      .values(
+        excalElements.map((el) => ({
+          title: "",
+          description: "",
+          excalData: el,
+        })),
+      )
       .returning({ id: nodes.id })
 
     return nodeData.first()
