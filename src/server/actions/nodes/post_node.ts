@@ -5,6 +5,7 @@ import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/typ
 import "@utils/array"
 
 import { db, nodes } from "@server"
+import { sql } from "drizzle-orm"
 
 export async function postNode(
   excalData: ExcalidrawElement,
@@ -13,12 +14,10 @@ export async function postNode(
     const nodeData = await db
       .insert(nodes)
       .values({
+        excalId: excalData.id,
         title: "",
         description: "",
-        excalData: {
-          ...excalData,
-          customData: {},
-        },
+        excalData,
       })
       .returning({ id: nodes.id })
 
@@ -36,11 +35,20 @@ export async function postNodes(
       .insert(nodes)
       .values(
         excalElements.map((el) => ({
+          excalId: el.id,
           title: "",
           description: "",
           excalData: el,
         })),
       )
+      .onConflictDoUpdate({
+        target: nodes.excalId,
+        set: {
+          excalData: sql.raw(
+            `excluded.${nodes.excalData.name}`,
+          ),
+        },
+      })
       .returning({ id: nodes.id })
 
     return nodeData.first()

@@ -12,10 +12,6 @@ export default async function HomePage() {
   // await reset()
   const nodes = await getNodes()
 
-  // console.log(nodes?.map((n) => n.excalData))
-
-  // return <></>
-
   return nodes ? (
     <CanvasProvider
       initialData={{

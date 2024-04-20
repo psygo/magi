@@ -11,3 +11,6 @@ export type Username = z.infer<typeof usernameSchema>
 
 export const emailSchema = z.string().email()
 export type Email = z.infer<typeof emailSchema>
+
+export const excalIdSchema = z.string()
+export type ExcalId = z.infer<typeof excalIdSchema>

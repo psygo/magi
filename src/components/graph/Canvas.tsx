@@ -17,6 +17,7 @@ import { useCanvas, useTheme } from "@context"
 import { Button } from "@shad"
 
 import { Progress } from "@components"
+import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 const Excalidraw = dynamic(
   async () => {
@@ -75,7 +76,7 @@ export function Canvas() {
       (el) => toDate(el.updated) > lastUpdated,
     )
 
-    if (notUpdatedYet) {
+    if (notUpdatedYet.length > 0) {
       await postNodes(notUpdatedYet)
 
       setLastUpdated(new Date())
@@ -104,7 +105,12 @@ export function Canvas() {
             ].map((n) => n * zoom)
 
             return (
-              <ShapeInfoButtons key={i} x={x!} y={y!} />
+              <ShapeInfoButtons
+                key={i}
+                x={x!}
+                y={y!}
+                excalEl={exEl}
+              />
             )
           })}
       </div>
@@ -115,11 +121,13 @@ export function Canvas() {
 type ShapeInfoButtonsProps = {
   x: number
   y: number
+  excalEl: ExcalidrawElement
 }
 
 export function ShapeInfoButtons({
   x,
   y,
+  excalEl,
 }: ShapeInfoButtonsProps) {
   return (
     <div className="flex gap-1">

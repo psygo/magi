@@ -65,6 +65,9 @@ export const nodes = createTable("nodes", {
     .unique()
     .notNull()
     .$defaultFn(() => standardNanoid()),
+  excalId: varchar("excal_id", { length: 256 })
+    .unique()
+    .notNull(),
   // Metadata
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
