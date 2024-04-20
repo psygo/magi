@@ -15,11 +15,14 @@ import { type ExcalAppState } from "@types"
 
 import { type SelectNode } from "@server"
 
+import { postNode } from "@actions"
+
 import { defaultInitialData, useTheme } from "@context"
 
 import { Button } from "@shad"
 
 import { Progress } from "@components"
+import { ArrowDown, ArrowUp, Info } from "lucide-react"
 
 const Excalidraw = dynamic(
   async () => {
@@ -69,7 +72,8 @@ export function Canvas({ initialNodes = [] }: CanvasProps) {
           setExcalidrawAPI(api)
         }}
         onChange={() => {
-          const els = excalidrawAPI?.getSceneElements()
+          const els =
+            excalidrawAPI?.getSceneElementsIncludingDeleted()
           setExcalAppState(excalidrawAPI?.getAppState())
 
           if (els) setExcalElements([...els])
@@ -79,12 +83,20 @@ export function Canvas({ initialNodes = [] }: CanvasProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI, theme])
 
-  function onExcalUpdate() {
-    const notUpdatedYet = excalElements.filter(
-      (el) => toDate(el.updated) > lastUpdated,
-    )
+  async function onExcalUpdate() {
+    const notUpdatedYet = excalElements
+      .filter((el) => toDate(el.updated) > lastUpdated)
+      .first()
 
-    if (notUpdatedYet.length > 0) {
+    if (notUpdatedYet) {
+      const newNodeData = await postNode(
+        "",
+        "",
+        notUpdatedYet,
+      )
+      // always post but then select distinct id ordered by
+      // date when getting the data back?
+
       setLastUpdated(new Date())
     }
   }
@@ -98,34 +110,73 @@ export function Canvas({ initialNodes = [] }: CanvasProps) {
         {Excal}
       </div>
       <div>
-        {excalElements.length > 0
-          ? excalElements.map((exEl, i) => {
-              const zoom = excalAppState!.zoom!.value
-              const [x, y] = [
-                exEl.x +
-                  excalAppState!.scrollX! +
-                  exEl.width,
-                exEl.y +
-                  excalAppState!.scrollY! +
-                  exEl.height,
-              ].map((n) => n * zoom)
+        {excalElements.length > 0 &&
+          excalElements.map((exEl, i) => {
+            const zoom = excalAppState!.zoom!.value
+            const [x, y] = [
+              exEl.x + excalAppState!.scrollX! - 15,
+              exEl.y +
+                excalAppState!.scrollY! +
+                exEl.height -
+                10,
+            ].map((n) => n * zoom)
 
-              return (
-                <Button
-                  key={i}
-                  style={{
-                    position: "absolute",
-                    zIndex: 50,
-                    left: x,
-                    top: y,
-                  }}
-                >
-                  B
-                </Button>
-              )
-            })
-          : null}
+            return (
+              <ShapeInfoButtons key={i} x={x!} y={y!} />
+            )
+          })}
       </div>
+    </div>
+  )
+}
+
+type ShapeInfoButtonsProps = {
+  x: number
+  y: number
+}
+
+export function ShapeInfoButtons({
+  x,
+  y,
+}: ShapeInfoButtonsProps) {
+  return (
+    <div className="flex gap-1">
+      <Button
+        variant="link"
+        className="p-0 m-0"
+        style={{
+          position: "absolute",
+          zIndex: 50,
+          left: x - 32,
+          top: y,
+        }}
+      >
+        <Info className="h-[13px] w-[13px]" />
+      </Button>
+      <Button
+        variant="link"
+        className="p-0 m-0"
+        style={{
+          position: "absolute",
+          zIndex: 50,
+          left: x - 16,
+          top: y,
+        }}
+      >
+        <ArrowUp className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="link"
+        className="p-0 m-0"
+        style={{
+          position: "absolute",
+          zIndex: 50,
+          left: x,
+          top: y,
+        }}
+      >
+        <ArrowDown className="h-4 w-4" />
+      </Button>
     </div>
   )
 }

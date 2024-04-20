@@ -2,6 +2,8 @@
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
+import "@utils/array"
+
 import { db, nodes } from "@server"
 
 export async function postNode(
@@ -10,14 +12,19 @@ export async function postNode(
   excalData: ExcalidrawElement,
 ) {
   try {
-    await db.insert(nodes).values({
-      title,
-      description,
-      excalData: {
-        ...excalData,
-        customData: {},
-      },
-    })
+    const nodeData = await db
+      .insert(nodes)
+      .values({
+        title,
+        description,
+        excalData: {
+          ...excalData,
+          customData: {},
+        },
+      })
+      .returning({ id: nodes.id })
+
+    return nodeData.first()
   } catch (e) {
     console.error(e)
   }
