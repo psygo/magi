@@ -1,2 +1,3 @@
 export * from "./nodes/exports"
-export * from "./theme/theme"
+export * from "./theme/exports"
+export * from "./votes/exports"

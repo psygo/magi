@@ -2,10 +2,7 @@
 
 import { createContext, useContext, useState } from "react"
 
-import {
-  type AppState,
-  type ExcalidrawInitialDataState,
-} from "@excalidraw/excalidraw/types/types"
+import { type AppState } from "@excalidraw/excalidraw/types/types"
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 import { type WithReactChildren } from "@types"
@@ -28,7 +25,6 @@ const CanvasContext = createContext<CanvasContext | null>(
 )
 
 export type CanvasProviderProps = WithReactChildren & {
-  initialData?: ExcalidrawInitialDataState
   initialNodes?: SelectNode[]
 }
 

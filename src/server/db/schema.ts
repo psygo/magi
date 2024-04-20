@@ -163,7 +163,7 @@ export const votes = createTable("votes", {
   points: integer("points").notNull(),
   // Relationships
   voterId: integer("voter_id").notNull(),
-  nodeId: integer("node_id"),
+  nodeId: varchar("node_id", { length: 256 }),
   edgeId: integer("edge_id"),
 })
 
@@ -179,7 +179,7 @@ export const votesRelations = relations(
     }),
     node: one(nodes, {
       fields: [votes.nodeId],
-      references: [nodes.id],
+      references: [nodes.excalId],
     }),
     edge: one(edges, {
       fields: [votes.edgeId],

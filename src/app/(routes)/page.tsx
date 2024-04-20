@@ -13,15 +13,7 @@ export default async function HomePage() {
   const nodes = await getNodes()
 
   return nodes ? (
-    <CanvasProvider
-      initialData={{
-        elements: nodes?.map(
-          (n) => n.excalData as ExcalidrawElement,
-        ),
-        appState: initialAppState,
-      }}
-      initialNodes={nodes}
-    >
+    <CanvasProvider initialNodes={nodes}>
       <Canvas />
     </CanvasProvider>
   ) : null

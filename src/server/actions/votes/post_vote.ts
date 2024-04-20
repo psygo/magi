@@ -1,25 +1,26 @@
 "use server"
 
-import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
-
 import "@utils/array"
 
-import { ExcalId } from "@types"
+import { type ExcalId } from "@types"
 
-import { db, nodes, votes } from "@server"
+import { db, votes } from "@server"
 
-export async function postNode(
+export async function postVote(
   excalId: ExcalId,
   up: boolean,
 ) {
   try {
-    // const voteData = await db
-    //   .insert(votes)
-    //   .values({
-    //     description: "",
-    //   })
-    //   .returning({ id: votes.id })
-    // return voteData.first()
+    const voteData = await db
+      .insert(votes)
+      .values({
+        voterId: 1,
+        points: up ? 1 : -1,
+        nodeId: excalId,
+      })
+      .returning({ id: votes.id })
+
+    return voteData.first()
   } catch (e) {
     console.error(e)
   }

@@ -10,7 +10,7 @@ import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types
 
 import { toDate } from "@utils"
 
-import { postNodes } from "@actions"
+import { postNodes, postVote } from "@actions"
 
 import { useCanvas, useTheme } from "@context"
 
@@ -18,6 +18,7 @@ import { Button } from "@shad"
 
 import { Progress } from "@components"
 import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
+import { ExcalId } from "../../types/id"
 
 const Excalidraw = dynamic(
   async () => {
@@ -130,43 +131,54 @@ export function ShapeInfoButtons({
   excalEl,
 }: ShapeInfoButtonsProps) {
   return (
-    <div className="flex gap-1">
-      <Button
-        variant="link"
-        className="p-0 m-0"
-        style={{
-          position: "absolute",
-          zIndex: 50,
-          left: x - 32,
-          top: y,
-        }}
-      >
+    <div
+      className="flex gap-1"
+      style={{
+        position: "absolute",
+        zIndex: 50,
+        left: x - 32,
+        top: y,
+      }}
+    >
+      <Button variant="link" className="p-0 m-0">
         <Info className="h-[13px] w-[13px]" />
       </Button>
-      <Button
-        variant="link"
-        className="p-0 m-0"
-        style={{
-          position: "absolute",
-          zIndex: 50,
-          left: x - 16,
-          top: y,
-        }}
-      >
-        <ArrowUp className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="link"
-        className="p-0 m-0"
-        style={{
-          position: "absolute",
-          zIndex: 50,
-          left: x,
-          top: y,
-        }}
-      >
-        <ArrowDown className="h-4 w-4" />
-      </Button>
+      <VoteButton excalId={excalEl.id} up={true} />
+      <VoteButton excalId={excalEl.id} />
     </div>
+  )
+}
+
+type VoteButtonProps = {
+  up?: boolean
+  excalId: ExcalId
+}
+
+export function VoteButton({
+  up = false,
+  excalId,
+}: VoteButtonProps) {
+  const [hovered, setHovered] = useState(false)
+
+  return (
+    <Button
+      variant="link"
+      className="p-0 m-0"
+      onClick={async () => await postVote(excalId, up)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {up ? (
+        <ArrowUp
+          className="h-4 w-4"
+          style={{ color: hovered ? "red" : "" }}
+        />
+      ) : (
+        <ArrowDown
+          className="h-4 w-4"
+          style={{ color: hovered ? "red" : "" }}
+        />
+      )}
+    </Button>
   )
 }
