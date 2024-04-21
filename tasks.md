@@ -1,12 +1,19 @@
 # Tasks
 
-1. [ ] Stress test Excalidraw with the extra `<div>` layer
+1. [ ] Nodes and Edges on the Same Table (self-join)
+2. [ ] Info Card
+3. [ ] Edit title and description form on the Info Card
+4. [ ] Comment on the Info Card
+5. [ ] Number of Comments on the info detail
+6. [ ] Edit Excalidraw Controls
+7. [ ] List connections on a node on the info card
 
-1. [ ] Drag a node
-1. [ ] Infinite Canvas
-   1. [ ] Zooming
-   1. [ ] Dragging
-1. [ ] Nodes cannot occupy the same space (collision detection)
-1. [ ] Text on the node
-1. [ ] Hovering on the node shows up more info
-1. [ ] Connect two nodes
+## Second Gen
+
+1. [ ] Create Canvases
+
+## Deployment
+
+1. [ ] Vercel Postgres
+2. [ ] PostHog
+3. [ ] Sentry

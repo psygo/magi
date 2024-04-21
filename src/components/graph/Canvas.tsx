@@ -103,8 +103,6 @@ export function Canvas() {
         (n) => n.type === "arrow",
       ) as ExcalidrawArrowElement[]
 
-      console.log(notUpdatedYet)
-
       if (notUpdatedYetNodes.length > 0) {
         const newNodes = await postNodes(notUpdatedYetNodes)
 
