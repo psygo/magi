@@ -1,4 +1,4 @@
-// import { reset } from "@server"
+import { reset } from "@server"
 
 import { getNodes } from "@actions"
 

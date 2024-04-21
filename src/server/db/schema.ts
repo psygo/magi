@@ -18,16 +18,39 @@ export const createTable = pgTableCreator(
   (name) => `magi_${name}`,
 )
 
+function idCols() {
+  return {
+    id: serial("id").primaryKey(),
+    nanoId: varchar("nano_id", { length: 256 })
+      .unique()
+      .notNull()
+      .$defaultFn(() => standardNanoid()),
+  }
+}
+
+function dateTimeCols() {
+  return {
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  }
+}
+
+function imageUrlCol() {
+  return {
+    imageUrl: varchar("image_url", { length: 1024 }),
+  }
+}
+
 export const users = createTable("users", {
   // IDs
-  id: serial("id").primaryKey(),
+  ...idCols(),
   clerkId: varchar("clerk_id", { length: 256 })
     .unique()
     .notNull(),
-  nanoId: varchar("nano_id", { length: 256 })
-    .unique()
-    .notNull()
-    .$defaultFn(() => standardNanoid()),
   username: varchar("username", { length: 256 })
     .unique()
     .notNull(),
@@ -35,16 +58,11 @@ export const users = createTable("users", {
     .unique()
     .notNull(),
   // Metadata
-  createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  ...dateTimeCols(),
   // Data
   firstName: varchar("first_name", { length: 256 }),
   lastName: varchar("last_name", { length: 256 }),
-  imageUrl: varchar("image_url", { length: 1024 }),
+  ...imageUrlCol(),
 })
 
 export type SelectUser = InferSelectModel<typeof users>
@@ -60,31 +78,26 @@ export const usersRelations = relations(
   }),
 )
 
-export const nodes = createTable("nodes", {
-  // IDs
-  id: serial("id").primaryKey(),
-  nanoId: varchar("nano_id", { length: 256 })
-    .unique()
-    .notNull()
-    .$defaultFn(() => standardNanoid()),
-  excalId: varchar("excal_id", { length: 256 })
-    .unique()
-    .notNull(),
-  // Metadata
-  createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  // Data
-  title: varchar("title", { length: 256 }).notNull(),
-  description: varchar("description", { length: 4096 }),
-  imageUrl: varchar("image_url", { length: 1024 }),
-  excalData: json("excal_data"),
-  // Relationships
-  creatorId: integer("creator_id").notNull(),
-})
+function nodesCols() {
+  return {
+    // IDs
+    ...idCols(),
+    excalId: varchar("excal_id", { length: 256 })
+      .unique()
+      .notNull(),
+    // Metadata
+    ...dateTimeCols(),
+    // Data
+    title: varchar("title", { length: 256 }).notNull(),
+    description: varchar("description", { length: 4096 }),
+    imageUrl: varchar("image_url", { length: 1024 }),
+    excalData: json("excal_data"),
+    // Relationships
+    creatorId: integer("creator_id").notNull(),
+  }
+}
+
+export const nodes = createTable("nodes", nodesCols())
 
 export type SelectNode = InferSelectModel<typeof nodes>
 export type InsertNode = InferSelectModel<typeof nodes>
@@ -104,26 +117,7 @@ export const nodesRelations = relations(
 )
 
 export const edges = createTable("edges", {
-  // IDs
-  id: serial("id").primaryKey(),
-  nanoId: varchar("nano_id", { length: 256 })
-    .unique()
-    .notNull()
-    .$defaultFn(() => standardNanoid()),
-  // Metadata
-  createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  // Data
-  title: varchar("title", { length: 256 }).notNull(),
-  description: varchar("description", { length: 4096 }),
-  imageUrl: varchar("image_url", { length: 1024 }),
-  excalData: json("excal_data"),
-  // Relationships
-  creatorId: integer("creator_id").notNull(),
+  ...nodesCols(),
   fromId: integer("from_id"),
   toId: integer("to_id"),
 })
@@ -153,26 +147,23 @@ export const edgesRelations = relations(
   }),
 )
 
+function nodeEdgeIdCols() {
+  return {
+    nodeId: varchar("node_id"),
+    edgeId: varchar("edge_id"),
+  }
+}
+
 export const votes = createTable("votes", {
   // IDs
-  id: serial("id").primaryKey(),
-  nanoId: varchar("nano_id", { length: 256 })
-    .unique()
-    .notNull()
-    .$defaultFn(() => standardNanoid()),
+  ...idCols(),
   // Metadata
-  createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  ...dateTimeCols(),
   // Data
   points: integer("points").notNull(),
   // Relationships
   voterId: integer("voter_id").notNull(),
-  nodeId: varchar("node_id", { length: 256 }),
-  edgeId: integer("edge_id"),
+  ...nodeEdgeIdCols(),
 })
 
 export type SelectVote = InferSelectModel<typeof votes>
@@ -191,31 +182,21 @@ export const votesRelations = relations(
     }),
     edge: one(edges, {
       fields: [votes.edgeId],
-      references: [edges.id],
+      references: [edges.excalId],
     }),
   }),
 )
 
 export const comments = createTable("comments", {
   // IDs
-  id: serial("id").primaryKey(),
-  nanoId: varchar("nano_id", { length: 256 })
-    .unique()
-    .notNull()
-    .$defaultFn(() => standardNanoid()),
+  ...idCols(),
   // Metadata
-  createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updated_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+  ...dateTimeCols(),
   // Data
   content: varchar("content", { length: 4096 }),
   // Relationships
   commenterId: integer("commenter_id").notNull(),
-  nodeId: integer("node_id"),
-  edgeId: integer("edge_id"),
+  ...nodeEdgeIdCols(),
 })
 
 export type SelectComment = InferSelectModel<
