@@ -47,8 +47,8 @@ export const users = createTable("users", {
   imageUrl: varchar("image_url", { length: 1024 }),
 })
 
-export type SelectUsers = InferSelectModel<typeof users>
-export type InsertUsers = InferSelectModel<typeof users>
+export type SelectUser = InferSelectModel<typeof users>
+export type InsertUser = InferSelectModel<typeof users>
 
 export const usersRelations = relations(
   users,
@@ -128,8 +128,8 @@ export const edges = createTable("edges", {
   toId: integer("to_id"),
 })
 
-export type SelectEdges = InferSelectModel<typeof edges>
-export type InsertEdges = InferSelectModel<typeof edges>
+export type SelectEdge = InferSelectModel<typeof edges>
+export type InsertEdge = InferSelectModel<typeof edges>
 
 export const edgesRelations = relations(
   edges,
@@ -175,8 +175,8 @@ export const votes = createTable("votes", {
   edgeId: integer("edge_id"),
 })
 
-export type SelectVotes = InferSelectModel<typeof votes>
-export type InsertVotes = InferSelectModel<typeof votes>
+export type SelectVote = InferSelectModel<typeof votes>
+export type InsertVote = InferSelectModel<typeof votes>
 
 export const votesRelations = relations(
   votes,
@@ -218,10 +218,10 @@ export const comments = createTable("comments", {
   edgeId: integer("edge_id"),
 })
 
-export type SelectComments = InferSelectModel<
+export type SelectComment = InferSelectModel<
   typeof comments
 >
-export type InsertComments = InferSelectModel<
+export type InsertComment = InferSelectModel<
   typeof comments
 >
 

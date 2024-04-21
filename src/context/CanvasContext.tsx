@@ -10,9 +10,15 @@ import {
   type WithReactChildren,
 } from "@types"
 
-import { type SelectNode } from "@server"
+import {
+  type SelectNodeWithCreatorAndStats,
+  type SelectNode,
+} from "@server"
 
-export type NodesRecords = Record<ExcalId, SelectNode>
+export type NodesRecords = Record<
+  ExcalId,
+  SelectNodeWithCreatorAndStats
+>
 
 type CanvasContext = {
   nodes: NodesRecords
@@ -34,7 +40,7 @@ const CanvasContext = createContext<CanvasContext | null>(
 )
 
 export type CanvasProviderProps = WithReactChildren & {
-  initialNodes?: SelectNode[]
+  initialNodes?: SelectNodeWithCreatorAndStats[]
 }
 
 export const initialAppState: AppState = {
@@ -46,7 +52,9 @@ export const initialAppState: AppState = {
   zoom: { value: 1 },
 }
 
-export function nodesArrayToRecords(nodes: SelectNode[]) {
+export function nodesArrayToRecords(
+  nodes: SelectNodeWithCreatorAndStats[],
+) {
   const records: NodesRecords = {}
   nodes.forEach((n) => {
     records[n.excalId] = n

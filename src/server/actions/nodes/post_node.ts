@@ -1,7 +1,5 @@
 "use server"
 
-import { currentUser } from "@clerk/nextjs/server"
-
 import { sql } from "drizzle-orm"
 
 import { db, nodes } from "@server"

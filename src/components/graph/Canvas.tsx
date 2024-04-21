@@ -24,6 +24,7 @@ import {
 import { Button } from "@shad"
 
 import { Progress } from "@components"
+import { cn } from "../../styles/cn"
 
 const Excalidraw = dynamic(
   async () => {
@@ -146,9 +147,13 @@ export function ShapeInfoButtons({
   y,
   excalEl,
 }: ShapeInfoButtonsProps) {
+  const { nodes } = useCanvas()
+  const node = nodes[excalEl.id]
+  const voteTotal = node?.stats?.voteTotal ?? 0
+
   return (
     <div
-      className="flex gap-1"
+      className="flex gap-1 items-center"
       style={{
         position: "absolute",
         zIndex: 50,
@@ -159,8 +164,18 @@ export function ShapeInfoButtons({
       <Button variant="link" className="p-0 m-0">
         <Info className="h-[13px] w-[13px]" />
       </Button>
-      <VoteButton excalId={excalEl.id} up={true} />
+      <VoteButton excalId={excalEl.id} up />
       <VoteButton excalId={excalEl.id} />
+      <p
+        className={cn(
+          "px-[2px] font-bold",
+          voteTotal >= 0
+            ? "text-green-700"
+            : "text-red-400",
+        )}
+      >
+        {voteTotal}
+      </p>
     </div>
   )
 }

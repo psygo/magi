@@ -8,17 +8,22 @@ import {
   nodes,
   votes,
   users,
+  type SelectUser,
 } from "@server"
 
 export type WithStats = {
-  stats: Partial<WithVotesTotal>
+  stats?: {
+    voteTotal?: number
+  }
 }
 
-export type WithVotesTotal = {
-  voteTotal: number
+export type WithCreator = {
+  creator?: SelectUser
 }
 
-export type SelectNodeWithStats = SelectNode & WithStats
+export type SelectNodeWithCreatorAndStats = SelectNode &
+  WithStats &
+  WithCreator
 
 export async function getNodes() {
   try {
@@ -29,7 +34,10 @@ export async function getNodes() {
           ...getTableColumns(users),
         },
         stats: {
-          voteTotal: sql<number>`sum(${votes.points})`,
+          voteTotal:
+            sql<number>`sum(${votes.points})`.mapWith(
+              Number,
+            ),
         },
       })
       .from(nodes)
@@ -38,9 +46,7 @@ export async function getNodes() {
       .leftJoin(users, eq(nodes.creatorId, users.id))
       .groupBy(nodes.id, users.id)
 
-    console.log(n)
-
-    return n
+    return n as SelectNodeWithCreatorAndStats[]
   } catch (e) {
     console.error(e)
   }
