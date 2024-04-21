@@ -85,6 +85,8 @@ export function Canvas() {
       (el) => toDate(el.updated) > lastUpdated,
     )
 
+    console.log(notUpdatedYet)
+
     if (notUpdatedYet.length > 0) {
       const newNodes = await postNodes(notUpdatedYet)
 

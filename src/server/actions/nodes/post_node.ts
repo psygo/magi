@@ -6,8 +6,6 @@ import { db, nodes } from "@server"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
-import "@utils/array"
-
 import { userIdFromClerk } from "../../utils/exports"
 
 export async function postNodes(

@@ -6,12 +6,14 @@ import { db, edges } from "@server"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
-import "@utils/array"
+import { type ExcalId } from "@types"
 
 import { userIdFromClerk } from "../../utils/exports"
 
 export async function postEdges(
   excalElements: ExcalidrawElement[],
+  fromId: ExcalId,
+  toId: ExcalId,
 ) {
   try {
     const userId = await userIdFromClerk()
@@ -26,6 +28,8 @@ export async function postEdges(
           description: "",
           excalData: el,
           creatorId: userId,
+          fromId,
+          toId,
         })),
       )
       .onConflictDoUpdate({

@@ -1,8 +1,4 @@
-import {
-  type InferSelectModel,
-  relations,
-  sql,
-} from "drizzle-orm"
+import { relations, sql } from "drizzle-orm"
 import {
   integer,
   json,
@@ -65,9 +61,6 @@ export const users = createTable("users", {
   ...imageUrlCol(),
 })
 
-export type SelectUser = InferSelectModel<typeof users>
-export type InsertUser = InferSelectModel<typeof users>
-
 export const usersRelations = relations(
   users,
   ({ many }) => ({
@@ -99,9 +92,6 @@ function nodesCols() {
 
 export const nodes = createTable("nodes", nodesCols())
 
-export type SelectNode = InferSelectModel<typeof nodes>
-export type InsertNode = InferSelectModel<typeof nodes>
-
 export const nodesRelations = relations(
   nodes,
   ({ one, many }) => ({
@@ -118,12 +108,9 @@ export const nodesRelations = relations(
 
 export const edges = createTable("edges", {
   ...nodesCols(),
-  fromId: integer("from_id"),
-  toId: integer("to_id"),
+  fromId: varchar("from_id"),
+  toId: varchar("to_id"),
 })
-
-export type SelectEdge = InferSelectModel<typeof edges>
-export type InsertEdge = InferSelectModel<typeof edges>
 
 export const edgesRelations = relations(
   edges,
@@ -134,12 +121,12 @@ export const edgesRelations = relations(
     }),
     from: one(nodes, {
       fields: [edges.fromId],
-      references: [nodes.id],
+      references: [nodes.excalId],
       relationName: "from",
     }),
     to: one(nodes, {
       fields: [edges.toId],
-      references: [nodes.id],
+      references: [nodes.excalId],
       relationName: "to",
     }),
     votes: many(votes),
@@ -165,9 +152,6 @@ export const votes = createTable("votes", {
   voterId: integer("voter_id").notNull(),
   ...nodeEdgeIdCols(),
 })
-
-export type SelectVote = InferSelectModel<typeof votes>
-export type InsertVote = InferSelectModel<typeof votes>
 
 export const votesRelations = relations(
   votes,
@@ -198,13 +182,6 @@ export const comments = createTable("comments", {
   commenterId: integer("commenter_id").notNull(),
   ...nodeEdgeIdCols(),
 })
-
-export type SelectComment = InferSelectModel<
-  typeof comments
->
-export type InsertComment = InferSelectModel<
-  typeof comments
->
 
 export const commentsRelations = relations(
   comments,
