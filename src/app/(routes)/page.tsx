@@ -1,6 +1,6 @@
 import { reset } from "@server"
 
-import { getNodes } from "@actions"
+import { getEdges, getNodes } from "@actions"
 
 import { CanvasProvider } from "@context"
 
@@ -8,12 +8,18 @@ import { Canvas } from "@components"
 
 export default async function HomePage() {
   // await reset()
-  const nodes = await getNodes()
+  const [nodes, edges] = await Promise.all([
+    getNodes(),
+    getEdges(),
+  ])
 
   // console.log(nodes)
 
   return nodes ? (
-    <CanvasProvider initialNodes={nodes}>
+    <CanvasProvider
+      initialNodes={nodes}
+      initialEdges={edges}
+    >
       <Canvas />
     </CanvasProvider>
   ) : null

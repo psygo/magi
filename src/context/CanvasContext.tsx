@@ -9,17 +9,26 @@ import {
   type SelectNodeWithCreatorAndStats,
   type ExcalId,
   type WithReactChildren,
+  type SelectEdgeWithCreatorAndStats,
 } from "@types"
 
 export type NodesRecords = Record<
   ExcalId,
   SelectNodeWithCreatorAndStats
 >
+export type EdgesRecords = Record<
+  ExcalId,
+  SelectEdgeWithCreatorAndStats
+>
 
 type CanvasContext = {
   nodes: NodesRecords
   setNodes: React.Dispatch<
     React.SetStateAction<NodesRecords>
+  >
+  edges: EdgesRecords
+  setEdges: React.Dispatch<
+    React.SetStateAction<EdgesRecords>
   >
   excalElements: ExcalidrawElement[]
   setExcalElements: React.Dispatch<
@@ -35,10 +44,6 @@ const CanvasContext = createContext<CanvasContext | null>(
   null,
 )
 
-export type CanvasProviderProps = WithReactChildren & {
-  initialNodes?: SelectNodeWithCreatorAndStats[]
-}
-
 export const initialAppState: AppState = {
   viewBackgroundColor: "#a5d8ff",
   scrollX: 0,
@@ -48,31 +53,49 @@ export const initialAppState: AppState = {
   zoom: { value: 1 },
 }
 
-export function nodesArrayToRecords(
-  nodes: SelectNodeWithCreatorAndStats[],
-) {
-  const records: NodesRecords = {}
-  nodes.forEach((n) => {
+export function nodesOrEdgesArrayToRecords<
+  T extends
+    | SelectNodeWithCreatorAndStats
+    | SelectEdgeWithCreatorAndStats,
+  K extends NodesRecords | EdgesRecords,
+>(nodesOrEdges: T[]) {
+  const records: K = {} as K
+  nodesOrEdges.forEach((n) => {
     records[n.excalId] = n
   })
   return records
 }
 
+export type CanvasProviderProps = WithReactChildren & {
+  initialNodes?: SelectNodeWithCreatorAndStats[]
+  initialEdges?: SelectEdgeWithCreatorAndStats[]
+}
+
 export function CanvasProvider({
   initialNodes = [],
+  initialEdges = [],
   children,
 }: CanvasProviderProps) {
   const [nodes, setNodes] = useState<NodesRecords>(
-    nodesArrayToRecords(initialNodes),
+    nodesOrEdgesArrayToRecords(initialNodes),
+  )
+  const [edges, setEdges] = useState<EdgesRecords>(
+    nodesOrEdgesArrayToRecords<
+      SelectEdgeWithCreatorAndStats,
+      EdgesRecords
+    >(initialEdges),
   )
 
   const [excalElements, setExcalElements] = useState<
     ExcalidrawElement[]
-  >(
-    initialNodes.map(
+  >([
+    ...initialNodes.map(
       (n) => n.excalData as ExcalidrawElement,
     ),
-  )
+    ...initialEdges.map(
+      (n) => n.excalData as ExcalidrawElement,
+    ),
+  ])
 
   const [excalAppState, setExcalAppState] =
     useState<AppState>(initialAppState)
@@ -82,6 +105,8 @@ export function CanvasProvider({
       value={{
         nodes,
         setNodes,
+        edges,
+        setEdges,
         excalElements,
         setExcalElements,
         excalAppState,

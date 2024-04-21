@@ -4,16 +4,12 @@ import { sql } from "drizzle-orm"
 
 import { db, edges } from "@server"
 
-import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
-
-import { type ExcalId } from "@types"
+import { type ExcalidrawArrowElement } from "@excalidraw/excalidraw/types/element/types"
 
 import { userIdFromClerk } from "../../utils/exports"
 
 export async function postEdges(
-  excalElements: ExcalidrawElement[],
-  fromId: ExcalId,
-  toId: ExcalId,
+  excalElements: ExcalidrawArrowElement[],
 ) {
   try {
     const userId = await userIdFromClerk()
@@ -28,8 +24,8 @@ export async function postEdges(
           description: "",
           excalData: el,
           creatorId: userId,
-          fromId,
-          toId,
+          fromId: el.startBinding?.elementId,
+          toId: el.endBinding?.elementId,
         })),
       )
       .onConflictDoUpdate({

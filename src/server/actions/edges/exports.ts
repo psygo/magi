@@ -1,1 +1,2 @@
-export * from "./post_edge"
+export * from "./get_edges"
+export * from "./post_edges"

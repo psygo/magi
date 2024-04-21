@@ -6,17 +6,24 @@ import dynamic from "next/dynamic"
 
 import { ArrowDown, ArrowUp, Info } from "lucide-react"
 
-import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
+import {
+  type ExcalidrawArrowElement,
+  type ExcalidrawElement,
+} from "@excalidraw/excalidraw/types/element/types"
 import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 
 import { toDate } from "@utils"
 
-import { type ExcalId } from "@types"
+import {
+  type SelectEdgeWithCreatorAndStats,
+  type ExcalId,
+} from "@types"
 
-import { postNodes, postVote } from "@actions"
+import { postEdges, postNodes, postVote } from "@actions"
 
 import {
-  nodesArrayToRecords,
+  type EdgesRecords,
+  nodesOrEdgesArrayToRecords,
   useCanvas,
   useTheme,
 } from "@context"
@@ -24,7 +31,8 @@ import {
 import { Button } from "@shad"
 
 import { Progress } from "@components"
-import { cn } from "../../styles/cn"
+
+import { cn } from "@styles"
 
 const Excalidraw = dynamic(
   async () => {
@@ -46,6 +54,8 @@ export function Canvas() {
   const {
     nodes,
     setNodes,
+    edges,
+    setEdges,
     excalElements,
     setExcalElements,
     excalAppState,
@@ -84,18 +94,42 @@ export function Canvas() {
     const notUpdatedYet = excalElements.filter(
       (el) => toDate(el.updated) > lastUpdated,
     )
+    const notUpdatedYetNodes = notUpdatedYet.filter(
+      (n) => n.type !== "arrow",
+    )
+    const notUpdatedYetEdges = notUpdatedYet.filter(
+      (n) => n.type === "arrow",
+    ) as ExcalidrawArrowElement[]
 
-    console.log(notUpdatedYet)
-
-    if (notUpdatedYet.length > 0) {
-      const newNodes = await postNodes(notUpdatedYet)
+    if (notUpdatedYetNodes.length > 0) {
+      const newNodes = await postNodes(notUpdatedYetNodes)
 
       if (newNodes) {
         const newNodesRecords =
-          nodesArrayToRecords(newNodes)
+          nodesOrEdgesArrayToRecords(newNodes)
+
         setNodes({
           ...nodes,
           ...newNodesRecords,
+        })
+
+        setLastUpdated(new Date())
+      }
+    }
+    if (notUpdatedYetEdges.length > 0) {
+      const newEdges = await postEdges(notUpdatedYetEdges)
+
+      console.log(newEdges)
+
+      if (newEdges) {
+        const newEdgesRecords = nodesOrEdgesArrayToRecords<
+          SelectEdgeWithCreatorAndStats,
+          EdgesRecords
+        >(newEdges)
+
+        setEdges({
+          ...edges,
+          ...newEdgesRecords,
         })
 
         setLastUpdated(new Date())
