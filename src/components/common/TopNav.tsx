@@ -27,7 +27,7 @@ function RightTopnav() {
     <div className="flex gap-2 items-center z-50">
       <ThemeButton />
       <SignedOut>
-        <Button>
+        <Button asChild>
           <SignInButton />
         </Button>
       </SignedOut>

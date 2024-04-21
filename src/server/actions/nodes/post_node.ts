@@ -10,34 +10,15 @@ import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/typ
 
 import "@utils/array"
 
-export async function postNode(
-  excalData: ExcalidrawElement,
-) {
-  try {
-    const user = await currentUser()
-    const userId = user?.privateMetadata.id
-
-    const nodeData = await db
-      .insert(nodes)
-      .values({
-        excalId: excalData.id,
-        title: "",
-        description: "",
-        excalData,
-        creatorId: 1,
-      })
-      .returning()
-
-    return nodeData.first()
-  } catch (e) {
-    console.error(e)
-  }
-}
+import { userIdFromClerk } from "../../utils/exports"
 
 export async function postNodes(
   excalElements: ExcalidrawElement[],
 ) {
   try {
+    const userId = await userIdFromClerk()
+    if (!userId) return
+
     const nodeData = await db
       .insert(nodes)
       .values(
@@ -46,7 +27,7 @@ export async function postNodes(
           title: "",
           description: "",
           excalData: el,
-          creatorId: 1,
+          creatorId: userId,
         })),
       )
       .onConflictDoUpdate({

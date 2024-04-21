@@ -22,7 +22,7 @@ import {
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { postNode } from "@actions"
+import { postNodes } from "@actions"
 
 import {
   nodeFormSchema,
@@ -48,12 +48,12 @@ export function NodeForm() {
   })
 
   async function onSubmit(values: NodeFormValidation) {
-    await postNode(
-      values.title,
-      values.description ?? "",
-      coords!.x,
-      coords!.y,
-    )
+    // await postNode(
+    //   values.title,
+    //   values.description ?? "",
+    //   coords!.x,
+    //   coords!.y,
+    // )
   }
 
   return (

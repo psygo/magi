@@ -3,14 +3,14 @@ import "server-only"
 import { sql } from "drizzle-orm"
 
 import { db } from "."
-import { mockUsers } from "./mock"
 import { nodes, users } from "./schema"
+// import { mockUsers } from "./mock"
 
 export async function reset() {
   try {
     await deleteEverything()
 
-    await mockUsers()
+    // await mockUsers()
   } catch (e) {
     console.error(e)
   }
@@ -24,9 +24,8 @@ async function deleteEverything() {
     await db.delete(users)
 
     const tableSchema = db._.schema
-    if (!tableSchema) {
+    if (!tableSchema)
       throw new Error("No table schema found")
-    }
 
     console.log("🗑️  Emptying the entire database")
 

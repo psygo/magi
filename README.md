@@ -14,7 +14,7 @@ This project has been set up with the [`create-t3-app`](https://create.t3.gg/) s
 
 ## Dev
 
-## Env
+### Env
 
 Locally, you can set things up with:
 
@@ -31,4 +31,12 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 CLERK_SECRET_KEY=
 
 #-----------------------------------------------------------
+```
+
+### Using Ngrok for Local Development
+
+Expose your local host to the web:
+
+```sh
+ngrok http http://localhost:3000
 ```
