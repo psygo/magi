@@ -6,14 +6,10 @@ import { type AppState } from "@excalidraw/excalidraw/types/types"
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 import {
+  type SelectNodeWithCreatorAndStats,
   type ExcalId,
   type WithReactChildren,
 } from "@types"
-
-import {
-  type SelectNodeWithCreatorAndStats,
-  type SelectNode,
-} from "@server"
 
 export type NodesRecords = Record<
   ExcalId,

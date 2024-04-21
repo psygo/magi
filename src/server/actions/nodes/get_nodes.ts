@@ -2,28 +2,9 @@
 
 import { desc, eq, sql, getTableColumns } from "drizzle-orm"
 
-import {
-  type SelectNode,
-  db,
-  nodes,
-  votes,
-  users,
-  type SelectUser,
-} from "@server"
+import { type SelectNodeWithCreatorAndStats } from "@types"
 
-export type WithStats = {
-  stats?: {
-    voteTotal?: number
-  }
-}
-
-export type WithCreator = {
-  creator?: SelectUser
-}
-
-export type SelectNodeWithCreatorAndStats = SelectNode &
-  WithStats &
-  WithCreator
+import { db, nodes, votes, users } from "@server"
 
 export async function getNodes() {
   try {

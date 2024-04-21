@@ -123,7 +123,7 @@ export const edges = createTable("edges", {
   imageUrl: varchar("image_url", { length: 1024 }),
   excalData: json("excal_data"),
   // Relationships
-  creatorId: integer("creator_id"),
+  creatorId: integer("creator_id").notNull(),
   fromId: integer("from_id"),
   toId: integer("to_id"),
 })
