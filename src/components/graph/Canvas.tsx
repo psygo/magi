@@ -91,50 +91,54 @@ export function Canvas() {
   }, [excalidrawAPI, theme])
 
   async function onExcalUpdate() {
-    const notUpdatedYet = excalElements.filter(
-      (el) => toDate(el.updated) > lastUpdated,
-    )
-    const notUpdatedYetNodes = notUpdatedYet.filter(
-      (n) => n.type !== "arrow",
-    )
-    const notUpdatedYetEdges = notUpdatedYet.filter(
-      (n) => n.type === "arrow",
-    ) as ExcalidrawArrowElement[]
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    setTimeout(async () => {
+      const notUpdatedYet = excalElements.filter(
+        (el) => toDate(el.updated) > lastUpdated,
+      )
+      const notUpdatedYetNodes = notUpdatedYet.filter(
+        (n) => n.type !== "arrow",
+      )
+      const notUpdatedYetEdges = notUpdatedYet.filter(
+        (n) => n.type === "arrow",
+      ) as ExcalidrawArrowElement[]
 
-    if (notUpdatedYetNodes.length > 0) {
-      const newNodes = await postNodes(notUpdatedYetNodes)
+      console.log(notUpdatedYet)
 
-      if (newNodes) {
-        const newNodesRecords =
-          nodesOrEdgesArrayToRecords(newNodes)
+      if (notUpdatedYetNodes.length > 0) {
+        const newNodes = await postNodes(notUpdatedYetNodes)
 
-        setNodes({
-          ...nodes,
-          ...newNodesRecords,
-        })
+        if (newNodes) {
+          const newNodesRecords =
+            nodesOrEdgesArrayToRecords(newNodes)
 
-        setLastUpdated(new Date())
+          setNodes({
+            ...nodes,
+            ...newNodesRecords,
+          })
+
+          setLastUpdated(new Date())
+        }
       }
-    }
-    if (notUpdatedYetEdges.length > 0) {
-      const newEdges = await postEdges(notUpdatedYetEdges)
+      if (notUpdatedYetEdges.length > 0) {
+        const newEdges = await postEdges(notUpdatedYetEdges)
 
-      console.log(newEdges)
+        if (newEdges) {
+          const newEdgesRecords =
+            nodesOrEdgesArrayToRecords<
+              SelectEdgeWithCreatorAndStats,
+              EdgesRecords
+            >(newEdges)
 
-      if (newEdges) {
-        const newEdgesRecords = nodesOrEdgesArrayToRecords<
-          SelectEdgeWithCreatorAndStats,
-          EdgesRecords
-        >(newEdges)
+          setEdges({
+            ...edges,
+            ...newEdgesRecords,
+          })
 
-        setEdges({
-          ...edges,
-          ...newEdgesRecords,
-        })
-
-        setLastUpdated(new Date())
+          setLastUpdated(new Date())
+        }
       }
-    }
+    }, 100)
   }
 
   return (
