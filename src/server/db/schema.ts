@@ -38,7 +38,9 @@ export const users = createTable("users", {
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
   // Data
   firstName: varchar("first_name", { length: 256 }),
   lastName: varchar("last_name", { length: 256 }),
@@ -72,14 +74,16 @@ export const nodes = createTable("nodes", {
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
   // Data
   title: varchar("title", { length: 256 }).notNull(),
   description: varchar("description", { length: 4096 }),
   imageUrl: varchar("image_url", { length: 1024 }),
   excalData: json("excal_data"),
   // Relationships
-  creatorId: integer("creator_id"),
+  creatorId: integer("creator_id").notNull(),
 })
 
 export type SelectNode = InferSelectModel<typeof nodes>
@@ -110,7 +114,9 @@ export const edges = createTable("edges", {
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
   // Data
   title: varchar("title", { length: 256 }).notNull(),
   description: varchar("description", { length: 4096 }),
@@ -158,7 +164,9 @@ export const votes = createTable("votes", {
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
   // Data
   points: integer("points").notNull(),
   // Relationships
@@ -199,7 +207,9 @@ export const comments = createTable("comments", {
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at"),
+  updatedAt: timestamp("updated_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
   // Data
   content: varchar("content", { length: 4096 }),
   // Relationships

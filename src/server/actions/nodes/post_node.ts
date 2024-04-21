@@ -1,16 +1,22 @@
 "use server"
 
+import { currentUser } from "@clerk/nextjs/server"
+
+import { sql } from "drizzle-orm"
+
+import { db, nodes } from "@server"
+
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 import "@utils/array"
-
-import { db, nodes } from "@server"
-import { sql } from "drizzle-orm"
 
 export async function postNode(
   excalData: ExcalidrawElement,
 ) {
   try {
+    const user = await currentUser()
+    const userId = user?.privateMetadata.id
+
     const nodeData = await db
       .insert(nodes)
       .values({
@@ -18,8 +24,9 @@ export async function postNode(
         title: "",
         description: "",
         excalData,
+        creatorId: 1,
       })
-      .returning({ id: nodes.id })
+      .returning()
 
     return nodeData.first()
   } catch (e) {
@@ -39,6 +46,7 @@ export async function postNodes(
           title: "",
           description: "",
           excalData: el,
+          creatorId: 1,
         })),
       )
       .onConflictDoUpdate({
@@ -49,9 +57,9 @@ export async function postNodes(
           ),
         },
       })
-      .returning({ id: nodes.id })
+      .returning()
 
-    return nodeData.first()
+    return nodeData
   } catch (e) {
     console.error(e)
   }

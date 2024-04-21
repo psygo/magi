@@ -5,11 +5,20 @@ import { createContext, useContext, useState } from "react"
 import { type AppState } from "@excalidraw/excalidraw/types/types"
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
-import { type WithReactChildren } from "@types"
+import {
+  type ExcalId,
+  type WithReactChildren,
+} from "@types"
 
 import { type SelectNode } from "@server"
 
+export type NodesRecords = Record<ExcalId, SelectNode>
+
 type CanvasContext = {
+  nodes: NodesRecords
+  setNodes: React.Dispatch<
+    React.SetStateAction<NodesRecords>
+  >
   excalElements: ExcalidrawElement[]
   setExcalElements: React.Dispatch<
     React.SetStateAction<ExcalidrawElement[]>
@@ -37,10 +46,22 @@ export const initialAppState: AppState = {
   zoom: { value: 1 },
 }
 
+export function nodesArrayToRecords(nodes: SelectNode[]) {
+  const records: NodesRecords = {}
+  nodes.forEach((n) => {
+    records[n.excalId] = n
+  })
+  return records
+}
+
 export function CanvasProvider({
   initialNodes = [],
   children,
 }: CanvasProviderProps) {
+  const [nodes, setNodes] = useState<NodesRecords>(
+    nodesArrayToRecords(initialNodes),
+  )
+
   const [excalElements, setExcalElements] = useState<
     ExcalidrawElement[]
   >(
@@ -48,12 +69,15 @@ export function CanvasProvider({
       (n) => n.excalData as ExcalidrawElement,
     ),
   )
+
   const [excalAppState, setExcalAppState] =
     useState<AppState>(initialAppState)
 
   return (
     <CanvasContext.Provider
       value={{
+        nodes,
+        setNodes,
         excalElements,
         setExcalElements,
         excalAppState,

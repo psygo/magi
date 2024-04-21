@@ -6,19 +6,24 @@ import dynamic from "next/dynamic"
 
 import { ArrowDown, ArrowUp, Info } from "lucide-react"
 
+import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 
 import { toDate } from "@utils"
 
+import { type ExcalId } from "@types"
+
 import { postNodes, postVote } from "@actions"
 
-import { useCanvas, useTheme } from "@context"
+import {
+  nodesArrayToRecords,
+  useCanvas,
+  useTheme,
+} from "@context"
 
 import { Button } from "@shad"
 
 import { Progress } from "@components"
-import { ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
-import { ExcalId } from "../../types/id"
 
 const Excalidraw = dynamic(
   async () => {
@@ -38,6 +43,8 @@ export function Canvas() {
     useState<ExcalidrawImperativeAPI>()
 
   const {
+    nodes,
+    setNodes,
     excalElements,
     setExcalElements,
     excalAppState,
@@ -78,9 +85,18 @@ export function Canvas() {
     )
 
     if (notUpdatedYet.length > 0) {
-      await postNodes(notUpdatedYet)
+      const newNodes = await postNodes(notUpdatedYet)
 
-      setLastUpdated(new Date())
+      if (newNodes) {
+        const newNodesRecords =
+          nodesArrayToRecords(newNodes)
+        setNodes({
+          ...nodes,
+          ...newNodesRecords,
+        })
+
+        setLastUpdated(new Date())
+      }
     }
   }
 
@@ -160,11 +176,15 @@ export function VoteButton({
 }: VoteButtonProps) {
   const [hovered, setHovered] = useState(false)
 
+  async function handleClick() {
+    await postVote(excalId, up)
+  }
+
   return (
     <Button
       variant="link"
       className="p-0 m-0"
-      onClick={async () => await postVote(excalId, up)}
+      onClick={handleClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >

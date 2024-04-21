@@ -19,9 +19,9 @@ export async function reset() {
 async function deleteEverything() {
   try {
     // eslint-disable-next-line drizzle/enforce-delete-with-where
-    await db.delete(users)
-    // eslint-disable-next-line drizzle/enforce-delete-with-where
     await db.delete(nodes)
+    // eslint-disable-next-line drizzle/enforce-delete-with-where
+    await db.delete(users)
 
     const tableSchema = db._.schema
     if (!tableSchema) {
@@ -35,10 +35,9 @@ async function deleteEverything() {
         console.log(
           `🧨 Preparing delete query for table: ${table.dbName}`,
         )
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         return sql.raw(/* sql */ `
-        TRUNCATE TABLE ${table.dbName} CASCADE
-      `)
+          TRUNCATE TABLE ${table.dbName} CASCADE;
+        `)
       },
     )
 
