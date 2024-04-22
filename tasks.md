@@ -1,13 +1,12 @@
 # Tasks
 
-1. [ ] Nodes and Edges on the Same Table (self-join)
-2. [ ] Info Card
+1. [ ] Info Card
    1. [ ] `<Suspense>`
-3. [ ] Edit title and description form on the Info Card
-4. [ ] Comment on the Info Card
-5. [ ] Number of Comments on the info detail
-6. [ ] Edit Excalidraw Controls
-7. [ ] List connections on a node on the info card
+2. [ ] Edit title and description form on the Info Card
+3. [ ] Comment on the Info Card
+4. [ ] Number of Comments on the info detail
+5. [ ] Edit Excalidraw Controls
+6. [ ] List connections on a node on the info card
 
 ## Second Gen
 

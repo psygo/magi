@@ -91,53 +91,56 @@ export function Canvas() {
   }, [excalidrawAPI, theme])
 
   async function onExcalUpdate() {
+    const notUpdatedYet = excalElements.filter(
+      (el) => toDate(el.updated) > lastUpdated,
+    )
+    const notUpdatedYetNodes = notUpdatedYet.filter(
+      (n) => n.type !== "arrow",
+    )
+    const notUpdatedYetEdges = notUpdatedYet.filter(
+      (n) => n.type === "arrow",
+    ) as ExcalidrawArrowElement[]
+
+    if (notUpdatedYetNodes.length > 0) {
+      const newNodes = await postNodes(notUpdatedYetNodes)
+
+      if (newNodes) {
+        const newNodesRecords =
+          nodesOrEdgesArrayToRecords(newNodes)
+
+        setNodes({
+          ...nodes,
+          ...newNodesRecords,
+        })
+
+        setLastUpdated(new Date())
+      }
+    }
+    if (notUpdatedYetEdges.length > 0) {
+      const newEdges = await postEdges(notUpdatedYetEdges)
+
+      if (newEdges) {
+        const newEdgesRecords = nodesOrEdgesArrayToRecords<
+          SelectEdgeWithCreatorAndStats,
+          EdgesRecords
+        >(newEdges)
+
+        setEdges({
+          ...edges,
+          ...newEdgesRecords,
+        })
+
+        setLastUpdated(new Date())
+      }
+    }
+  }
+
+  function delayedExcalUpdate() {
     // The delay here is used because apparently the
     // snapping of the arrow is not done immediately.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     setTimeout(async () => {
-      const notUpdatedYet = excalElements.filter(
-        (el) => toDate(el.updated) > lastUpdated,
-      )
-      const notUpdatedYetNodes = notUpdatedYet.filter(
-        (n) => n.type !== "arrow",
-      )
-      const notUpdatedYetEdges = notUpdatedYet.filter(
-        (n) => n.type === "arrow",
-      ) as ExcalidrawArrowElement[]
-
-      if (notUpdatedYetNodes.length > 0) {
-        const newNodes = await postNodes(notUpdatedYetNodes)
-
-        if (newNodes) {
-          const newNodesRecords =
-            nodesOrEdgesArrayToRecords(newNodes)
-
-          setNodes({
-            ...nodes,
-            ...newNodesRecords,
-          })
-
-          setLastUpdated(new Date())
-        }
-      }
-      if (notUpdatedYetEdges.length > 0) {
-        const newEdges = await postEdges(notUpdatedYetEdges)
-
-        if (newEdges) {
-          const newEdgesRecords =
-            nodesOrEdgesArrayToRecords<
-              SelectEdgeWithCreatorAndStats,
-              EdgesRecords
-            >(newEdges)
-
-          setEdges({
-            ...edges,
-            ...newEdgesRecords,
-          })
-
-          setLastUpdated(new Date())
-        }
-      }
+      await onExcalUpdate()
     }, 100)
   }
 
@@ -145,8 +148,8 @@ export function Canvas() {
     <div>
       <div
         className="absolute top-0 w-screen h-screen"
-        onPointerUp={onExcalUpdate}
-        onKeyUp={onExcalUpdate}
+        onPointerUp={delayedExcalUpdate}
+        onKeyUp={delayedExcalUpdate}
       >
         {Excal}
       </div>

@@ -99,7 +99,7 @@ export const nodesRelations = relations(
       fields: [nodes.creatorId],
       references: [users.id],
     }),
-    edges: many(edges, { relationName: "from" }),
+    from: many(edges, { relationName: "from" }),
     to: many(edges, { relationName: "to" }),
     votes: many(votes),
     comments: many(comments),

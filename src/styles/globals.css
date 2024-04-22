@@ -6,6 +6,14 @@
 @tailwind utilities;
 
 /*--------------------------------------------------------*/
+/* Excalidraw */
+
+.App-bottom-bar,
+.App-top-bar {
+  z-index: 1000 !important;
+}
+
+/*--------------------------------------------------------*/
 /* Clerk */
 
 .cl-avatarBox {
