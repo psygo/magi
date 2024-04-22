@@ -17,6 +17,7 @@ export async function putNode(
       .set({
         title: title ?? "",
         description: description ?? "",
+        updatedAt: new Date(),
       })
       .where(eq(nodes.excalId, excalId))
       .returning()

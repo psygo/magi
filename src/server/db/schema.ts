@@ -192,11 +192,11 @@ export const commentsRelations = relations(
     }),
     node: one(nodes, {
       fields: [comments.nodeId],
-      references: [nodes.id],
+      references: [nodes.excalId],
     }),
     edge: one(edges, {
       fields: [comments.edgeId],
-      references: [edges.id],
+      references: [edges.excalId],
     }),
   }),
 )

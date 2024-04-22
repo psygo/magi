@@ -3,6 +3,9 @@ import { z } from "zod"
 export const stringIdSchema = z.string()
 export type StringId = z.infer<typeof stringIdSchema>
 
+export const nanoIdSchema = z.string()
+export type NanoId = z.infer<typeof nanoIdSchema>
+
 export const clerkIdSchema = z.string()
 export type ClerkId = z.infer<typeof clerkIdSchema>
 

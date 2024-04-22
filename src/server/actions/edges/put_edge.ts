@@ -17,6 +17,7 @@ export async function putEdge(
       .set({
         title: title ?? "",
         description: description ?? "",
+        updatedAt: new Date(),
       })
       .where(eq(edges.excalId, excalId))
       .returning()
