@@ -19,6 +19,7 @@ type NodeOrEdgeContext = {
     | SelectEdgeWithCreatorAndStats
     | undefined
   loading: LoadingState
+  isNode: boolean
 }
 
 const NodeOrEdgeContext =
@@ -32,14 +33,15 @@ export function NodeOrEdgeProvider({
   excalEl,
   children,
 }: NodeOrEdgeProviderProps) {
+  const isNode = excalEl.type !== "arrow"
   const { nodeOrEdge, loading } = useNodeOrEdge(
     excalEl.id,
-    excalEl.type !== "arrow",
+    isNode,
   )
 
   return (
     <NodeOrEdgeContext.Provider
-      value={{ nodeOrEdge, loading }}
+      value={{ nodeOrEdge, loading, isNode }}
     >
       {children}
     </NodeOrEdgeContext.Provider>

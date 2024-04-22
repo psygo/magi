@@ -1,5 +1,7 @@
 "use client"
 
+import { useState } from "react"
+
 import { Info } from "lucide-react"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
@@ -17,6 +19,8 @@ import {
 } from "@shad"
 
 import { LoadingState } from "@types"
+
+import { putEdge, putNode } from "@actions"
 
 import {
   NodeOrEdgeProvider,
@@ -49,28 +53,64 @@ export function NodeCardDialog({
 }
 
 function NodeCardDialogContent() {
-  const { nodeOrEdge, loading } = useNodeOrEdgeData()
+  const { nodeOrEdge, loading, isNode } =
+    useNodeOrEdgeData()
 
-  if (loading !== LoadingState.Loaded) return <Progress />
+  const [isEditing, setIsEditing] = useState(false)
+
+  const [title, setTitle] = useState(nodeOrEdge?.title)
+
+  if (!nodeOrEdge || loading !== LoadingState.Loaded)
+    return <Progress />
 
   return (
     <>
       <DialogHeader>
-        <DialogTitle>
-          Node Data ({nodeOrEdge?.excalId})
+        <DialogTitle className="flex gap-2">
+          Node Data
+          <p className="text-gray-500">
+            {nodeOrEdge?.excalId}
+          </p>
         </DialogTitle>
       </DialogHeader>
-      <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-4 items-center gap-4">
-          <Label htmlFor="name" className="text-right">
-            Name
-          </Label>
-          <Input
-            id="name"
-            defaultValue="Pedro Duarte"
-            className="col-span-3"
-          />
-        </div>
+      <div className="flex flex-col">
+        {!isEditing ? (
+          <div className="flex gap-2 items-center">
+            <h2>{nodeOrEdge.title}</h2>
+            <Button onClick={() => setIsEditing(true)}>
+              Edit
+            </Button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 mt-5">
+            <Label htmlFor="name">Title</Label>
+            <Input
+              id="name"
+              defaultValue={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <Button onClick={() => setIsEditing(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                isNode
+                  ? await putNode(
+                      nodeOrEdge.excalId,
+                      title,
+                      nodeOrEdge.description ?? "",
+                    )
+                  : await putEdge(
+                      nodeOrEdge.excalId,
+                      title,
+                      nodeOrEdge.description ?? "",
+                    )
+              }}
+            >
+              Save
+            </Button>
+          </div>
+        )}
       </div>
       <DialogFooter>
         <Button type="submit">Save changes</Button>
