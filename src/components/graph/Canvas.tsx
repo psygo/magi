@@ -4,22 +4,14 @@ import { useMemo, useState } from "react"
 
 import dynamic from "next/dynamic"
 
-import { ArrowDown, ArrowUp, Info } from "lucide-react"
-
-import {
-  type ExcalidrawArrowElement,
-  type ExcalidrawElement,
-} from "@excalidraw/excalidraw/types/element/types"
+import { type ExcalidrawArrowElement } from "@excalidraw/excalidraw/types/element/types"
 import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 
 import { toDate } from "@utils"
 
-import {
-  type SelectEdgeWithCreatorAndStats,
-  type ExcalId,
-} from "@types"
+import { type SelectEdgeWithCreatorAndStats } from "@types"
 
-import { postEdges, postNodes, postVote } from "@actions"
+import { postEdges, postNodes } from "@actions"
 
 import {
   type EdgesRecords,
@@ -28,11 +20,9 @@ import {
   useTheme,
 } from "@context"
 
-import { Button } from "@shad"
-
 import { Progress } from "@components"
 
-import { cn } from "@styles"
+import { ShapeInfoButtons } from "./ShapeInfoButton"
 
 const Excalidraw = dynamic(
   async () => {
@@ -176,87 +166,5 @@ export function Canvas() {
           })}
       </div>
     </div>
-  )
-}
-
-type ShapeInfoButtonsProps = {
-  x: number
-  y: number
-  excalEl: ExcalidrawElement
-}
-
-export function ShapeInfoButtons({
-  x,
-  y,
-  excalEl,
-}: ShapeInfoButtonsProps) {
-  const { nodes } = useCanvas()
-  const node = nodes[excalEl.id]
-  const voteTotal = node?.stats?.voteTotal ?? 0
-
-  return (
-    <div
-      className="flex gap-1 items-center"
-      style={{
-        position: "absolute",
-        zIndex: 50,
-        left: x - 32,
-        top: y,
-      }}
-    >
-      <Button variant="link" className="p-0 m-0">
-        <Info className="h-[13px] w-[13px]" />
-      </Button>
-      <VoteButton excalId={excalEl.id} up />
-      <VoteButton excalId={excalEl.id} />
-      <p
-        className={cn(
-          "px-[2px] font-bold",
-          voteTotal >= 0
-            ? "text-green-700"
-            : "text-red-400",
-        )}
-      >
-        {voteTotal}
-      </p>
-    </div>
-  )
-}
-
-type VoteButtonProps = {
-  up?: boolean
-  excalId: ExcalId
-}
-
-export function VoteButton({
-  up = false,
-  excalId,
-}: VoteButtonProps) {
-  const [hovered, setHovered] = useState(false)
-
-  async function handleClick() {
-    await postVote(excalId, up)
-  }
-
-  return (
-    <Button
-      variant="link"
-      className="p-0 m-0"
-      onClick={handleClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {up ? (
-        <ArrowUp
-          className="h-4 w-4"
-          style={{ color: hovered ? "red" : "" }}
-        />
-      ) : (
-        <ArrowDown
-          className="h-4 w-4"
-          style={{ color: hovered ? "red" : "" }}
-        />
-      )}
-    </Button>
   )
 }
