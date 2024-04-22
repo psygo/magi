@@ -1,16 +1,13 @@
 "use client"
 
-import { Info } from "lucide-react"
-
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 import { useCanvas } from "@context"
 
-import { Button } from "@shad"
-
 import { cn } from "@styles"
 
 import { VoteButton } from "./VoteButton"
+import { NodeCardDialog } from "./NodeCardDialog"
 
 type ShapeInfoButtonsProps = {
   x: number
@@ -32,14 +29,15 @@ export function ShapeInfoButtons({
       className="flex gap-1 items-center"
       style={{
         position: "absolute",
-        zIndex: 50,
+        zIndex: 10,
         left: x - 32,
         top: y,
       }}
     >
-      <Button variant="link" className="p-0 m-0">
-        <Info className="h-[13px] w-[13px]" />
-      </Button>
+      <NodeCardDialog
+        excalId={excalEl.id}
+        isNode={excalEl.type !== "arrow"}
+      />
       <VoteButton excalId={excalEl.id} up />
       <VoteButton excalId={excalEl.id} />
       <p

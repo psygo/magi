@@ -10,6 +10,7 @@
 
 ## Second Gen
 
+1. [ ] Context for each element
 1. [ ] Throttling
 1. [ ] `<iframe>` and other solutions
    1. [ ] For YouTube at least, it's possible to simply use the [thumbnails](https://stackoverflow.com/a/2068371/4756173)

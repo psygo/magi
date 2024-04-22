@@ -62,6 +62,8 @@ export async function getNode(excalId: ExcalId) {
         .limit(1)
     ).first()
 
+    console.log(n)
+
     return n as SelectNodeWithCreatorAndStats
   } catch (e) {
     console.error(e)
