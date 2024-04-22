@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 
-import { Info } from "lucide-react"
+import { Info, Pencil } from "lucide-react"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
@@ -10,13 +10,14 @@ import {
   Button,
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
   Input,
   Label,
 } from "@shad"
+
+import { stringIsEmpty } from "@utils"
 
 import { LoadingState } from "@types"
 
@@ -53,12 +54,7 @@ export function NodeCardDialog({
 }
 
 function NodeCardDialogContent() {
-  const { nodeOrEdge, loading, isNode } =
-    useNodeOrEdgeData()
-
-  const [isEditing, setIsEditing] = useState(false)
-
-  const [title, setTitle] = useState(nodeOrEdge?.title)
+  const { nodeOrEdge, loading } = useNodeOrEdgeData()
 
   if (!nodeOrEdge || loading !== LoadingState.Loaded)
     return <Progress />
@@ -67,54 +63,75 @@ function NodeCardDialogContent() {
     <>
       <DialogHeader>
         <DialogTitle className="flex gap-2">
-          Node Data
-          <p className="text-gray-500">
+          <p className="text-gray-500">Node Data</p>
+          <p className="text-gray-400">
             {nodeOrEdge?.excalId}
           </p>
         </DialogTitle>
       </DialogHeader>
-      <div className="flex flex-col">
-        {!isEditing ? (
-          <div className="flex gap-2 items-center">
-            <h2>{nodeOrEdge.title}</h2>
-            <Button onClick={() => setIsEditing(true)}>
-              Edit
-            </Button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 mt-5">
-            <Label htmlFor="name">Title</Label>
-            <Input
-              id="name"
-              defaultValue={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <Button onClick={() => setIsEditing(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={async () => {
-                isNode
-                  ? await putNode(
-                      nodeOrEdge.excalId,
-                      title,
-                      nodeOrEdge.description ?? "",
-                    )
-                  : await putEdge(
-                      nodeOrEdge.excalId,
-                      title,
-                      nodeOrEdge.description ?? "",
-                    )
-              }}
-            >
-              Save
-            </Button>
-          </div>
-        )}
+      <div className="flex flex-col ">
+        <Title />
       </div>
-      <DialogFooter>
-        <Button type="submit">Save changes</Button>
-      </DialogFooter>
     </>
   )
+}
+
+function Title() {
+  const { nodeOrEdge, isNode } = useNodeOrEdgeData()
+
+  const [isEditing, setIsEditing] = useState(
+    stringIsEmpty(nodeOrEdge?.title),
+  )
+
+  const [title, setTitle] = useState(nodeOrEdge?.title)
+
+  if (!nodeOrEdge) return
+
+  if (isEditing) {
+    return (
+      <div className="flex items-center gap-2">
+        <Label htmlFor="name">Title</Label>
+        <Input
+          id="name"
+          defaultValue={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <Button onClick={() => setIsEditing(false)}>
+          Cancel
+        </Button>
+        <Button
+          onClick={async () => {
+            isNode
+              ? await putNode(
+                  nodeOrEdge.excalId,
+                  title,
+                  nodeOrEdge.description ?? "",
+                )
+              : await putEdge(
+                  nodeOrEdge.excalId,
+                  title,
+                  nodeOrEdge.description ?? "",
+                )
+          }}
+        >
+          Save
+        </Button>
+      </div>
+    )
+  } else {
+    return (
+      <div className="flex gap-4 items-center">
+        <h2 className="text-3xl font-bold">
+          {nodeOrEdge.title !== "" ? nodeOrEdge.title : "—"}
+        </h2>
+        <Button
+          variant="ghost"
+          className="p-0 pt-[6px]"
+          onClick={() => setIsEditing(true)}
+        >
+          <Pencil className="h-[15px] w-[15px] text-gray-500" />
+        </Button>
+      </div>
+    )
+  }
 }
