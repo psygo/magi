@@ -91,6 +91,8 @@ export function Canvas() {
   }, [excalidrawAPI, theme])
 
   async function onExcalUpdate() {
+    // The delay here is used because apparently the
+    // snapping of the arrow is not done immediately.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     setTimeout(async () => {
       const notUpdatedYet = excalElements.filter(
