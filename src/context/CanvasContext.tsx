@@ -7,19 +7,11 @@ import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/typ
 
 import {
   type SelectNodeWithCreatorAndStats,
-  type ExcalId,
   type WithReactChildren,
   type SelectEdgeWithCreatorAndStats,
+  type EdgesRecords,
+  type NodesRecords,
 } from "@types"
-
-export type NodesRecords = Record<
-  ExcalId,
-  SelectNodeWithCreatorAndStats
->
-export type EdgesRecords = Record<
-  ExcalId,
-  SelectEdgeWithCreatorAndStats
->
 
 type CanvasContext = {
   nodes: NodesRecords

@@ -30,9 +30,7 @@ export function useNodeOrEdge<
         ? await getNode(excalId)
         : await getEdge(excalId)
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      if (nodeOrEdgeData) setNodeOrEdge(nodeOrEdgeData)
+      if (nodeOrEdgeData) setNodeOrEdge(nodeOrEdgeData as T)
 
       setLoading(LoadingState.Loaded)
     }

@@ -9,12 +9,14 @@ import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types
 
 import { toDate } from "@utils"
 
-import { type SelectEdgeWithCreatorAndStats } from "@types"
+import {
+  type EdgesRecords,
+  type SelectEdgeWithCreatorAndStats,
+} from "@types"
 
 import { postEdges, postNodes } from "@actions"
 
 import {
-  type EdgesRecords,
   nodesOrEdgesArrayToRecords,
   useCanvas,
   useTheme,

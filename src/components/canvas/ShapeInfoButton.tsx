@@ -34,10 +34,7 @@ export function ShapeInfoButtons({
         top: y,
       }}
     >
-      <NodeCardDialog
-        excalId={excalEl.id}
-        isNode={excalEl.type !== "arrow"}
-      />
+      <NodeCardDialog excalEl={excalEl} />
       <VoteButton excalId={excalEl.id} up />
       <VoteButton excalId={excalEl.id} />
       <p
