@@ -39,5 +39,5 @@ export function useNodeOrEdge<
     getNodeOrEdgeData()
   }, [excalId, isNode])
 
-  return { nodeOrEdge, loading }
+  return { nodeOrEdge, setNodeOrEdge, loading }
 }

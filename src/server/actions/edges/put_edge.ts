@@ -2,7 +2,9 @@
 
 import { eq } from "drizzle-orm"
 
-import { db, edges } from "@server"
+import "@utils/array"
+
+import { db, edges, getEdge } from "@server"
 
 import { type ExcalId } from "@types"
 
@@ -12,7 +14,7 @@ export async function putEdge(
   description?: string,
 ) {
   try {
-    const updatedEdge = await db
+    await db
       .update(edges)
       .set({
         title: title ?? "",
@@ -22,7 +24,9 @@ export async function putEdge(
       .where(eq(edges.excalId, excalId))
       .returning()
 
-    return updatedEdge
+    const newEdge = await getEdge(excalId)
+
+    return newEdge
   } catch (e) {
     console.error(e)
   }

@@ -21,8 +21,6 @@ import { stringIsEmpty } from "@utils"
 
 import { LoadingState } from "@types"
 
-import { putEdge, putNode } from "@actions"
-
 import {
   NodeOrEdgeProvider,
   useNodeOrEdgeData,
@@ -71,13 +69,15 @@ function NodeCardDialogContent() {
       </DialogHeader>
       <div className="flex flex-col ">
         <Title />
+        <Description />
       </div>
     </>
   )
 }
 
 function Title() {
-  const { nodeOrEdge, isNode } = useNodeOrEdgeData()
+  const { nodeOrEdge, updateNodeOrEdge } =
+    useNodeOrEdgeData()
 
   const [isEditing, setIsEditing] = useState(
     stringIsEmpty(nodeOrEdge?.title),
@@ -90,28 +90,26 @@ function Title() {
   if (isEditing) {
     return (
       <div className="flex items-center gap-2">
-        <Label htmlFor="name">Title</Label>
+        <Label htmlFor="title">Title</Label>
         <Input
-          id="name"
+          id="title"
           defaultValue={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <Button onClick={() => setIsEditing(false)}>
+        <Button
+          variant="outline"
+          className="btn border-red-500 text-red-500"
+          onClick={() => setIsEditing(false)}
+        >
           Cancel
         </Button>
         <Button
           onClick={async () => {
-            isNode
-              ? await putNode(
-                  nodeOrEdge.excalId,
-                  title,
-                  nodeOrEdge.description ?? "",
-                )
-              : await putEdge(
-                  nodeOrEdge.excalId,
-                  title,
-                  nodeOrEdge.description ?? "",
-                )
+            await updateNodeOrEdge(
+              title,
+              nodeOrEdge.description ?? "",
+            )
+            setIsEditing(false)
           }}
         >
           Save
@@ -120,13 +118,74 @@ function Title() {
     )
   } else {
     return (
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-2 items-center">
         <h2 className="text-3xl font-bold">
           {nodeOrEdge.title !== "" ? nodeOrEdge.title : "—"}
         </h2>
         <Button
           variant="ghost"
-          className="p-0 pt-[6px]"
+          className="p-0 px-2 mt-[6px]"
+          onClick={() => setIsEditing(true)}
+        >
+          <Pencil className="h-[15px] w-[15px] text-gray-500" />
+        </Button>
+      </div>
+    )
+  }
+}
+
+function Description() {
+  const { nodeOrEdge, updateNodeOrEdge } =
+    useNodeOrEdgeData()
+
+  const [isEditing, setIsEditing] = useState(
+    stringIsEmpty(nodeOrEdge?.description),
+  )
+
+  const [description, setDescription] = useState(
+    nodeOrEdge?.description,
+  )
+
+  if (!nodeOrEdge) return
+
+  if (isEditing) {
+    return (
+      <div className="flex items-center gap-2">
+        <Label htmlFor="description">Description</Label>
+        <Input
+          id="description"
+          defaultValue={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <Button
+          variant="outline"
+          className="btn border-red-500 text-red-500"
+          onClick={() => setIsEditing(false)}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={async () => {
+            await updateNodeOrEdge(
+              nodeOrEdge.title ?? "",
+              description,
+            )
+            setIsEditing(false)
+          }}
+        >
+          Save
+        </Button>
+      </div>
+    )
+  } else {
+    return (
+      <div className="flex gap-2 items-center">
+        <h2 className="text-3xl font-bold">
+          {nodeOrEdge.title !== "" ? nodeOrEdge.title : "—"}
+        </h2>
+        <Button
+          variant="ghost"
+          className="p-0 px-2 mt-[6px]"
           onClick={() => setIsEditing(true)}
         >
           <Pencil className="h-[15px] w-[15px] text-gray-500" />

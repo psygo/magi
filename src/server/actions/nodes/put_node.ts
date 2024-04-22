@@ -2,7 +2,9 @@
 
 import { eq } from "drizzle-orm"
 
-import { db, nodes } from "@server"
+import "@utils/array"
+
+import { db, getNode, nodes } from "@server"
 
 import { type ExcalId } from "@types"
 
@@ -12,7 +14,7 @@ export async function putNode(
   description?: string,
 ) {
   try {
-    const updatedNode = await db
+    await db
       .update(nodes)
       .set({
         title: title ?? "",
@@ -22,7 +24,9 @@ export async function putNode(
       .where(eq(nodes.excalId, excalId))
       .returning()
 
-    return updatedNode
+    const newNode = await getNode(excalId)
+
+    return newNode
   } catch (e) {
     console.error(e)
   }

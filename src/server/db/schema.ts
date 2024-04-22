@@ -82,7 +82,9 @@ function nodesCols() {
     ...dateTimeCols(),
     // Data
     title: varchar("title", { length: 256 }).notNull(),
-    description: varchar("description", { length: 4096 }),
+    description: varchar("description", {
+      length: 4096,
+    }).notNull(),
     imageUrl: varchar("image_url", { length: 1024 }),
     excalData: json("excal_data"),
     // Relationships
