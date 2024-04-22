@@ -15,6 +15,7 @@ import {
   DialogTrigger,
   Input,
   Label,
+  Textarea,
 } from "@shad"
 
 import { stringIsEmpty } from "@utils"
@@ -94,6 +95,7 @@ function Title() {
         <Input
           id="title"
           defaultValue={title}
+          placeholder="A Great Title"
           onChange={(e) => setTitle(e.target.value)}
         />
         <Button
@@ -150,45 +152,50 @@ function Description() {
 
   if (isEditing) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-2 justify-start">
         <Label htmlFor="description">Description</Label>
-        <Input
+        <Textarea
           id="description"
           defaultValue={description}
+          placeholder="A great description"
           onChange={(e) => setDescription(e.target.value)}
         />
-        <Button
-          variant="outline"
-          className="btn border-red-500 text-red-500"
-          onClick={() => setIsEditing(false)}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={async () => {
-            await updateNodeOrEdge(
-              nodeOrEdge.title ?? "",
-              description,
-            )
-            setIsEditing(false)
-          }}
-        >
-          Save
-        </Button>
+        <div className="flex gap-2 justify-end">
+          <Button
+            variant="outline"
+            className="btn border-red-500 text-red-500"
+            onClick={() => setIsEditing(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={async () => {
+              await updateNodeOrEdge(
+                nodeOrEdge.title ?? "",
+                description,
+              )
+              setIsEditing(false)
+            }}
+          >
+            Save
+          </Button>
+        </div>
       </div>
     )
   } else {
     return (
       <div className="flex gap-2 items-center">
-        <h2 className="text-3xl font-bold">
-          {nodeOrEdge.title !== "" ? nodeOrEdge.title : "—"}
-        </h2>
+        <p className="">
+          {nodeOrEdge.description !== ""
+            ? nodeOrEdge.description
+            : "—"}
+        </p>
         <Button
           variant="ghost"
-          className="p-0 px-2 mt-[6px]"
+          className="p-0 px-2 mt-[1px]"
           onClick={() => setIsEditing(true)}
         >
-          <Pencil className="h-[15px] w-[15px] text-gray-500" />
+          <Pencil className="h-[11px] w-[11px] text-gray-500" />
         </Button>
       </div>
     )
