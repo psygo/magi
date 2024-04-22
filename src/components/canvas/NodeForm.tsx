@@ -22,32 +22,17 @@ import {
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { postNodes } from "@actions"
-
 import {
-  nodeFormSchema,
-  type NodeFormValidation,
+  nodeEditFormSchema,
+  type NodeEditFormValidation,
 } from "@validation"
 
-import { useGraph } from "@context"
-
 export function NodeForm() {
-  const {
-    selectedNode,
-    isCreatingNode,
-    setIsCreatingNode,
-    coords,
-  } = useGraph()
-
-  const nodeForm = useForm<NodeFormValidation>({
-    resolver: zodResolver(nodeFormSchema),
-    defaultValues: {
-      title: selectedNode?.title ?? "",
-      description: selectedNode?.description ?? "",
-    },
+  const nodeForm = useForm<NodeEditFormValidation>({
+    resolver: zodResolver(nodeEditFormSchema),
   })
 
-  async function onSubmit(values: NodeFormValidation) {
+  async function onSubmit(values: NodeEditFormValidation) {
     // await postNode(
     //   values.title,
     //   values.description ?? "",
@@ -58,8 +43,8 @@ export function NodeForm() {
 
   return (
     <Sheet
-      open={isCreatingNode}
-      onOpenChange={setIsCreatingNode}
+    // open={isCreatingNode}
+    // onOpenChange={setIsCreatingNode}
     >
       <SheetTrigger></SheetTrigger>
       <SheetContent className="pt-3">

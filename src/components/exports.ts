@@ -1,2 +1,2 @@
 export * from "./common/exports"
-export * from "./graph/exports"
+export * from "./canvas/exports"
