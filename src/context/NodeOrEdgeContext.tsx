@@ -6,20 +6,16 @@ import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/typ
 
 import {
   type WithReactChildren,
-  type SelectEdgeWithCreatorAndStats,
   type SelectNodeWithCreatorAndStats,
   type LoadingState,
 } from "@types"
 
-import { putEdge, putNode } from "@actions"
+import { putNode } from "@actions"
 
 import { useNodeOrEdge } from "@hooks"
 
 type NodeOrEdgeContext = {
-  nodeOrEdge:
-    | SelectNodeWithCreatorAndStats
-    | SelectEdgeWithCreatorAndStats
-    | undefined
+  nodeOrEdge: SelectNodeWithCreatorAndStats | undefined
   loading: LoadingState
   isNode: boolean
   updateNodeOrEdge: (
@@ -48,17 +44,11 @@ export function NodeOrEdgeProvider({
     description?: string,
   ) {
     if (nodeOrEdge) {
-      const newNode = isNode
-        ? await putNode(
-            nodeOrEdge.excalId,
-            title ?? nodeOrEdge.title ?? "",
-            description ?? nodeOrEdge.description ?? "",
-          )
-        : await putEdge(
-            nodeOrEdge.excalId,
-            title ?? nodeOrEdge.title ?? "",
-            description ?? nodeOrEdge.description ?? "",
-          )
+      const newNode = await putNode(
+        nodeOrEdge.excalId,
+        title ?? nodeOrEdge.title ?? "",
+        description ?? nodeOrEdge.description ?? "",
+      )
 
       setNodeOrEdge(newNode)
     }

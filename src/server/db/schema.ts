@@ -65,34 +65,31 @@ export const usersRelations = relations(
   users,
   ({ many }) => ({
     nodes: many(nodes),
-    edges: many(edges),
     votes: many(votes),
     comments: many(comments),
   }),
 )
 
-function nodesCols() {
-  return {
-    // IDs
-    ...idCols(),
-    excalId: varchar("excal_id", { length: 256 })
-      .unique()
-      .notNull(),
-    // Metadata
-    ...dateTimeCols(),
-    // Data
-    title: varchar("title", { length: 256 }).notNull(),
-    description: varchar("description", {
-      length: 4096,
-    }).notNull(),
-    imageUrl: varchar("image_url", { length: 1024 }),
-    excalData: json("excal_data"),
-    // Relationships
-    creatorId: integer("creator_id").notNull(),
-  }
-}
-
-export const nodes = createTable("nodes", nodesCols())
+export const nodes = createTable("nodes", {
+  // IDs
+  ...idCols(),
+  excalId: varchar("excal_id", { length: 256 })
+    .unique()
+    .notNull(),
+  // Metadata
+  ...dateTimeCols(),
+  // Data
+  title: varchar("title", { length: 256 }).notNull(),
+  description: varchar("description", {
+    length: 4096,
+  }).notNull(),
+  imageUrl: varchar("image_url", { length: 1024 }),
+  excalData: json("excal_data"),
+  // Relationships
+  creatorId: integer("creator_id").notNull(),
+  fromId: varchar("from_id"),
+  toId: varchar("to_id"),
+})
 
 export const nodesRelations = relations(
   nodes,
@@ -101,47 +98,22 @@ export const nodesRelations = relations(
       fields: [nodes.creatorId],
       references: [users.id],
     }),
-    from: many(edges, { relationName: "from" }),
-    to: many(edges, { relationName: "to" }),
     votes: many(votes),
     comments: many(comments),
-  }),
-)
-
-export const edges = createTable("edges", {
-  ...nodesCols(),
-  fromId: varchar("from_id"),
-  toId: varchar("to_id"),
-})
-
-export const edgesRelations = relations(
-  edges,
-  ({ one, many }) => ({
-    creator: one(users, {
-      fields: [edges.creatorId],
-      references: [users.id],
-    }),
-    from: one(nodes, {
-      fields: [edges.fromId],
+    from: many(nodes, { relationName: "from" }),
+    to: many(nodes, { relationName: "to" }),
+    fromOrigin: one(nodes, {
+      fields: [nodes.fromId],
       references: [nodes.excalId],
       relationName: "from",
     }),
-    to: one(nodes, {
-      fields: [edges.toId],
+    toOrigin: one(nodes, {
+      fields: [nodes.toId],
       references: [nodes.excalId],
       relationName: "to",
     }),
-    votes: many(votes),
-    comments: many(comments),
   }),
 )
-
-function nodeEdgeIdCols() {
-  return {
-    nodeId: varchar("node_id"),
-    edgeId: varchar("edge_id"),
-  }
-}
 
 export const votes = createTable("votes", {
   // IDs
@@ -152,7 +124,7 @@ export const votes = createTable("votes", {
   points: integer("points").notNull(),
   // Relationships
   voterId: integer("voter_id").notNull(),
-  ...nodeEdgeIdCols(),
+  nodeId: varchar("node_id"),
 })
 
 export const votesRelations = relations(
@@ -166,10 +138,6 @@ export const votesRelations = relations(
       fields: [votes.nodeId],
       references: [nodes.excalId],
     }),
-    edge: one(edges, {
-      fields: [votes.edgeId],
-      references: [edges.excalId],
-    }),
   }),
 )
 
@@ -182,7 +150,7 @@ export const comments = createTable("comments", {
   content: varchar("content", { length: 4096 }),
   // Relationships
   commenterId: integer("commenter_id").notNull(),
-  ...nodeEdgeIdCols(),
+  nodeId: varchar("node_id"),
 })
 
 export const commentsRelations = relations(
@@ -195,10 +163,6 @@ export const commentsRelations = relations(
     node: one(nodes, {
       fields: [comments.nodeId],
       references: [nodes.excalId],
-    }),
-    edge: one(edges, {
-      fields: [comments.edgeId],
-      references: [edges.excalId],
     }),
   }),
 )

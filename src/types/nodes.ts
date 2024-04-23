@@ -12,6 +12,7 @@ export type InsertNode = InferSelectModel<typeof nodes>
 export type WithNodeStats = {
   stats?: {
     voteTotal?: number
+    commentTotal?: number
   }
 }
 

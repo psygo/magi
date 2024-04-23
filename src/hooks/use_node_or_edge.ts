@@ -5,18 +5,17 @@ import { useEffect, useState } from "react"
 import {
   type ExcalId,
   LoadingState,
-  type SelectEdgeWithCreatorAndStats,
   type SelectNodeWithCreatorAndStats,
 } from "@types"
 
-import { getEdge, getNode } from "@actions"
+import { getNode } from "@actions"
 
-export function useNodeOrEdge<
-  T extends
-    | SelectNodeWithCreatorAndStats
-    | SelectEdgeWithCreatorAndStats,
->(excalId: ExcalId, isNode = true) {
-  const [nodeOrEdge, setNodeOrEdge] = useState<T>()
+export function useNodeOrEdge(
+  excalId: ExcalId,
+  isNode = true,
+) {
+  const [nodeOrEdge, setNodeOrEdge] =
+    useState<SelectNodeWithCreatorAndStats>()
 
   const [loading, setLoading] = useState<LoadingState>(
     LoadingState.NotYet,
@@ -26,11 +25,9 @@ export function useNodeOrEdge<
     async function getNodeOrEdgeData() {
       setLoading(LoadingState.Loading)
 
-      const nodeOrEdgeData = isNode
-        ? await getNode(excalId)
-        : await getEdge(excalId)
+      const nodeOrEdgeData = await getNode(excalId)
 
-      if (nodeOrEdgeData) setNodeOrEdge(nodeOrEdgeData as T)
+      if (nodeOrEdgeData) setNodeOrEdge(nodeOrEdgeData)
 
       setLoading(LoadingState.Loaded)
     }

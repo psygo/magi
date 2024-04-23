@@ -1,11 +1,10 @@
 # Tasks
 
-1. [ ] Info Card
-2. [ ] Edit title and description form on the Info Card
-3. [ ] Comment on the Info Card
-4. [ ] Number of Comments on the info detail
-5. [ ] Edit Excalidraw Controls
-6. [ ] List connections on a node on the info card
+1. [ ] Comment on the Info Card
+2. [ ] Number of Comments on the info detail
+3. [ ] Edit Excalidraw Controls
+4. [ ] List connections on a node on the info card
+5. [ ] Guards for only altering your own content
 
 ## Second Gen
 

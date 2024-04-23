@@ -1,20 +1,14 @@
-import { getEdges, getNodes } from "@actions"
+import { getNodes } from "@actions"
 
 import { CanvasProvider } from "@context"
 
 import { Canvas } from "@components"
 
 export default async function HomePage() {
-  const [nodes, edges] = await Promise.all([
-    getNodes(),
-    getEdges(),
-  ])
+  const nodes = await getNodes()
 
   return nodes ? (
-    <CanvasProvider
-      initialNodes={nodes}
-      initialEdges={edges}
-    >
+    <CanvasProvider initialNodes={nodes}>
       <Canvas />
     </CanvasProvider>
   ) : null

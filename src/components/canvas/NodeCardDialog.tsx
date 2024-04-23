@@ -15,6 +15,7 @@ import {
   DialogTrigger,
   Input,
   Label,
+  Separator,
   Textarea,
 } from "@shad"
 
@@ -68,9 +69,10 @@ function NodeCardDialogContent() {
           </p>
         </DialogTitle>
       </DialogHeader>
-      <div className="flex flex-col ">
+      <div className="flex flex-col">
         <Title />
         <Description />
+        <Separator className="mt-4" />
       </div>
     </>
   )

@@ -20,7 +20,6 @@ export async function putComment(
       .update(comments)
       .set({
         content,
-        commenterId: userId,
         updatedAt: new Date(),
       })
       .where(eq(comments.nanoId, nanoId))

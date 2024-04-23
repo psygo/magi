@@ -9,24 +9,10 @@ import {
   type ExcalId,
 } from "@types"
 
-import {
-  db,
-  votes,
-  users,
-  edges,
-  comments,
-  nodes,
-} from "@server"
+import { db, votes, users, comments, nodes } from "@server"
 
-export async function getComments(
-  excalId: ExcalId,
-  isNode: boolean,
-) {
+export async function getComments(excalId: ExcalId) {
   try {
-    const nodeOrEdgeWhere = isNode
-      ? eq(nodes.excalId, excalId)
-      : eq(edges.excalId, excalId)
-
     const n = await db
       .select({
         ...getTableColumns(comments),
@@ -35,10 +21,10 @@ export async function getComments(
         },
       })
       .from(comments)
-      .where(nodeOrEdgeWhere)
-      .leftJoin(votes, eq(edges.excalId, votes.nodeId))
-      .leftJoin(users, eq(edges.creatorId, users.id))
-      .groupBy(edges.id, users.id)
+      .where(eq(nodes.excalId, excalId))
+      .leftJoin(votes, eq(nodes.excalId, votes.nodeId))
+      .leftJoin(users, eq(nodes.creatorId, users.id))
+      .groupBy(nodes.id, users.id)
 
     return n as SelectCommentWithCreator[]
   } catch (e) {

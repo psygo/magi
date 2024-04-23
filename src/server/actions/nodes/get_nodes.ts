@@ -9,28 +9,36 @@ import {
   type SelectNodeWithCreatorAndStats,
 } from "@types"
 
-import { db, nodes, votes, users } from "@server"
+import { db, nodes, votes, users, comments } from "@server"
+
+function getNodeQuery() {
+  return db
+    .select({
+      ...getTableColumns(nodes),
+      creator: {
+        ...getTableColumns(users),
+      },
+      stats: {
+        voteTotal:
+          sql<number>`sum(${votes.points})`.mapWith(Number),
+        commentTotal:
+          sql<number>`count(${comments.id})`.mapWith(
+            Number,
+          ),
+      },
+    })
+    .from(nodes)
+    .leftJoin(users, eq(nodes.creatorId, users.id))
+    .leftJoin(votes, eq(nodes.excalId, votes.nodeId))
+    .leftJoin(comments, eq(nodes.excalId, comments.nodeId))
+    .groupBy(nodes.id, users.id)
+}
 
 export async function getNodes() {
   try {
-    const n = await db
-      .select({
-        ...getTableColumns(nodes),
-        creator: {
-          ...getTableColumns(users),
-        },
-        stats: {
-          voteTotal:
-            sql<number>`sum(${votes.points})`.mapWith(
-              Number,
-            ),
-        },
-      })
-      .from(nodes)
-      .orderBy(desc(nodes.updatedAt))
-      .leftJoin(votes, eq(nodes.excalId, votes.nodeId))
-      .leftJoin(users, eq(nodes.creatorId, users.id))
-      .groupBy(nodes.id, users.id)
+    const n = await getNodeQuery().orderBy(
+      desc(nodes.updatedAt),
+    )
 
     return n as SelectNodeWithCreatorAndStats[]
   } catch (e) {
@@ -40,29 +48,11 @@ export async function getNodes() {
 
 export async function getNode(excalId: ExcalId) {
   try {
-    const n = (
-      await db
-        .select({
-          ...getTableColumns(nodes),
-          creator: {
-            ...getTableColumns(users),
-          },
-          stats: {
-            voteTotal:
-              sql<number>`sum(${votes.points})`.mapWith(
-                Number,
-              ),
-          },
-        })
-        .from(nodes)
-        .where(eq(nodes.excalId, excalId))
-        .leftJoin(votes, eq(nodes.excalId, votes.nodeId))
-        .leftJoin(users, eq(nodes.creatorId, users.id))
-        .groupBy(nodes.id, users.id)
-        .limit(1)
-    ).first()
+    const n = await getNodeQuery()
+      .where(eq(nodes.excalId, excalId))
+      .limit(1)
 
-    return n as SelectNodeWithCreatorAndStats
+    return n.first() as SelectNodeWithCreatorAndStats
   } catch (e) {
     console.error(e)
   }

@@ -2,9 +2,14 @@
 
 import { comments, db } from "@server"
 
+import { type ExcalId } from "@types"
+
 import { userIdFromClerk } from "../../utils/exports"
 
-export async function postComment(content: string) {
+export async function postComment(
+  content: string,
+  excalId: ExcalId,
+) {
   try {
     const userId = await userIdFromClerk()
     if (!userId) return
@@ -14,6 +19,7 @@ export async function postComment(content: string) {
       .values({
         content,
         commenterId: userId,
+        nodeId: excalId,
       })
       .returning()
 

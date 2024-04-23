@@ -4,17 +4,11 @@ import { useMemo, useState } from "react"
 
 import dynamic from "next/dynamic"
 
-import { type ExcalidrawArrowElement } from "@excalidraw/excalidraw/types/element/types"
 import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 
 import { toDate } from "@utils"
 
-import {
-  type EdgesRecords,
-  type SelectEdgeWithCreatorAndStats,
-} from "@types"
-
-import { postEdges, postNodes } from "@actions"
+import { postNodes } from "@actions"
 
 import {
   nodesOrEdgesArrayToRecords,
@@ -46,8 +40,6 @@ export function Canvas() {
   const {
     nodes,
     setNodes,
-    edges,
-    setEdges,
     excalElements,
     setExcalElements,
     excalAppState,
@@ -86,15 +78,9 @@ export function Canvas() {
     const notUpdatedYet = excalElements.filter(
       (el) => toDate(el.updated) > lastUpdated,
     )
-    const notUpdatedYetNodes = notUpdatedYet.filter(
-      (n) => n.type !== "arrow",
-    )
-    const notUpdatedYetEdges = notUpdatedYet.filter(
-      (n) => n.type === "arrow",
-    ) as ExcalidrawArrowElement[]
 
-    if (notUpdatedYetNodes.length > 0) {
-      const newNodes = await postNodes(notUpdatedYetNodes)
+    if (notUpdatedYet.length > 0) {
+      const newNodes = await postNodes(notUpdatedYet)
 
       if (newNodes) {
         const newNodesRecords =
@@ -103,23 +89,6 @@ export function Canvas() {
         setNodes({
           ...nodes,
           ...newNodesRecords,
-        })
-
-        setLastUpdated(new Date())
-      }
-    }
-    if (notUpdatedYetEdges.length > 0) {
-      const newEdges = await postEdges(notUpdatedYetEdges)
-
-      if (newEdges) {
-        const newEdgesRecords = nodesOrEdgesArrayToRecords<
-          SelectEdgeWithCreatorAndStats,
-          EdgesRecords
-        >(newEdges)
-
-        setEdges({
-          ...edges,
-          ...newEdgesRecords,
         })
 
         setLastUpdated(new Date())
@@ -138,14 +107,14 @@ export function Canvas() {
 
   return (
     <div>
-      <div
+      <section
         className="absolute top-0 w-screen h-screen"
         onPointerUp={delayedExcalUpdate}
         onKeyUp={delayedExcalUpdate}
       >
         {Excal}
-      </div>
-      <div>
+      </section>
+      <section>
         {excalElements.length > 0 &&
           excalElements.map((exEl, i) => {
             const zoom = excalAppState.zoom.value
@@ -166,7 +135,7 @@ export function Canvas() {
               />
             )
           })}
-      </div>
+      </section>
     </div>
   )
 }
