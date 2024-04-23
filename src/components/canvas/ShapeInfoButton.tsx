@@ -6,8 +6,8 @@ import { useCanvas } from "@context"
 
 import { cn } from "@styles"
 
-import { VoteButton } from "./VoteButton"
-import { NodeCardDialog } from "./NodeCardDialog"
+import { NodeCardDialog } from "../nodes/exports"
+import { VoteButton } from "../votes/exports"
 
 type ShapeInfoButtonsProps = {
   x: number

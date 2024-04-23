@@ -74,10 +74,10 @@
         "./src/server/exports"
       ],
       "@shad/*": [
-        "./src/components/shad/*"
+        "src/components/common/shad/*"
       ],
       "@shad": [
-        "./src/components/shad/exports"
+        "src/components/common/shad/exports"
       ],
       "@styles/*": [
         "./src/styles/*"

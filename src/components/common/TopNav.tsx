@@ -5,7 +5,7 @@ import {
   UserButton,
 } from "@clerk/nextjs"
 
-import { Button } from "@shad"
+import { Button } from "~/components/common/shad/exports"
 
 import { ThemeButton } from "./ThemeButton"
 

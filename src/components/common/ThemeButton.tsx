@@ -6,7 +6,7 @@ import { saveTheme } from "@actions"
 
 import { useTheme } from "@context"
 
-import { Button } from "@shad"
+import { Button } from "~/components/common/shad/exports"
 
 export function ThemeButton() {
   const { cycleTheme } = useTheme()

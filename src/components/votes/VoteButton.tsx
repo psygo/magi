@@ -8,7 +8,7 @@ import { type ExcalId } from "@types"
 
 import { postVote } from "@actions"
 
-import { Button } from "@shad"
+import { Button } from "~/components/common/shad/exports"
 
 type VoteButtonProps = {
   up?: boolean

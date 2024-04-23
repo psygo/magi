@@ -17,7 +17,7 @@ import {
   Label,
   Separator,
   Textarea,
-} from "@shad"
+} from "~/components/common/shad/exports"
 
 import { stringIsEmpty } from "@utils"
 
