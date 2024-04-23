@@ -39,13 +39,11 @@ export const initialAppState: AppState = {
   zoom: { value: 1 },
 }
 
-export function nodesOrEdgesArrayToRecords(
-  nodesOrEdges: SelectNodeWithCreatorAndStats[],
+export function nodesArrayToRecords(
+  nodes: SelectNodeWithCreatorAndStats[],
 ) {
   const records = {} as NodesRecords
-  nodesOrEdges.forEach((n) => {
-    records[n.excalId] = n
-  })
+  nodes.forEach((n) => (records[n.excalId] = n))
   return records
 }
 
@@ -58,7 +56,7 @@ export function CanvasProvider({
   children,
 }: CanvasProviderProps) {
   const [nodes, setNodes] = useState<NodesRecords>(
-    nodesOrEdgesArrayToRecords(initialNodes),
+    nodesArrayToRecords(initialNodes),
   )
 
   const [excalElements, setExcalElements] = useState<

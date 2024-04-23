@@ -23,10 +23,7 @@ import { stringIsEmpty } from "@utils"
 
 import { LoadingState } from "@types"
 
-import {
-  NodeOrEdgeProvider,
-  useNodeOrEdgeData,
-} from "@context"
+import { NodeProvider, useNodeOrEdgeData } from "@context"
 
 import { Progress } from "../common/exports"
 
@@ -45,18 +42,18 @@ export function NodeCardDialog({
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <NodeOrEdgeProvider excalEl={excalEl}>
+        <NodeProvider excalEl={excalEl}>
           <NodeCardDialogContent />
-        </NodeOrEdgeProvider>
+        </NodeProvider>
       </DialogContent>
     </Dialog>
   )
 }
 
 function NodeCardDialogContent() {
-  const { nodeOrEdge, loading } = useNodeOrEdgeData()
+  const { node, loading } = useNodeOrEdgeData()
 
-  if (!nodeOrEdge || loading !== LoadingState.Loaded)
+  if (!node || loading !== LoadingState.Loaded)
     return <Progress />
 
   return (
@@ -64,9 +61,7 @@ function NodeCardDialogContent() {
       <DialogHeader>
         <DialogTitle className="flex gap-2">
           <p className="text-gray-500">Node Data</p>
-          <p className="text-gray-400">
-            {nodeOrEdge?.excalId}
-          </p>
+          <p className="text-gray-400">{node?.excalId}</p>
         </DialogTitle>
       </DialogHeader>
       <div className="flex flex-col">
@@ -79,16 +74,15 @@ function NodeCardDialogContent() {
 }
 
 function Title() {
-  const { nodeOrEdge, updateNodeOrEdge } =
-    useNodeOrEdgeData()
+  const { node, updateNode } = useNodeOrEdgeData()
 
   const [isEditing, setIsEditing] = useState(
-    stringIsEmpty(nodeOrEdge?.title),
+    stringIsEmpty(node?.title),
   )
 
-  const [title, setTitle] = useState(nodeOrEdge?.title)
+  const [title, setTitle] = useState(node?.title)
 
-  if (!nodeOrEdge) return
+  if (!node) return
 
   if (isEditing) {
     return (
@@ -109,10 +103,8 @@ function Title() {
         </Button>
         <Button
           onClick={async () => {
-            await updateNodeOrEdge(
-              title,
-              nodeOrEdge.description ?? "",
-            )
+            await updateNode(title, node.description ?? "")
+
             setIsEditing(false)
           }}
         >
@@ -124,7 +116,7 @@ function Title() {
     return (
       <div className="flex gap-2 items-center">
         <h2 className="text-3xl font-bold">
-          {nodeOrEdge.title !== "" ? nodeOrEdge.title : "—"}
+          {node.title !== "" ? node.title : "—"}
         </h2>
         <Button
           variant="ghost"
@@ -139,18 +131,17 @@ function Title() {
 }
 
 function Description() {
-  const { nodeOrEdge, updateNodeOrEdge } =
-    useNodeOrEdgeData()
+  const { node, updateNode } = useNodeOrEdgeData()
 
   const [isEditing, setIsEditing] = useState(
-    stringIsEmpty(nodeOrEdge?.description),
+    stringIsEmpty(node?.description),
   )
 
   const [description, setDescription] = useState(
-    nodeOrEdge?.description,
+    node?.description,
   )
 
-  if (!nodeOrEdge) return
+  if (!node) return
 
   if (isEditing) {
     return (
@@ -172,10 +163,11 @@ function Description() {
           </Button>
           <Button
             onClick={async () => {
-              await updateNodeOrEdge(
-                nodeOrEdge.title ?? "",
+              await updateNode(
+                node.title ?? "",
                 description,
               )
+
               setIsEditing(false)
             }}
           >
@@ -188,9 +180,7 @@ function Description() {
     return (
       <div className="flex gap-2 items-center">
         <p className="">
-          {nodeOrEdge.description !== ""
-            ? nodeOrEdge.description
-            : "—"}
+          {node.description !== "" ? node.description : "—"}
         </p>
         <Button
           variant="ghost"

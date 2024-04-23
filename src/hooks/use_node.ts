@@ -10,11 +10,8 @@ import {
 
 import { getNode } from "@actions"
 
-export function useNodeOrEdge(
-  excalId: ExcalId,
-  isNode = true,
-) {
-  const [nodeOrEdge, setNodeOrEdge] =
+export function useNode(excalId: ExcalId) {
+  const [node, setNode] =
     useState<SelectNodeWithCreatorAndStats>()
 
   const [loading, setLoading] = useState<LoadingState>(
@@ -25,16 +22,16 @@ export function useNodeOrEdge(
     async function getNodeOrEdgeData() {
       setLoading(LoadingState.Loading)
 
-      const nodeOrEdgeData = await getNode(excalId)
+      const nodeData = await getNode(excalId)
 
-      if (nodeOrEdgeData) setNodeOrEdge(nodeOrEdgeData)
+      if (nodeData) setNode(nodeData)
 
       setLoading(LoadingState.Loaded)
     }
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getNodeOrEdgeData()
-  }, [excalId, isNode])
+  }, [excalId])
 
-  return { nodeOrEdge, setNodeOrEdge, loading }
+  return { node, setNode, loading }
 }

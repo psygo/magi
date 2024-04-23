@@ -8,10 +8,12 @@ import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types
 
 import { toDate } from "@utils"
 
+import { LoadingState } from "@types"
+
 import { postNodes } from "@actions"
 
 import {
-  nodesOrEdgesArrayToRecords,
+  nodesArrayToRecords,
   useCanvas,
   useTheme,
 } from "@context"
@@ -36,6 +38,9 @@ export function Canvas() {
 
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI>()
+  const [loading, setLoading] = useState(
+    LoadingState.NotYet,
+  )
 
   const {
     nodes,
@@ -65,7 +70,15 @@ export function Canvas() {
         onChange={() => {
           const els =
             excalidrawAPI?.getSceneElementsIncludingDeleted()
-          setExcalAppState(excalidrawAPI!.getAppState())
+
+          const appState = excalidrawAPI!.getAppState()
+          setExcalAppState(appState)
+
+          setLoading(
+            appState.isLoading
+              ? LoadingState.Loading
+              : LoadingState.Loaded,
+          )
 
           if (els) setExcalElements([...els])
         }}
@@ -84,7 +97,7 @@ export function Canvas() {
 
       if (newNodes) {
         const newNodesRecords =
-          nodesOrEdgesArrayToRecords(newNodes)
+          nodesArrayToRecords(newNodes)
 
         setNodes({
           ...nodes,
@@ -115,7 +128,8 @@ export function Canvas() {
         {Excal}
       </section>
       <section>
-        {excalElements.length > 0 &&
+        {loading === LoadingState.Loaded &&
+          excalElements.length > 0 &&
           excalElements.map((exEl, i) => {
             const zoom = excalAppState.zoom.value
             const [x, y] = [

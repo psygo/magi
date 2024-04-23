@@ -1,3 +1,3 @@
 export * from "./CanvasContext"
-export * from "./NodeOrEdgeContext"
+export * from "./NodeContext"
 export * from "./ThemeContext"

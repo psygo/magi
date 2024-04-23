@@ -7,9 +7,9 @@ import { Canvas } from "@components"
 export default async function HomePage() {
   const nodes = await getNodes()
 
-  return nodes ? (
+  return (
     <CanvasProvider initialNodes={nodes}>
       <Canvas />
     </CanvasProvider>
-  ) : null
+  )
 }

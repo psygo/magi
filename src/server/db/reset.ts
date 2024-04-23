@@ -4,13 +4,15 @@ import { sql } from "drizzle-orm"
 
 import { db } from "."
 import { nodes, users } from "./schema"
-// import { mockUsers } from "./mock"
+import { mockUsers } from "./mock"
 
-export async function reset() {
+export async function reset(mock = true) {
   try {
     await deleteEverything()
 
-    // await mockUsers()
+    if (mock) {
+      await mockUsers()
+    }
   } catch (e) {
     console.error(e)
   }
