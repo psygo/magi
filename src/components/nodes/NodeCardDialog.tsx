@@ -1,8 +1,6 @@
 "use client"
 
-import { useState } from "react"
-
-import { Info, Pencil } from "lucide-react"
+import { Info } from "lucide-react"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
@@ -13,19 +11,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  Input,
-  Label,
   Separator,
-  Textarea,
 } from "~/components/common/shad/exports"
-
-import { stringIsEmpty } from "@utils"
 
 import { LoadingState } from "@types"
 
-import { NodeProvider, useNodeOrEdgeData } from "@context"
+import { NodeProvider, useNodeData } from "@context"
 
 import { Progress } from "../common/exports"
+
+import { Title } from "./Title"
+import { Description } from "./Description"
 
 type NodeEdgeCardDialogProps = {
   excalEl: ExcalidrawElement
@@ -51,7 +47,7 @@ export function NodeCardDialog({
 }
 
 function NodeCardDialogContent() {
-  const { node, loading } = useNodeOrEdgeData()
+  const { node, loading } = useNodeData()
 
   if (!node || loading !== LoadingState.Loaded)
     return <Progress />
@@ -71,125 +67,4 @@ function NodeCardDialogContent() {
       </div>
     </>
   )
-}
-
-function Title() {
-  const { node, updateNode } = useNodeOrEdgeData()
-
-  const [isEditing, setIsEditing] = useState(
-    stringIsEmpty(node?.title),
-  )
-
-  const [title, setTitle] = useState(node?.title)
-
-  if (!node) return
-
-  if (isEditing) {
-    return (
-      <div className="flex items-center gap-2">
-        <Label htmlFor="title">Title</Label>
-        <Input
-          id="title"
-          defaultValue={title}
-          placeholder="A Great Title"
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <Button
-          variant="outline"
-          className="btn border-red-500 text-red-500"
-          onClick={() => setIsEditing(false)}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={async () => {
-            await updateNode(title, node.description ?? "")
-
-            setIsEditing(false)
-          }}
-        >
-          Save
-        </Button>
-      </div>
-    )
-  } else {
-    return (
-      <div className="flex gap-2 items-center">
-        <h2 className="text-3xl font-bold">
-          {node.title !== "" ? node.title : "—"}
-        </h2>
-        <Button
-          variant="ghost"
-          className="p-0 px-2 mt-[6px]"
-          onClick={() => setIsEditing(true)}
-        >
-          <Pencil className="h-[15px] w-[15px] text-gray-500" />
-        </Button>
-      </div>
-    )
-  }
-}
-
-function Description() {
-  const { node, updateNode } = useNodeOrEdgeData()
-
-  const [isEditing, setIsEditing] = useState(
-    stringIsEmpty(node?.description),
-  )
-
-  const [description, setDescription] = useState(
-    node?.description,
-  )
-
-  if (!node) return
-
-  if (isEditing) {
-    return (
-      <div className="flex flex-col gap-2 justify-start">
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          defaultValue={description}
-          placeholder="A great description"
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <div className="flex gap-2 justify-end">
-          <Button
-            variant="outline"
-            className="btn border-red-500 text-red-500"
-            onClick={() => setIsEditing(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={async () => {
-              await updateNode(
-                node.title ?? "",
-                description,
-              )
-
-              setIsEditing(false)
-            }}
-          >
-            Save
-          </Button>
-        </div>
-      </div>
-    )
-  } else {
-    return (
-      <div className="flex gap-2 items-center">
-        <p className="">
-          {node.description !== "" ? node.description : "—"}
-        </p>
-        <Button
-          variant="ghost"
-          className="p-0 px-2 mt-[1px]"
-          onClick={() => setIsEditing(true)}
-        >
-          <Pencil className="h-[11px] w-[11px] text-gray-500" />
-        </Button>
-      </div>
-    )
-  }
 }

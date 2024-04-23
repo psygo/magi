@@ -2,8 +2,6 @@
 
 ## Services Used
 
-This project has been set up with the [`create-t3-app`](https://create.t3.gg/) script.
-
 - [Vercel](https://vercel.com) for handling deployment.
 - [Vercel Postgres](https://vercel.com/docs/storage/vercel-postgres) for handling the DB.
 - [uploadthing](https://uploadthing.com) for image or file upload.
@@ -13,6 +11,8 @@ This project has been set up with the [`create-t3-app`](https://create.t3.gg/) s
 - [Sentry](https://sentry.io) for error monitoring.
 
 ## Dev
+
+This project has been set up with the [`create-t3-app`](https://create.t3.gg/) script.
 
 ### Env
 

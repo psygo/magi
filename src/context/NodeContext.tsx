@@ -63,7 +63,7 @@ export function NodeProvider({
   )
 }
 
-export function useNodeOrEdgeData() {
+export function useNodeData() {
   const context = useContext(NodeContext)
 
   if (!context) {

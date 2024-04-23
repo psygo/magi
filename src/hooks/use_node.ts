@@ -19,7 +19,7 @@ export function useNode(excalId: ExcalId) {
   )
 
   useEffect(() => {
-    async function getNodeOrEdgeData() {
+    async function getNodeData() {
       setLoading(LoadingState.Loading)
 
       const nodeData = await getNode(excalId)
@@ -30,7 +30,7 @@ export function useNode(excalId: ExcalId) {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getNodeOrEdgeData()
+    getNodeData()
   }, [excalId])
 
   return { node, setNode, loading }
