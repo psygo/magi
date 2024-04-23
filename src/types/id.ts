@@ -1,5 +1,8 @@
 import { z } from "zod"
 
+export const numberIdSchema = z.number()
+export type NumberId = z.infer<typeof numberIdSchema>
+
 export const stringIdSchema = z.string()
 export type StringId = z.infer<typeof stringIdSchema>
 

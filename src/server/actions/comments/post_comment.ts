@@ -1,8 +1,15 @@
 "use server"
 
+import "@utils/array"
+
 import { comments, db } from "@server"
 
-import { type ExcalId } from "@types"
+import { getComment } from "@actions"
+
+import {
+  type SelectCommentWithCreator,
+  type ExcalId,
+} from "@types"
 
 import { userIdFromClerk } from "../../utils/exports"
 
@@ -14,7 +21,7 @@ export async function postComment(
     const userId = await userIdFromClerk()
     if (!userId) return
 
-    const commentData = await db
+    const commentInsertData = await db
       .insert(comments)
       .values({
         content,
@@ -23,7 +30,12 @@ export async function postComment(
       })
       .returning()
 
-    return commentData
+    const commentData = await getComment(
+      commentInsertData.first().nanoId,
+    )
+
+    // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
+    return commentData as SelectCommentWithCreator
   } catch (e) {
     console.error(e)
   }
