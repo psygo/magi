@@ -1,18 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import React, { useState } from "react"
 
-import { Pencil } from "lucide-react"
-
-import {
-  Button,
-  Label,
-  Textarea,
-} from "~/components/common/shad/exports"
+import { Label, Textarea } from "@shad"
 
 import { stringIsEmpty } from "@utils"
 
 import { useNodeData } from "@context"
+
+import {
+  EditableContentContainerEdit,
+  EditableContentContainerView,
+  autoFocus,
+} from "../common/exports"
 
 export function Description() {
   const { node, updateNode } = useNodeData()
@@ -29,51 +29,34 @@ export function Description() {
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-2 justify-start">
+      <EditableContentContainerEdit
+        onCancel={() => setIsEditing(false)}
+        onSave={async () => {
+          await updateNode(node.title, description)
+
+          setIsEditing(false)
+        }}
+      >
         <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
-          defaultValue={description}
           placeholder="A great description"
+          {...autoFocus}
+          value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <div className="flex gap-2 justify-end">
-          <Button
-            variant="outline"
-            className="btn border-red-500 text-red-500"
-            onClick={() => setIsEditing(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={async () => {
-              await updateNode(
-                node.title ?? "",
-                description,
-              )
-
-              setIsEditing(false)
-            }}
-          >
-            Save
-          </Button>
-        </div>
-      </div>
+      </EditableContentContainerEdit>
     )
   } else {
     return (
-      <div className="flex gap-2 items-center">
+      <EditableContentContainerView
+        onEdit={() => setIsEditing(true)}
+        iconSize={13}
+      >
         <p className="">
           {node.description !== "" ? node.description : "—"}
         </p>
-        <Button
-          variant="ghost"
-          className="p-0 px-2 mt-[1px]"
-          onClick={() => setIsEditing(true)}
-        >
-          <Pencil className="h-[11px] w-[11px] text-gray-500" />
-        </Button>
-      </div>
+      </EditableContentContainerView>
     )
   }
 }

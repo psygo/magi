@@ -1,10 +1,11 @@
 # Tasks
 
 1. [ ] Comment on the Info Card
-2. [ ] Number of Comments on the info detail
-3. [ ] Edit Excalidraw Controls
-4. [ ] List connections on a node on the info card
-5. [ ] Guards for only altering your own content
+1. [ ] Push IDs to the URL path
+1. [ ] Number of Comments on the info detail
+1. [ ] Edit Excalidraw Controls
+1. [ ] List connections on a node on the info card
+1. [ ] Guards for only altering your own content
 
 ## Second Gen
 

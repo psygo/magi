@@ -13,7 +13,7 @@ import { db, votes, users, comments, nodes } from "@server"
 
 export async function getComments(excalId: ExcalId) {
   try {
-    const n = await db
+    const c = await db
       .select({
         ...getTableColumns(comments),
         creator: {
@@ -21,12 +21,13 @@ export async function getComments(excalId: ExcalId) {
         },
       })
       .from(comments)
+      .leftJoin(nodes, eq(comments.nodeId, nodes.excalId))
       .where(eq(nodes.excalId, excalId))
-      .leftJoin(votes, eq(nodes.excalId, votes.nodeId))
       .leftJoin(users, eq(nodes.creatorId, users.id))
-      .groupBy(nodes.id, users.id)
+      .leftJoin(votes, eq(nodes.excalId, votes.nodeId))
+      .groupBy(comments.id, nodes.id, users.id)
 
-    return n as SelectCommentWithCreator[]
+    return c as SelectCommentWithCreator[]
   } catch (e) {
     console.error(e)
   }

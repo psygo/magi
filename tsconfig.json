@@ -113,7 +113,7 @@
     "**/*.cjs",
     "**/*.js",
     ".next/types/**/*.ts"
-  ],
+, "src/components/comments"  ],
   "exclude": [
     "node_modules"
   ]

@@ -20,6 +20,8 @@ import { NodeProvider, useNodeData } from "@context"
 
 import { Progress } from "../common/exports"
 
+import { CommentSection } from "../comments/exports"
+
 import { Title } from "./Title"
 import { Description } from "./Description"
 
@@ -37,7 +39,7 @@ export function NodeCardDialog({
           <Info className="h-[13px] w-[13px]" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="">
         <NodeProvider excalEl={excalEl}>
           <NodeCardDialogContent />
         </NodeProvider>
@@ -60,10 +62,11 @@ function NodeCardDialogContent() {
           <p className="text-gray-400">{node?.excalId}</p>
         </DialogTitle>
       </DialogHeader>
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-4 mt-4">
         <Title />
         <Description />
-        <Separator className="mt-4" />
+        <Separator className="my-2" />
+        <CommentSection excalId={node.excalId} />
       </div>
     </>
   )
