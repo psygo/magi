@@ -66,11 +66,11 @@ export function EditableContentContainerView({
   children,
 }: EditableContentViewContainerProps) {
   return (
-    <div className="flex gap-2 items-center">
+    <div className={cn("flex gap-2 items-center w-max")}>
       {children}
       <Button
         variant="ghost"
-        className="p-0 px-2 mt-[1px]"
+        className="p-0 px-2 mt-[1px] h-max"
         onClick={onEdit}
       >
         <Pencil

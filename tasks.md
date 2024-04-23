@@ -1,5 +1,6 @@
 # Tasks
 
+1. [ ] Creator points on the node, and comment cards
 1. [ ] Comment on the Info Card
 1. [ ] Push IDs to the URL path
 1. [ ] Number of Comments on the info detail

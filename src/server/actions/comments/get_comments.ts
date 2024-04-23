@@ -24,7 +24,7 @@ export async function getComments(excalId: ExcalId) {
       .from(comments)
       .where(eq(nodes.excalId, excalId))
       .leftJoin(nodes, eq(comments.nodeId, nodes.excalId))
-      .leftJoin(users, eq(nodes.creatorId, users.id))
+      .leftJoin(users, eq(comments.commenterId, users.id))
       .groupBy(comments.id, nodes.id, users.id)
       .orderBy(desc(comments.updatedAt))
 

@@ -8,13 +8,14 @@ import {
   LoadingState,
   type SelectCommentWithCreator,
   type ExcalId,
+  type SelectUser,
 } from "@types"
 
 import { postComment, putComment } from "@actions"
 
 import { useComments } from "@hooks"
 
-import { Textarea } from "@shad"
+import { Separator, Textarea } from "@shad"
 
 import {
   EditableContentContainerEdit,
@@ -39,15 +40,20 @@ export function CommentSection({
     <>
       <h2 className="text-xl font-bold">Comments</h2>
       <Comment excalId={excalId} />
-      {comments.map((c, i) => {
-        return (
-          <Comment
-            key={i}
-            commentInitialData={c}
-            excalId={excalId}
-          />
-        )
-      })}
+      <div className="flex flex-col gap-2 mt-2">
+        {comments.map((c, i) => {
+          return (
+            <div key={i} className="flex flex-col gap-2">
+              <Separator />
+              <Comment
+                commentInitialData={c}
+                excalId={excalId}
+              />
+            </div>
+          )
+        })}
+      </div>
+      <Separator className="mt-[-6px]" />
     </>
   )
 }
@@ -83,8 +89,6 @@ export function Comment({
               )
             : await postComment(commentContent, excalId)
 
-          console.log(newComment)
-
           if (newComment) {
             setComment(newComment)
             setIsEditing(false)
@@ -108,8 +112,31 @@ export function Comment({
         onEdit={() => setIsEditing(true)}
         iconSize={13}
       >
-        <p className="">{commentContent}</p>
+        <div className="flex flex-wrap gap-4 items-center">
+          <p className="">{commentContent}</p>
+          <div className="flex flex-wrap gap-2 items-center">
+            <CommentUser user={comment!.creator!} />
+            <p className="text-xs text-gray-500">
+              {comment?.updatedAt.toLocaleDateString()}{" "}
+              {comment?.updatedAt.toLocaleTimeString()}
+            </p>
+          </div>
+        </div>
       </EditableContentContainerView>
     )
   }
+}
+
+type CommentUserProps = {
+  user: SelectUser
+}
+
+function CommentUser({ user }: CommentUserProps) {
+  return (
+    <div className="flex">
+      <h4 className="text-sm font-bold text-orange-500">
+        @{user.username}
+      </h4>
+    </div>
+  )
 }
