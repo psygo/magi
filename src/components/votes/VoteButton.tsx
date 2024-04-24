@@ -9,11 +9,13 @@ import { Button } from "@shad"
 type VoteButtonProps = {
   up?: boolean
   onClick: () => void
+  iconSize?: number
 }
 
 export function VoteButton({
   up = false,
   onClick,
+  iconSize = 18,
 }: VoteButtonProps) {
   const [hovered, setHovered] = useState(false)
 
@@ -27,13 +29,19 @@ export function VoteButton({
     >
       {up ? (
         <ArrowUp
-          className="h-4 w-4"
-          style={{ color: hovered ? "red" : "" }}
+          style={{
+            color: hovered ? "red" : "",
+            height: iconSize,
+            width: iconSize,
+          }}
         />
       ) : (
         <ArrowDown
-          className="h-4 w-4"
-          style={{ color: hovered ? "red" : "" }}
+          style={{
+            color: hovered ? "red" : "",
+            height: iconSize,
+            width: iconSize,
+          }}
         />
       )}
     </Button>

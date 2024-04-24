@@ -1,5 +1,7 @@
 "use client"
 
+import { useState } from "react"
+
 import { Info } from "lucide-react"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
@@ -15,9 +17,12 @@ import {
 } from "~/components/common/shad/exports"
 
 import {
+  type ExcalId,
   LoadingState,
   type SelectUserWithStats,
 } from "@types"
+
+import { postVote } from "@actions"
 
 import { NodeProvider, useNodeData } from "@context"
 
@@ -29,6 +34,7 @@ import { CommentSection } from "../comments/exports"
 
 import { Title } from "./Title"
 import { Description } from "./Description"
+import { VoteButton } from "../votes/VoteButton"
 
 type NodeEdgeCardDialogProps = {
   excalEl: ExcalidrawElement
@@ -72,6 +78,10 @@ function NodeCardDialogContent() {
         <Description
           aF={node.title !== "" || node.description !== ""}
         />
+        <VotePointsSection
+          initialVoteTotal={node.stats?.voteTotal}
+          excalId={node.excalId}
+        />
         <NodeAuthor author={node.creator!} />
         <Separator className="my-2" />
         <CommentSection excalId={node.excalId} />
@@ -96,6 +106,48 @@ function NodeAuthor({ author }: NodeAuthorProps) {
       <h6 className={cn("text-md", pointsColor(points))}>
         {points}
       </h6>
+    </div>
+  )
+}
+
+type VotePointsSectionProps = {
+  excalId: ExcalId
+  initialVoteTotal?: number
+}
+
+function VotePointsSection({
+  excalId,
+  initialVoteTotal = 0,
+}: VotePointsSectionProps) {
+  const [voteTotal, setVoteTotal] = useState(
+    initialVoteTotal,
+  )
+
+  return (
+    <div className="flex gap-4 items-center">
+      <VoteButton
+        up
+        onClick={async () => {
+          await postVote(excalId, true)
+          setVoteTotal(voteTotal + 1)
+        }}
+        iconSize={24}
+      />
+      <VoteButton
+        onClick={async () => {
+          await postVote(excalId, false)
+          setVoteTotal(voteTotal - 1)
+        }}
+        iconSize={24}
+      />
+      <p
+        className={cn(
+          "px-[2px] font-bold text-xl",
+          pointsColor(voteTotal),
+        )}
+      >
+        {voteTotal}
+      </p>
     </div>
   )
 }
