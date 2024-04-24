@@ -20,6 +20,7 @@ import { Separator, Textarea } from "@shad"
 import {
   EditableContentContainerEdit,
   EditableContentContainerView,
+  PencilButton,
   Progress,
   autoFocus,
 } from "../common/exports"
@@ -40,10 +41,10 @@ export function CommentSection({
     <>
       <h2 className="text-xl font-bold">Comments</h2>
       <Comment excalId={excalId} />
-      <div className="flex flex-col gap-2 mt-2">
+      <div className="flex flex-col gap-3 mt-2">
         {comments.map((c, i) => {
           return (
-            <div key={i} className="flex flex-col gap-2">
+            <div key={i} className="flex flex-col gap-3">
               <Separator />
               <Comment
                 commentInitialData={c}
@@ -109,10 +110,9 @@ export function Comment({
   } else {
     return (
       <EditableContentContainerView
-        onEdit={() => setIsEditing(true)}
-        iconSize={13}
+        showEditButton={false}
       >
-        <div className="flex flex-wrap gap-4 items-center">
+        <div className="flex flex-col gap-1 justify-start">
           <p className="">{commentContent}</p>
           <div className="flex flex-wrap gap-2 items-center">
             <CommentUser user={comment!.creator!} />
@@ -120,6 +120,10 @@ export function Comment({
               {comment?.updatedAt.toLocaleDateString()}{" "}
               {comment?.updatedAt.toLocaleTimeString()}
             </p>
+            <PencilButton
+              iconSize={13}
+              onEdit={() => setIsEditing(true)}
+            />
           </div>
         </div>
       </EditableContentContainerView>

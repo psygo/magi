@@ -39,7 +39,7 @@ export function NodeCardDialog({
           <Info className="h-[13px] w-[13px]" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="">
+      <DialogContent className="overflow-y-scroll max-h-[90vh]">
         <NodeProvider excalEl={excalEl}>
           <NodeCardDialogContent />
         </NodeProvider>

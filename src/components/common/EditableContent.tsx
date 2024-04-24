@@ -56,30 +56,48 @@ export function EditableContentContainerEdit({
 
 type EditableContentViewContainerProps =
   WithReactChildren & {
-    onEdit: () => void
-    iconSize: number
+    onEdit?: () => void
+    iconSize?: number
+    showEditButton?: boolean
   }
 
 export function EditableContentContainerView({
   onEdit,
-  iconSize,
+  iconSize = 13,
+  showEditButton = true,
   children,
 }: EditableContentViewContainerProps) {
   return (
-    <div className={cn("flex gap-2 items-center w-max")}>
+    <div className={cn("flex gap-2 items-center")}>
       {children}
-      <Button
-        variant="ghost"
-        className="p-0 px-2 mt-[1px] h-max"
-        onClick={onEdit}
-      >
-        <Pencil
-          className={cn(
-            "text-gray-500",
-            `h-[${iconSize}px] w-[${iconSize}px]`,
-          )}
-        />
-      </Button>
+      {showEditButton && (
+        <PencilButton iconSize={iconSize} onEdit={onEdit} />
+      )}
     </div>
+  )
+}
+
+type PencilButtonProps = Pick<
+  EditableContentViewContainerProps,
+  "onEdit" | "iconSize"
+>
+
+export function PencilButton({
+  iconSize = 13,
+  onEdit,
+}: PencilButtonProps) {
+  return (
+    <Button
+      variant="ghost"
+      className="p-0 px-2 mt-[1px] h-max"
+      onClick={onEdit}
+    >
+      <Pencil
+        className={cn(
+          "text-gray-500",
+          `h-[${iconSize}px] w-[${iconSize}px]`,
+        )}
+      />
+    </Button>
   )
 }
