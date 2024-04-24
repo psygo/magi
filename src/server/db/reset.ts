@@ -1,59 +1,52 @@
 import "server-only"
 
-import { sql } from "drizzle-orm"
-
 import { db } from "."
-import { nodes, users } from "./schema"
+import { comments, nodes, users, votes } from "./schema"
 import { mockUsers } from "./mock"
 
-export async function reset(mock = true) {
-  try {
-    await deleteEverything()
+type ResetOptions = DeleteOptions & {
+  mock?: boolean
+}
 
-    if (mock) {
-      await mockUsers()
-    }
+export async function reset(
+  options: ResetOptions = {
+    deleteUsers: false,
+    deleteNodes: false,
+    mock: false,
+  },
+) {
+  try {
+    await deleteEverything(options)
+
+    if (options.mock) await mockUsers()
   } catch (e) {
     console.error(e)
   }
 }
 
-async function deleteEverything() {
+type DeleteOptions = {
+  deleteUsers?: boolean
+  deleteNodes?: boolean
+}
+
+async function deleteEverything(
+  options: DeleteOptions = {
+    deleteUsers: false,
+    deleteNodes: false,
+  },
+) {
   try {
-    // eslint-disable-next-line drizzle/enforce-delete-with-where
-    await db.delete(nodes)
-    // eslint-disable-next-line drizzle/enforce-delete-with-where
-    await db.delete(users)
-
-    const tableSchema = db._.schema
-    if (!tableSchema)
-      throw new Error("No table schema found")
-
-    console.log("🗑️  Emptying the entire database")
-
-    const queries = Object.values(tableSchema).map(
-      (table) => {
-        console.log(
-          `🧨 Preparing delete query for table: ${table.dbName}`,
-        )
-        return sql.raw(/* sql */ `
-          TRUNCATE TABLE ${table.dbName} CASCADE;
-        `)
-      },
-    )
-
-    console.log("📨 Sending delete queries...")
-
-    await db.transaction(async (tx) => {
-      await Promise.all(
-        queries.map(async (query) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          if (query) await tx.execute(query)
-        }),
-      )
-    })
-
-    console.log("✅ Database emptied")
+    if (options.deleteNodes) {
+      // eslint-disable-next-line drizzle/enforce-delete-with-where
+      await db.delete(comments)
+      // eslint-disable-next-line drizzle/enforce-delete-with-where
+      await db.delete(votes)
+      // eslint-disable-next-line drizzle/enforce-delete-with-where
+      await db.delete(nodes)
+    }
+    if (options.deleteUsers)
+      // eslint-disable-next-line drizzle/enforce-delete-with-where
+      await db.delete(users)
   } catch (e) {
     console.error(e)
   }
