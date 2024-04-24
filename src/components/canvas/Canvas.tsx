@@ -21,6 +21,7 @@ import {
 import { Progress } from "@components"
 
 import { ShapeInfoButtons } from "./ShapeInfoButton"
+import { useUser } from "@clerk/nextjs"
 
 const Excalidraw = dynamic(
   async () => {

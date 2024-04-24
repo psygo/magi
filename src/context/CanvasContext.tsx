@@ -36,7 +36,7 @@ export const initialAppState: AppState = {
   scrollY: 0,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  zoom: { value: 1 },
+  zoom: { value: 0.8 },
 }
 
 export function nodesArrayToRecords(

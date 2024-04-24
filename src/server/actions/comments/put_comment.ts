@@ -1,6 +1,6 @@
 "use server"
 
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 
 import "@utils/array"
 
@@ -29,7 +29,12 @@ export async function putComment(
         content,
         updatedAt: new Date(),
       })
-      .where(eq(comments.nanoId, nanoId))
+      .where(
+        and(
+          eq(comments.nanoId, nanoId),
+          eq(comments.commenterId, userId),
+        ),
+      )
       .returning()
 
     const commentData = await getComment(

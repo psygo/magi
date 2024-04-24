@@ -45,6 +45,7 @@ export async function postNodes(
       )
       .onConflictDoUpdate({
         target: nodes.excalId,
+        where: sql`magi_nodes.creator_id = ${userId}`,
         set: {
           excalData: sql.raw(
             `excluded.${nodes.excalData.name}`,
