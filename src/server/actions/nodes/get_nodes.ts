@@ -5,11 +5,14 @@ import { desc, eq, sql, getTableColumns } from "drizzle-orm"
 import "@utils/array"
 
 import {
+  type SelectNodeWithCreatorAndStatsAndCreatorStats,
   type ExcalId,
   type SelectNodeWithCreatorAndStats,
 } from "@types"
 
 import { db, nodes, votes, users, comments } from "@server"
+
+import { getUser } from "../users/exports"
 
 function getNodeQuery() {
   return db
@@ -48,11 +51,20 @@ export async function getNodes() {
 
 export async function getNode(excalId: ExcalId) {
   try {
-    const n = await getNodeQuery()
-      .where(eq(nodes.excalId, excalId))
-      .limit(1)
+    const n = (
+      await getNodeQuery()
+        .where(eq(nodes.excalId, excalId))
+        .limit(1)
+    ).first() as SelectNodeWithCreatorAndStats
 
-    return n.first() as SelectNodeWithCreatorAndStats
+    const creator = n.creator!
+
+    const creatorWithStats = await getUser(creator.id)
+
+    return {
+      ...n,
+      creator: creatorWithStats,
+    } as SelectNodeWithCreatorAndStatsAndCreatorStats
   } catch (e) {
     console.error(e)
   }

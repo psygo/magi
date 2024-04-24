@@ -1,15 +1,15 @@
 # Tasks
 
-1. [ ] Creator points on the node, and comment cards
-1. [ ] Comment on the Info Card
-1. [ ] Push IDs to the URL path
-1. [ ] Number of Comments on the info detail
-1. [ ] Edit Excalidraw Controls
-1. [ ] List connections on a node on the info card
+1. [ ] Fix update of the voting component
+1. [ ] Voting on the node card dialog
 1. [ ] Guards for only altering your own content
 
-## Second Gen
+## Second Version
 
+1. [ ] Push IDs to the URL path
+1. [ ] Edit Excalidraw Controls
+1. [ ] Number of Comments on the info detail
+1. [ ] List connections on a node on the info card
 1. [ ] Throttling
 1. [ ] `<iframe>` and other solutions
    1. [ ] For YouTube at least, it's possible to simply use the [thumbnails](https://stackoverflow.com/a/2068371/4756173)

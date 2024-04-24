@@ -14,7 +14,10 @@ import {
   Separator,
 } from "~/components/common/shad/exports"
 
-import { LoadingState } from "@types"
+import {
+  LoadingState,
+  type SelectUserWithStats,
+} from "@types"
 
 import { NodeProvider, useNodeData } from "@context"
 
@@ -64,10 +67,31 @@ function NodeCardDialogContent() {
       </DialogHeader>
       <div className="flex flex-col gap-4 mt-4">
         <Title />
-        <Description />
+        <Description
+          aF={node.title !== "" || node.description !== ""}
+        />
+        <NodeAuthor author={node.creator!} />
         <Separator className="my-2" />
         <CommentSection excalId={node.excalId} />
       </div>
     </>
+  )
+}
+
+type NodeAuthorProps = {
+  author: SelectUserWithStats
+}
+
+function NodeAuthor({ author }: NodeAuthorProps) {
+  return (
+    <div className="flex gap-2 items-center">
+      <p>by</p>
+      <h6 className="text-md text-blue-500">
+        @{author.username}
+      </h6>
+      <h6 className="text-md text-green-500">
+        {author.stats?.voteTotal}
+      </h6>
+    </div>
   )
 }

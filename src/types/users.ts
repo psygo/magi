@@ -9,3 +9,15 @@ export type InsertUser = InferSelectModel<typeof users>
 export type WithCreator = {
   creator?: SelectUser
 }
+
+export type WithCreatorAndCreatorStats = {
+  creator?: SelectUser
+}
+
+export type WithUserStats = {
+  stats?: {
+    voteTotal: number
+  }
+}
+
+export type SelectUserWithStats = SelectUser & WithUserStats

@@ -22,7 +22,7 @@ import {
   EditableContentContainerView,
   PencilButton,
   Progress,
-  autoFocus,
+  autoFocusDefault,
 } from "../common/exports"
 
 type CommentSectionProps = {
@@ -40,7 +40,7 @@ export function CommentSection({
   return (
     <>
       <h2 className="text-xl font-bold">Comments</h2>
-      <Comment excalId={excalId} />
+      <Comment excalId={excalId} aF={false} />
       <div className="flex flex-col gap-3 mt-2">
         {comments.map((c, i) => {
           return (
@@ -61,11 +61,13 @@ export function CommentSection({
 
 type CommentProps = {
   commentInitialData?: SelectCommentWithCreator
+  aF?: boolean
   excalId: ExcalId
 }
 
 export function Comment({
   commentInitialData,
+  aF = true,
   excalId,
 }: CommentProps) {
   const [comment, setComment] = useState<
@@ -77,6 +79,8 @@ export function Comment({
   const [isEditing, setIsEditing] = useState(
     stringIsEmpty(commentInitialData?.content),
   )
+
+  const aFocus = { ...autoFocusDefault, autoFocus: aF }
 
   if (isEditing) {
     return (
@@ -99,7 +103,7 @@ export function Comment({
         <Textarea
           id="comment"
           placeholder="Leave a comment"
-          {...autoFocus}
+          {...aFocus}
           value={commentContent}
           onChange={(e) =>
             setCommentContent(e.target.value)
@@ -109,9 +113,7 @@ export function Comment({
     )
   } else {
     return (
-      <EditableContentContainerView
-        showEditButton={false}
-      >
+      <EditableContentContainerView showEditButton={false}>
         <div className="flex flex-col gap-1 justify-start">
           <p className="">{commentContent}</p>
           <div className="flex flex-wrap gap-2 items-center">

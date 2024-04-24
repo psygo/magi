@@ -6,8 +6,8 @@ import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/typ
 
 import {
   type WithReactChildren,
-  type SelectNodeWithCreatorAndStats,
   type LoadingState,
+  type SelectNodeWithCreatorAndStatsAndCreatorStats,
 } from "@types"
 
 import { putNode } from "@actions"
@@ -15,7 +15,9 @@ import { putNode } from "@actions"
 import { useNode } from "@hooks"
 
 type NodeContext = {
-  node: SelectNodeWithCreatorAndStats | undefined
+  node:
+    | SelectNodeWithCreatorAndStatsAndCreatorStats
+    | undefined
   loading: LoadingState
   updateNode: (
     title?: string,

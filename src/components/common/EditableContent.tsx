@@ -6,7 +6,7 @@ import { type WithReactChildren } from "@types"
 
 import { cn } from "@styles"
 
-export const autoFocus = {
+export const autoFocusDefault = {
   autoFocus: true,
   onFocus: (
     e: React.FocusEvent<

@@ -11,10 +11,16 @@ import { useNodeData } from "@context"
 import {
   EditableContentContainerEdit,
   EditableContentContainerView,
-  autoFocus,
+  autoFocusDefault,
 } from "../common/exports"
 
-export function Description() {
+import { type TitleProps } from "./Title"
+
+type DescriptionProps = TitleProps
+
+export function Description({
+  aF = true,
+}: DescriptionProps) {
   const { node, updateNode } = useNodeData()
 
   const [isEditing, setIsEditing] = useState(
@@ -24,6 +30,8 @@ export function Description() {
   const [description, setDescription] = useState(
     node?.description,
   )
+
+  const aFocus = { ...autoFocusDefault, autoFocus: aF }
 
   if (!node) return
 
@@ -41,7 +49,7 @@ export function Description() {
         <Textarea
           id="description"
           placeholder="A great description"
-          {...autoFocus}
+          {...aFocus}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />

@@ -11,10 +11,14 @@ import { useNodeData } from "@context"
 import {
   EditableContentContainerEdit,
   EditableContentContainerView,
-  autoFocus,
+  autoFocusDefault,
 } from "../common/exports"
 
-export function Title() {
+export type TitleProps = {
+  aF?: boolean
+}
+
+export function Title({ aF = true }: TitleProps) {
   const { node, updateNode } = useNodeData()
 
   const [isEditing, setIsEditing] = useState(
@@ -22,6 +26,8 @@ export function Title() {
   )
 
   const [title, setTitle] = useState(node?.title)
+
+  const aFocus = { ...autoFocusDefault, autoFocus: aF }
 
   if (!node) return
 
@@ -39,7 +45,7 @@ export function Title() {
         <Input
           id="title"
           placeholder="A Great Title"
-          {...autoFocus}
+          {...aFocus}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
