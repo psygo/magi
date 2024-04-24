@@ -88,9 +88,13 @@ export function Canvas() {
   }, [excalidrawAPI, theme])
 
   async function onExcalUpdate() {
+    console.log(excalElements)
+
     const notUpdatedYet = excalElements.filter(
       (el) => toDate(el.updated) > lastUpdated,
     )
+
+    console.log(notUpdatedYet)
 
     if (notUpdatedYet.length > 0) {
       const newNodes = await postNodes(notUpdatedYet)
@@ -131,6 +135,8 @@ export function Canvas() {
         {loading === LoadingState.Loaded &&
           excalElements.length > 0 &&
           excalElements.map((exEl, i) => {
+            if (exEl.isDeleted) return
+
             const zoom = excalAppState.zoom.value
             const [x, y] = [
               exEl.x + excalAppState.scrollX - 15,

@@ -1,5 +1,6 @@
 import { relations, sql } from "drizzle-orm"
 import {
+  boolean,
   integer,
   json,
   pgTableCreator,
@@ -85,6 +86,7 @@ export const nodes = createTable("nodes", {
   }).notNull(),
   imageUrl: varchar("image_url", { length: 1024 }),
   excalData: json("excal_data"),
+  isDeleted: boolean("is_deleted").notNull().default(false),
   // Relationships
   creatorId: integer("creator_id").notNull(),
   fromId: varchar("from_id"),

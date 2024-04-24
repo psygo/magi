@@ -37,6 +37,7 @@ export async function postNodes(
             title: "",
             description: "",
             excalData: el,
+            isDeleted: el.isDeleted,
             creatorId: userId,
             ...arrowData,
           }
@@ -47,6 +48,9 @@ export async function postNodes(
         set: {
           excalData: sql.raw(
             `excluded.${nodes.excalData.name}`,
+          ),
+          isDeleted: sql.raw(
+            `excluded.${nodes.isDeleted.name}`,
           ),
           fromId: sql.raw(`excluded.${nodes.fromId.name}`),
           toId: sql.raw(`excluded.${nodes.toId.name}`),
