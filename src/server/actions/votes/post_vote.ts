@@ -1,5 +1,7 @@
 "use server"
 
+import { and, eq } from "drizzle-orm"
+
 import "@utils/array"
 
 import { type ExcalId } from "@types"
@@ -15,6 +17,15 @@ export async function postVote(
   try {
     const userId = await userIdFromClerk()
     if (!userId) return
+
+    await db
+      .delete(votes)
+      .where(
+        and(
+          eq(votes.nodeId, excalId),
+          eq(votes.voterId, userId),
+        ),
+      )
 
     const voteData = await db
       .insert(votes)
