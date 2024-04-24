@@ -1,6 +1,5 @@
 # Tasks
 
-1. [ ] Fix update of the voting component
 1. [ ] Voting on the node card dialog
 1. [ ] Guards for only altering your own content
 

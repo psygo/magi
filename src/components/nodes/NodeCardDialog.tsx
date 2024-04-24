@@ -21,6 +21,8 @@ import {
 
 import { NodeProvider, useNodeData } from "@context"
 
+import { cn, pointsColor } from "@styles"
+
 import { Progress } from "../common/exports"
 
 import { CommentSection } from "../comments/exports"
@@ -83,14 +85,16 @@ type NodeAuthorProps = {
 }
 
 function NodeAuthor({ author }: NodeAuthorProps) {
+  const points = author.stats!.voteTotal
+
   return (
     <div className="flex gap-2 items-center">
       <p>by</p>
       <h6 className="text-md text-blue-500">
         @{author.username}
       </h6>
-      <h6 className="text-md text-green-500">
-        {author.stats?.voteTotal}
+      <h6 className={cn("text-md", pointsColor(points))}>
+        {points}
       </h6>
     </div>
   )

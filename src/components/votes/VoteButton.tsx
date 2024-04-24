@@ -4,32 +4,24 @@ import { useState } from "react"
 
 import { ArrowDown, ArrowUp } from "lucide-react"
 
-import { type ExcalId } from "@types"
-
-import { postVote } from "@actions"
-
-import { Button } from "~/components/common/shad/exports"
+import { Button } from "@shad"
 
 type VoteButtonProps = {
   up?: boolean
-  excalId: ExcalId
+  onClick: () => void
 }
 
 export function VoteButton({
   up = false,
-  excalId,
+  onClick,
 }: VoteButtonProps) {
   const [hovered, setHovered] = useState(false)
-
-  async function handleClick() {
-    await postVote(excalId, up)
-  }
 
   return (
     <Button
       variant="link"
       className="p-0 m-0"
-      onClick={handleClick}
+      onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >

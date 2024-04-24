@@ -135,11 +135,11 @@ export function Canvas() {
 
             const zoom = excalAppState.zoom.value
             const [x, y] = [
-              exEl.x + excalAppState.scrollX - 15,
-              exEl.y +
-                excalAppState.scrollY +
-                exEl.height -
-                10,
+              exEl.x +
+                excalAppState.scrollX +
+                exEl.width -
+                25,
+              exEl.y + excalAppState.scrollY + exEl.height,
             ].map((n) => n * zoom)
 
             return (
