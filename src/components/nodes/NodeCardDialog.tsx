@@ -18,6 +18,7 @@ import {
   type ExcalId,
   LoadingState,
   type SelectUserWithStats,
+  type ClerkId,
 } from "@types"
 
 import { postVote } from "@actions"
@@ -35,6 +36,7 @@ import { VoteButton } from "../votes/VoteButton"
 import { Title } from "./Title"
 import { Description } from "./Description"
 import { UserAvatar } from "../users/UserAvatar"
+import { useUser } from "@clerk/nextjs"
 
 type NodeEdgeCardDialogProps = {
   excalEl: ExcalidrawElement
@@ -88,6 +90,7 @@ function NodeCardDialogContent() {
         />
         <VotePointsSection
           excalId={node.excalId}
+          creatorClerkId={node.creator!.clerkId}
           initialUserVotedPoints={node.stats?.votedPoints}
           initialVoteTotal={node.stats?.voteTotal}
         />
@@ -127,15 +130,19 @@ function NodeAuthor({ author }: NodeAuthorProps) {
 
 type VotePointsSectionProps = {
   excalId: ExcalId
+  creatorClerkId: ClerkId
   initialVoteTotal?: number
   initialUserVotedPoints?: number
 }
 
 function VotePointsSection({
   excalId,
+  creatorClerkId,
   initialVoteTotal = 0,
   initialUserVotedPoints = 0,
 }: VotePointsSectionProps) {
+  const { user } = useUser()
+
   const [voteTotal, setVoteTotal] = useState(
     initialVoteTotal ?? 0,
   )
@@ -149,6 +156,7 @@ function VotePointsSection({
       <VoteButton
         up
         onClick={async () => {
+          if (user?.id === creatorClerkId) return
           await postVote(excalId, true)
           setVoteTotal(initialUserVotedPoints + 1)
           setUserVotedPoints(1)
@@ -158,6 +166,7 @@ function VotePointsSection({
       />
       <VoteButton
         onClick={async () => {
+          if (user?.id === creatorClerkId) return
           await postVote(excalId, false)
           setVoteTotal(initialUserVotedPoints - 1)
           setUserVotedPoints(-1)

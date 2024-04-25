@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 
+import { useUser } from "@clerk/nextjs"
+
 import { stringIsEmpty } from "@utils"
 
 import {
@@ -70,6 +72,8 @@ export function Comment({
   aF = true,
   excalId,
 }: CommentProps) {
+  const { isSignedIn } = useUser()
+
   const [comment, setComment] = useState<
     SelectCommentWithCreator | undefined
   >(commentInitialData)
@@ -82,7 +86,7 @@ export function Comment({
 
   const aFocus = { ...autoFocusDefault, autoFocus: aF }
 
-  if (isEditing) {
+  if (isEditing && isSignedIn) {
     return (
       <EditableContentContainerEdit
         onCancel={() => setIsEditing(false)}

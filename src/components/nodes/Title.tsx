@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 
+import { useUser } from "@clerk/nextjs"
+
 import { Input, Label } from "@shad"
 
 import { stringIsEmpty } from "@utils"
@@ -21,6 +23,11 @@ export type TitleProps = {
 export function Title({ aF = true }: TitleProps) {
   const { node, updateNode } = useNodeData()
 
+  const { user } = useUser()
+  const userIsAuthor = !!(
+    user && user.id === node!.creator!.clerkId
+  )
+
   const [isEditing, setIsEditing] = useState(
     stringIsEmpty(node?.title),
   )
@@ -31,7 +38,7 @@ export function Title({ aF = true }: TitleProps) {
 
   if (!node) return
 
-  if (isEditing) {
+  if (isEditing && userIsAuthor) {
     return (
       <EditableContentContainerEdit
         onCancel={() => setIsEditing(false)}
@@ -58,6 +65,7 @@ export function Title({ aF = true }: TitleProps) {
           setIsEditing(true)
         }}
         iconSize={13}
+        showEditButton={userIsAuthor}
       >
         <h2 className="text-3xl font-bold">
           {node.title !== "" ? node.title : "—"}

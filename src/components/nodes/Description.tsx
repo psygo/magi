@@ -2,6 +2,8 @@
 
 import React, { useState } from "react"
 
+import { useUser } from "@clerk/nextjs"
+
 import { Label, Textarea } from "@shad"
 
 import { stringIsEmpty } from "@utils"
@@ -23,6 +25,11 @@ export function Description({
 }: DescriptionProps) {
   const { node, updateNode } = useNodeData()
 
+  const { user } = useUser()
+  const userIsAuthor = !!(
+    user && user.id === node!.creator!.clerkId
+  )
+
   const [isEditing, setIsEditing] = useState(
     stringIsEmpty(node?.description),
   )
@@ -35,7 +42,7 @@ export function Description({
 
   if (!node) return
 
-  if (isEditing) {
+  if (isEditing && userIsAuthor) {
     return (
       <EditableContentContainerEdit
         onCancel={() => setIsEditing(false)}
@@ -60,6 +67,7 @@ export function Description({
       <EditableContentContainerView
         onEdit={() => setIsEditing(true)}
         iconSize={13}
+        showEditButton={userIsAuthor}
       >
         <p className="">
           {node.description !== "" ? node.description : "—"}

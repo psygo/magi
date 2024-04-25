@@ -1,7 +1,10 @@
 # Tasks
 
-1. [ ] Can't vote on your own stuff guard
-1. [ ] Guards for only altering your own content
+## Deployment
+
+1. [ ] Vercel Postgres
+2. [ ] PostHog
+3. [ ] Sentry
 
 ## Second Version
 
@@ -14,9 +17,3 @@
    1. [ ] For YouTube at least, it's possible to simply use the [thumbnails](https://stackoverflow.com/a/2068371/4756173)
    2. [ ] For other websites, we could probably render their `<meta>`?
 1. [ ] Create Canvases
-
-## Deployment
-
-1. [ ] Vercel Postgres
-2. [ ] PostHog
-3. [ ] Sentry
