@@ -34,6 +34,7 @@ import { VoteButton } from "../votes/VoteButton"
 
 import { Title } from "./Title"
 import { Description } from "./Description"
+import { UserAvatar } from "../users/UserAvatar"
 
 type NodeEdgeCardDialogProps = {
   excalEl: ExcalidrawElement
@@ -108,6 +109,12 @@ function NodeAuthor({ author }: NodeAuthorProps) {
   return (
     <div className="flex gap-2 items-center">
       <p>by</p>
+      <UserAvatar
+        username={author.username}
+        imageUrl={author.imageUrl}
+        iconSize={24}
+        fontSize={14}
+      />
       <h6 className="text-md text-blue-500">
         @{author.username}
       </h6>
@@ -130,7 +137,7 @@ function VotePointsSection({
   initialUserVotedPoints = 0,
 }: VotePointsSectionProps) {
   const [voteTotal, setVoteTotal] = useState(
-    initialVoteTotal,
+    initialVoteTotal ?? 0,
   )
 
   const [userVotedPoints, setUserVotedPoints] = useState(

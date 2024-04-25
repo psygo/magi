@@ -4,6 +4,8 @@ import { useMemo, useState } from "react"
 
 import dynamic from "next/dynamic"
 
+import { useUser } from "@clerk/nextjs"
+
 import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
 
 import { toDate } from "@utils"
@@ -21,7 +23,6 @@ import {
 import { Progress } from "@components"
 
 import { ShapeInfoButtons } from "./ShapeInfoButton"
-import { useUser } from "@clerk/nextjs"
 
 const Excalidraw = dynamic(
   async () => {
@@ -36,6 +37,8 @@ const Excalidraw = dynamic(
 
 export function Canvas() {
   const { theme } = useTheme()
+
+  const { isSignedIn } = useUser()
 
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI>()
@@ -111,12 +114,12 @@ export function Canvas() {
   }
 
   function delayedExcalUpdate() {
+    if (!isSignedIn) return
+
     // The delay here is used because apparently the
     // snapping of the arrow is not done immediately.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    setTimeout(async () => {
-      await onExcalUpdate()
-    }, 100)
+    setTimeout(async () => await onExcalUpdate(), 100)
   }
 
   return (

@@ -25,8 +25,6 @@ export function ShapeInfoButtons({
   const node = nodes[excalEl.id]
   const voteTotal = node?.stats?.voteTotal ?? 0
 
-  console.log(node)
-
   return (
     <div
       className="flex gap-1 items-center"
