@@ -10,12 +10,14 @@ type VoteButtonProps = {
   up?: boolean
   onClick: () => void
   iconSize?: number
+  votedPoints?: number
 }
 
 export function VoteButton({
   up = false,
   onClick,
   iconSize = 18,
+  votedPoints = 0,
 }: VoteButtonProps) {
   const [hovered, setHovered] = useState(false)
 
@@ -30,7 +32,7 @@ export function VoteButton({
       {up ? (
         <ArrowUp
           style={{
-            color: hovered ? "red" : "",
+            color: votedPoints > 0 || hovered ? "green" : "",
             height: iconSize,
             width: iconSize,
           }}
@@ -38,7 +40,7 @@ export function VoteButton({
       ) : (
         <ArrowDown
           style={{
-            color: hovered ? "red" : "",
+            color: votedPoints < 0 || hovered ? "red" : "",
             height: iconSize,
             width: iconSize,
           }}

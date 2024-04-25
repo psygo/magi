@@ -10,7 +10,14 @@ import {
   type SelectNodeWithCreatorAndStats,
 } from "@types"
 
-import { db, nodes, votes, users, comments } from "@server"
+import {
+  db,
+  nodes,
+  votes,
+  users,
+  comments,
+  getUserVote,
+} from "@server"
 
 import { getUser } from "../users/exports"
 
@@ -61,9 +68,15 @@ export async function getNode(excalId: ExcalId) {
 
     const creatorWithStats = await getUser(creator.id)
 
+    const userVotedPoints = await getUserVote(excalId)
+
     return {
       ...n,
       creator: creatorWithStats,
+      stats: {
+        ...n.stats,
+        votedPoints: userVotedPoints,
+      },
     } as SelectNodeWithCreatorAndStatsAndCreatorStats
   } catch (e) {
     console.error(e)

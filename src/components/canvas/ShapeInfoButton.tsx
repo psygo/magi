@@ -1,17 +1,10 @@
 "use client"
 
-import { useState } from "react"
-
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
-
-import { postVote } from "@actions"
 
 import { useCanvas } from "@context"
 
-import { cn, pointsColor } from "@styles"
-
 import { NodeCardDialog } from "../nodes/exports"
-import { VoteButton } from "../votes/exports"
 
 type ShapeInfoButtonsProps = {
   x: number
@@ -26,10 +19,7 @@ export function ShapeInfoButtons({
 }: ShapeInfoButtonsProps) {
   const { nodes } = useCanvas()
   const node = nodes[excalEl.id]
-
-  const [voteTotal, setVoteTotal] = useState(
-    node?.stats?.voteTotal ?? 0,
-  )
+  const voteTotal = node?.stats?.voteTotal ?? 0
 
   return (
     <div
@@ -37,32 +27,14 @@ export function ShapeInfoButtons({
       style={{
         position: "absolute",
         zIndex: 10,
-        left: x - 32,
+        left: x,
         top: y,
       }}
     >
-      <NodeCardDialog excalEl={excalEl} />
-      <VoteButton
-        up
-        onClick={async () => {
-          await postVote(excalEl.id, true)
-          setVoteTotal(voteTotal + 1)
-        }}
+      <NodeCardDialog
+        excalEl={excalEl}
+        voteTotal={voteTotal}
       />
-      <VoteButton
-        onClick={async () => {
-          await postVote(excalEl.id, false)
-          setVoteTotal(voteTotal - 1)
-        }}
-      />
-      <p
-        className={cn(
-          "px-[2px] font-bold",
-          pointsColor(voteTotal),
-        )}
-      >
-        {voteTotal}
-      </p>
     </div>
   )
 }

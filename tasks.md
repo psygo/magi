@@ -1,6 +1,6 @@
 # Tasks
 
-1. [ ] Voting on the node card dialog
+1. [ ] Can't vote on your own stuff guard
 1. [ ] Guards for only altering your own content
 
 ## Second Version

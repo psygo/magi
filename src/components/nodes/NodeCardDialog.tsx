@@ -2,8 +2,6 @@
 
 import { useState } from "react"
 
-import { Info } from "lucide-react"
-
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 import {
@@ -32,22 +30,31 @@ import { Progress } from "../common/exports"
 
 import { CommentSection } from "../comments/exports"
 
+import { VoteButton } from "../votes/VoteButton"
+
 import { Title } from "./Title"
 import { Description } from "./Description"
-import { VoteButton } from "../votes/VoteButton"
 
 type NodeEdgeCardDialogProps = {
   excalEl: ExcalidrawElement
+  voteTotal: number
 }
 
 export function NodeCardDialog({
   excalEl,
+  voteTotal,
 }: NodeEdgeCardDialogProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="link" className="p-0 m-0">
-          <Info className="h-[13px] w-[13px]" />
+        <Button
+          variant="link"
+          className={cn(
+            "p-0 px-[2px] font-bold text-base",
+            pointsColor(voteTotal),
+          )}
+        >
+          {voteTotal}
         </Button>
       </DialogTrigger>
       <DialogContent className="overflow-y-scroll max-h-[90vh]">
@@ -79,8 +86,9 @@ function NodeCardDialogContent() {
           aF={node.title !== "" || node.description !== ""}
         />
         <VotePointsSection
-          initialVoteTotal={node.stats?.voteTotal}
           excalId={node.excalId}
+          initialUserVotedPoints={node.stats?.votedPoints}
+          initialVoteTotal={node.stats?.voteTotal}
         />
         <NodeAuthor author={node.creator!} />
         <Separator className="my-2" />
@@ -113,14 +121,20 @@ function NodeAuthor({ author }: NodeAuthorProps) {
 type VotePointsSectionProps = {
   excalId: ExcalId
   initialVoteTotal?: number
+  initialUserVotedPoints?: number
 }
 
 function VotePointsSection({
   excalId,
   initialVoteTotal = 0,
+  initialUserVotedPoints = 0,
 }: VotePointsSectionProps) {
   const [voteTotal, setVoteTotal] = useState(
     initialVoteTotal,
+  )
+
+  const [userVotedPoints, setUserVotedPoints] = useState(
+    initialUserVotedPoints,
   )
 
   return (
@@ -129,16 +143,20 @@ function VotePointsSection({
         up
         onClick={async () => {
           await postVote(excalId, true)
-          setVoteTotal(voteTotal + 1)
+          setVoteTotal(initialUserVotedPoints + 1)
+          setUserVotedPoints(1)
         }}
         iconSize={24}
+        votedPoints={userVotedPoints}
       />
       <VoteButton
         onClick={async () => {
           await postVote(excalId, false)
-          setVoteTotal(voteTotal - 1)
+          setVoteTotal(initialUserVotedPoints - 1)
+          setUserVotedPoints(-1)
         }}
         iconSize={24}
+        votedPoints={userVotedPoints}
       />
       <p
         className={cn(

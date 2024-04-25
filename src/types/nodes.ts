@@ -16,6 +16,7 @@ export type WithNodeStats = {
   stats?: {
     voteTotal?: number
     commentTotal?: number
+    votedPoints?: number
   }
 }
 
