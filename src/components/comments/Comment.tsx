@@ -34,6 +34,8 @@ type CommentSectionProps = {
 export function CommentSection({
   excalId,
 }: CommentSectionProps) {
+  const { isSignedIn } = useUser()
+
   const { comments, loading } = useComments(excalId)
 
   if (!comments || loading !== LoadingState.Loaded)
@@ -42,19 +44,22 @@ export function CommentSection({
   return (
     <>
       <h2 className="text-xl font-bold">Comments</h2>
-      <Comment excalId={excalId} aF={false} />
+      {isSignedIn && (
+        <Comment excalId={excalId} aF={false} />
+      )}
       <div className="flex flex-col gap-3 mt-2">
-        {comments.map((c, i) => {
-          return (
-            <div key={i} className="flex flex-col gap-3">
-              <Separator />
-              <Comment
-                commentInitialData={c}
-                excalId={excalId}
-              />
-            </div>
-          )
-        })}
+        {comments.length > 0 &&
+          comments.map((c, i) => {
+            return (
+              <div key={i} className="flex flex-col gap-3">
+                <Separator />
+                <Comment
+                  commentInitialData={c}
+                  excalId={excalId}
+                />
+              </div>
+            )
+          })}
       </div>
       <Separator className="mt-[-6px]" />
     </>
@@ -121,7 +126,9 @@ export function Comment({
         <div className="flex flex-col gap-1 justify-start">
           <p className="">{commentContent}</p>
           <div className="flex flex-wrap gap-2 items-center">
-            <CommentUser user={comment!.creator!} />
+            {comment && comment.creator && (
+              <CommentUser user={comment.creator} />
+            )}
             <p className="text-xs text-gray-500">
               {comment?.updatedAt.toLocaleDateString()}{" "}
               {comment?.updatedAt.toLocaleTimeString()}

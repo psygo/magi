@@ -26,6 +26,7 @@ export async function getUser(userId: NumberId) {
       .from(users)
       .leftJoin(nodes, eq(nodes.creatorId, userId))
       .leftJoin(votes, eq(nodes.excalId, votes.nodeId))
+      .where(eq(users.id, userId))
       .groupBy(users.id)
       .limit(1)
 

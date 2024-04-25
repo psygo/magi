@@ -1,5 +1,7 @@
 # Tasks
 
+1. [ ] Test another user
+
 ## Deployment
 
 1. [ ] Vercel Postgres

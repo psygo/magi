@@ -26,7 +26,7 @@ export async function getUserVote(excalId: ExcalId) {
       )
       .limit(1)
 
-    return userVote.first().points ?? 0
+    return userVote.first()?.points ?? 0
   } catch (e) {
     console.error(e)
   }
