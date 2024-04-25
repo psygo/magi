@@ -139,7 +139,7 @@ export function Canvas() {
               exEl.x +
                 excalAppState.scrollX +
                 exEl.width -
-                12,
+                40,
               exEl.y + excalAppState.scrollY + exEl.height,
             ].map((n) => n * zoom)
 

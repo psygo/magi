@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-indexed-object-style */
 import { type InferSelectModel } from "drizzle-orm"
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -27,7 +28,9 @@ export type SelectNodeWithCreatorAndStats = SelectNode &
 export type SelectNodeWithCreatorAndStatsAndCreatorStats =
   SelectNode & WithNodeStats & WithCreatorAndCreatorStats
 
-export type NodesRecords = Record<
-  ExcalId,
-  SelectNodeWithCreatorAndStats
->
+// export type NodesRecords = Record<
+//   ExcalId,
+//   SelectNodeWithCreatorAndStats
+// >
+
+export type NodesRecords = {[key: ExcalId]: SelectNodeWithCreatorAndStats}

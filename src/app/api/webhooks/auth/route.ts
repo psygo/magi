@@ -68,6 +68,7 @@ export async function POST(req: Request) {
             userCreatedData.id,
             userCreatedData.username!,
             email,
+            userCreatedData.image_url,
           )
           break
         case "user.updated":
@@ -75,7 +76,12 @@ export async function POST(req: Request) {
           await updateUser(
             userUpdatedData.id,
             userUpdatedData.username!,
+            userUpdatedData.image_url,
           )
+          break
+        case "user.deleted":
+          const userDeletedData = verifiedPayload.data
+          await deleteUser(userDeletedData.id!)
           break
         default:
           console.log(`${type} is not a managed event.`)
@@ -92,6 +98,7 @@ async function createUser(
   clerkId: ClerkId,
   username: Username,
   email: Email,
+  imageUrl: string,
 ) {
   try {
     const usersData = await db
@@ -100,6 +107,7 @@ async function createUser(
         clerkId,
         username,
         email,
+        imageUrl,
       })
       .returning({ id: users.id, nanoId: users.nanoId })
 
@@ -124,14 +132,24 @@ async function createUser(
 async function updateUser(
   clerkId: ClerkId,
   username: Username,
+  imageUrl: string,
 ) {
   try {
     await db
       .update(users)
       .set({
         username,
+        imageUrl,
       })
       .where(eq(users.clerkId, clerkId))
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+async function deleteUser(clerkId: ClerkId) {
+  try {
+    await db.delete(users).where(eq(users.clerkId, clerkId))
   } catch (e) {
     console.error(e)
   }
