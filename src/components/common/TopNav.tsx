@@ -11,7 +11,7 @@ import { ThemeButton } from "./ThemeButton"
 
 export function TopNav() {
   return (
-    <nav className="absolute top-1 w-screen p-4 flex justify-between">
+    <nav className="absolute top-[2px] desktop:top-14 w-screen p-4 flex justify-between">
       <LeftTopnav />
       <RightTopnav />
     </nav>
@@ -24,8 +24,7 @@ function LeftTopnav() {
 
 function RightTopnav() {
   return (
-    <div className="flex gap-2 items-center z-50">
-      <ThemeButton />
+    <div className="flex desktop:flex-col gap-2 items-center desktop:items-end z-50">
       <SignedOut>
         <Button asChild>
           <SignInButton />
@@ -34,6 +33,7 @@ function RightTopnav() {
       <SignedIn>
         <UserButton />
       </SignedIn>
+      <ThemeButton />
     </div>
   )
 }

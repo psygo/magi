@@ -14,6 +14,14 @@
 
 This project has been set up with the [`create-t3-app`](https://create.t3.gg/) script.
 
+### Deployment
+
+Besides pushing things to Vercel and setting up the environment variables, you will need to manually do:
+
+```sh
+pnpm run db:push
+```
+
 ### Env
 
 Locally, you can set things up with:
@@ -29,6 +37,8 @@ POSTGRES_URL=postgresql://phili:password@localhost:5432/postgres?search_path=pub
 
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 CLERK_SECRET_KEY=
+
+CLERK_WEBHOOKS_USER_EVENTS=
 
 #-----------------------------------------------------------
 ```
