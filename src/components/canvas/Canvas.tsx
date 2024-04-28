@@ -135,9 +135,9 @@ export function Canvas() {
       </section>
       <section>
         {loading === LoadingState.Loaded &&
-          excalElements.map((exEl, i) => {
+          excalElements.map((excalEl, i) => {
             return (
-              <ShapeInfoButtons key={i} excalEl={exEl} />
+              <ShapeInfoButtons key={i} excalEl={excalEl} />
             )
           })}
       </section>

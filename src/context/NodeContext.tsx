@@ -15,6 +15,7 @@ import { putNode } from "@actions"
 import { useNode } from "@hooks"
 
 type NodeContext = {
+  excalEl: ExcalidrawElement
   node:
     | SelectNodeWithCreatorAndStatsAndCreatorStats
     | undefined
@@ -55,6 +56,7 @@ export function NodeProvider({
   return (
     <NodeContext.Provider
       value={{
+        excalEl,
         node,
         loading,
         updateNode,
