@@ -36,7 +36,7 @@ export function NodeVotePointsSection({
   )
 
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex items-center h-max">
       <VoteButton
         up
         onClick={async () => {
@@ -60,7 +60,7 @@ export function NodeVotePointsSection({
       />
       <p
         className={cn(
-          "px-[2px] font-bold text-xl",
+          "px-[14px] font-bold text-xl",
           pointsColor(voteTotal),
         )}
       >

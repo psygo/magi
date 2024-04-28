@@ -77,25 +77,29 @@ function NodeModalContent() {
         <NodeTitle />
         <NodeDescription />
         <div className="flex justify-between mt-3">
-          <div className="mt-2">
-            <Button variant="ghost">
-              <Share2 />
-            </Button>
-            <Button variant="ghost">
-              <Star />
-            </Button>
+          <div className="flex flex-col gap-1 mt-[6px]">
+            <NodeVotePointsSection
+              excalId={node.excalId}
+              creatorClerkId={node.creator!.clerkId}
+              initialUserVotedPoints={
+                node.stats?.votedPoints
+              }
+              initialVoteTotal={node.stats?.voteTotal}
+            />
+            <div className="flex gap-1 mt-2 ml-[2px]">
+              <Button variant="ghost">
+                <Share2 className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost">
+                <Star className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
           <NodeAuthor
             author={node.creator!}
             updatedAt={node.updatedAt}
           />
         </div>
-        <NodeVotePointsSection
-          excalId={node.excalId}
-          creatorClerkId={node.creator!.clerkId}
-          initialUserVotedPoints={node.stats?.votedPoints}
-          initialVoteTotal={node.stats?.voteTotal}
-        />
         <Separator className="my-2" />
         <CommentSection excalId={node.excalId} />
       </div>

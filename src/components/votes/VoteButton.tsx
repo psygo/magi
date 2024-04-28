@@ -23,8 +23,7 @@ export function VoteButton({
 
   return (
     <Button
-      variant="link"
-      className="p-0 m-0"
+      variant="ghost"
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -32,7 +31,8 @@ export function VoteButton({
       {up ? (
         <ArrowUp
           style={{
-            color: votedPoints > 0 || hovered ? "green" : "",
+            color:
+              votedPoints > 0 || hovered ? "green" : "",
             height: iconSize,
             width: iconSize,
           }}
