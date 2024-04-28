@@ -65,9 +65,40 @@ export const users = createTable("users", {
 export const usersRelations = relations(
   users,
   ({ many }) => ({
+    canvases: many(canvases),
     nodes: many(nodes),
     votes: many(votes),
     comments: many(comments),
+  }),
+)
+
+export const canvases = createTable("canvases", {
+  // IDs
+  ...idCols(),
+  // Metadata
+  ...dateTimeCols(),
+  // Data
+  title: varchar("title", { length: 256 }).notNull(),
+  description: varchar("description", {
+    length: 4096,
+  }).notNull(),
+  isDeleted: boolean("is_deleted").notNull().default(false),
+  isPrivate: boolean("is_private").notNull().default(false),
+  isUnlisted: boolean("is_unlisted")
+    .notNull()
+    .default(false),
+  // Relationships
+  ownerId: integer("creator_id").notNull(),
+})
+
+export const canvasesRelations = relations(
+  canvases,
+  ({ one, many }) => ({
+    owner: one(users, {
+      fields: [canvases.ownerId],
+      references: [users.id],
+    }),
+    nodes: many(nodes),
   }),
 )
 
@@ -89,6 +120,7 @@ export const nodes = createTable("nodes", {
   isDeleted: boolean("is_deleted").notNull().default(false),
   // Relationships
   creatorId: integer("creator_id").notNull(),
+  canvasId: integer("canvas_id"),
   fromId: varchar("from_id"),
   toId: varchar("to_id"),
 })
@@ -99,6 +131,10 @@ export const nodesRelations = relations(
     creator: one(users, {
       fields: [nodes.creatorId],
       references: [users.id],
+    }),
+    canvas: one(canvases, {
+      fields: [nodes.canvasId],
+      references: [canvases.id],
     }),
     votes: many(votes),
     comments: many(comments),
