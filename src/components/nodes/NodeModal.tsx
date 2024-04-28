@@ -49,7 +49,7 @@ export function NodeModal({
           {voteTotal}
         </Button>
       </DialogTrigger>
-      <DialogContent className="overflow-y-scroll max-h-[90vh] rounded-md">
+      <DialogContent className="overflow-y-scroll h-[90vh] rounded-md">
         <NodeProvider excalEl={excalEl}>
           <NodeModalContent />
         </NodeProvider>

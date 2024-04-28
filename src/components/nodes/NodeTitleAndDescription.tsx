@@ -6,6 +6,8 @@ import { LoadingState } from "@types"
 
 import { useNodeData } from "@context"
 
+import { Card, CardContent } from "@shad"
+
 import { EditableField, FieldType } from "../common/exports"
 
 export function NodeTitle() {
@@ -19,20 +21,24 @@ export function NodeTitle() {
   if (!node) return
 
   return (
-    <EditableField
-      content={
-        node.title === "" ? "No title yet" : node.title
-      }
-      contentClassName="text-2xl font-bold"
-      isEditable={userIsAuthor}
-      label="Title"
-      placeholder="Your title here"
-      initialFieldValue={node.title}
-      onSaveHook={async (v) =>
-        await updateNode(v, node.description)
-      }
-      loading={loadingUpdate === LoadingState.Loading}
-    />
+    <Card>
+      <CardContent className="flex flex-col gap-2 py-2 px-3">
+        <EditableField
+          content={
+            node.title === "" ? "No title yet" : node.title
+          }
+          contentClassName="text-2xl font-bold"
+          isEditable={userIsAuthor}
+          label="Title"
+          placeholder="Your title here"
+          initialFieldValue={node.title}
+          onSaveHook={async (v) =>
+            await updateNode(v, node.description)
+          }
+          loading={loadingUpdate === LoadingState.Loading}
+        />
+      </CardContent>
+    </Card>
   )
 }
 
@@ -47,21 +53,25 @@ export function NodeDescription() {
   if (!node) return
 
   return (
-    <EditableField
-      type={FieldType.textarea}
-      content={
-        node.description === ""
-          ? "No title yet"
-          : node.description
-      }
-      isEditable={userIsAuthor}
-      label="Description"
-      placeholder="Your description here"
-      initialFieldValue={node.description}
-      onSaveHook={async (v) =>
-        await updateNode(node.title, v)
-      }
-      loading={loadingUpdate === LoadingState.Loading}
-    />
+    <Card>
+      <CardContent className="flex flex-col gap-2 py-2 px-3">
+        <EditableField
+          type={FieldType.textarea}
+          content={
+            node.description === ""
+              ? "No title yet"
+              : node.description
+          }
+          isEditable={userIsAuthor}
+          label="Description"
+          placeholder="Your description here"
+          initialFieldValue={node.description}
+          onSaveHook={async (v) =>
+            await updateNode(node.title, v)
+          }
+          loading={loadingUpdate === LoadingState.Loading}
+        />
+      </CardContent>
+    </Card>
   )
 }
