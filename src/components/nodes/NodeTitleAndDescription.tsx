@@ -54,7 +54,6 @@ export function NodeDescription() {
           ? "No title yet"
           : node.description
       }
-      contentClassName="text-gray-400"
       isEditable={userIsAuthor}
       label="Description"
       placeholder="Your description here"

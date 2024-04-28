@@ -20,7 +20,10 @@ import { Progress } from "../common/exports"
 
 import { CommentSection } from "../comments/exports"
 
-import { NodeTitle, NodeDescription } from "./NodeTitleAndDescription"
+import {
+  NodeTitle,
+  NodeDescription,
+} from "./NodeTitleAndDescription"
 import { NodeAuthor } from "./NodeAuthor"
 import { NodeVotePointsSection } from "./NodeVotePointsSection"
 
@@ -69,10 +72,16 @@ function NodeModalContent() {
           <p className="text-gray-400">{node?.nanoId}</p>
         </DialogTitle>
       </DialogHeader>
-      <div className="flex flex-col gap-4 mt-4">
+      <div className="flex flex-col gap-4 mt-2">
         <NodeTitle />
         <NodeDescription />
-        <NodeAuthor author={node.creator!} />
+        <div className="flex justify-between mt-3">
+          <div></div>
+          <NodeAuthor
+            author={node.creator!}
+            updatedAt={node.updatedAt}
+          />
+        </div>
         <NodeVotePointsSection
           excalId={node.excalId}
           creatorClerkId={node.creator!.clerkId}
