@@ -20,7 +20,7 @@ import { Progress } from "../common/exports"
 
 import { CommentSection } from "../comments/exports"
 
-import { NodeTitle, NodeDescription } from "./NodeTitle"
+import { NodeTitle, NodeDescription } from "./NodeTitleAndDescription"
 import { NodeAuthor } from "./NodeAuthor"
 import { NodeVotePointsSection } from "./NodeVotePointsSection"
 
@@ -64,7 +64,7 @@ function NodeModalContent() {
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="flex gap-2">
+        <DialogTitle className="flex gap-2 mt-[-8px]">
           <p className="text-gray-500">Element Data</p>
           <p className="text-gray-400">{node?.nanoId}</p>
         </DialogTitle>
