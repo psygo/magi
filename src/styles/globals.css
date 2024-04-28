@@ -10,7 +10,7 @@
 
 .App-bottom-bar,
 .App-top-bar {
-  z-index: 20 !important;
+  z-index: 10 !important;
 }
 
 /*--------------------------------------------------------*/

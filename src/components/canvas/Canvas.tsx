@@ -96,6 +96,8 @@ export function Canvas() {
       (el) => toDate(el.updated) > lastUpdated,
     )
 
+    console.log(notUpdatedYet)
+
     if (notUpdatedYet.length > 0) {
       const newNodes = await postNodes(notUpdatedYet)
 
@@ -125,7 +127,7 @@ export function Canvas() {
   return (
     <div>
       <section
-        className="absolute top-0 w-screen h-screen"
+        className="fixed top-0 w-screen h-screen"
         onPointerUp={delayedExcalUpdate}
         onKeyUp={delayedExcalUpdate}
       >
@@ -133,26 +135,9 @@ export function Canvas() {
       </section>
       <section>
         {loading === LoadingState.Loaded &&
-          excalElements.length > 0 &&
           excalElements.map((exEl, i) => {
-            if (exEl.isDeleted) return
-
-            const zoom = excalAppState.zoom.value
-            const [x, y] = [
-              exEl.x +
-                excalAppState.scrollX +
-                exEl.width -
-                40,
-              exEl.y + excalAppState.scrollY + exEl.height,
-            ].map((n) => n * zoom)
-
             return (
-              <ShapeInfoButtons
-                key={i}
-                x={x!}
-                y={y!}
-                excalEl={exEl}
-              />
+              <ShapeInfoButtons key={i} excalEl={exEl} />
             )
           })}
       </section>

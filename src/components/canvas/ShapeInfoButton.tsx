@@ -11,40 +11,41 @@ import { NodeCardDialog } from "../nodes/exports"
 import { UserAvatar } from "../users/exports"
 
 type ShapeInfoButtonsProps = {
-  x: number
-  y: number
   excalEl: ExcalidrawElement
 }
 
 export function ShapeInfoButtons({
-  x,
-  y,
   excalEl,
 }: ShapeInfoButtonsProps) {
-  const { nodes } = useCanvas()
+  const { nodes, excalAppState } = useCanvas()
+
+  if (excalEl.isDeleted) return
+  if (excalEl.type === "text" && excalEl.containerId) return
+
+  const zoom = excalAppState.zoom.value
+  const [x, y] = [
+    excalEl.x + excalAppState.scrollX + excalEl.width - 40,
+    excalEl.y + excalAppState.scrollY + excalEl.height,
+  ].map((n) => n * zoom)
+
   const node = nodes[excalEl.id]
   const voteTotal = node?.stats?.voteTotal ?? 0
 
   return (
-    <div
+    <section
       className="flex gap-1 items-center"
       style={{
-        position: "absolute",
+        position: "fixed",
         zIndex: 10,
         left: x,
         top: y,
       }}
     >
-      {node && node?.creator && (
-        <UserAvatar
-          username={node.creator.username}
-          imageUrl={node.creator.imageUrl}
-        />
-      )}
+      <UserAvatar excalEl={excalEl} />
       <NodeCardDialog
         excalEl={excalEl}
         voteTotal={voteTotal}
       />
-    </div>
+    </section>
   )
 }
