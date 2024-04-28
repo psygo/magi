@@ -2,27 +2,27 @@ import "@utils/string"
 
 import { useUser } from "@clerk/nextjs"
 
-import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
+import { type ExcalId } from "@types"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@shad"
 
 import { useCanvas } from "@context"
 
 type UserAvatarProps = {
-  excalEl: ExcalidrawElement
+  excalId: ExcalId
   iconSize?: number
   fontSize?: number
 }
 
 export function UserAvatar({
-  excalEl,
-  iconSize = 16,
+  excalId,
+  iconSize = 18,
   fontSize = 12,
 }: UserAvatarProps) {
   const { user } = useUser()
 
   const { nodes, excalAppState } = useCanvas()
-  const node = nodes[excalEl.id]
+  const node = nodes[excalId]
 
   const zoom = excalAppState.zoom.value
 

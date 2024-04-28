@@ -26,6 +26,7 @@ export function ShapeInfoButtons({
 
   function getXY() {
     const zoom = excalAppState.zoom.value
+
     if (excalEl.type === "arrow") {
       const lastPoint = Array.from(
         excalEl.points,
@@ -65,7 +66,7 @@ export function ShapeInfoButtons({
         top: y,
       }}
     >
-      <UserAvatar excalEl={excalEl} />
+      <UserAvatar excalId={excalEl.id} />
       <NodeCardDialog
         excalEl={excalEl}
         voteTotal={voteTotal}
