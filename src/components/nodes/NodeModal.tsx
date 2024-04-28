@@ -26,6 +26,7 @@ import {
 } from "./NodeTitleAndDescription"
 import { NodeAuthor } from "./NodeAuthor"
 import { NodeVotePointsSection } from "./NodeVotePointsSection"
+import { Share2, Star } from "lucide-react"
 
 type NodeEdgeCardDialogProps = {
   excalEl: ExcalidrawElement
@@ -49,7 +50,7 @@ export function NodeModal({
           {voteTotal}
         </Button>
       </DialogTrigger>
-      <DialogContent className="overflow-y-scroll h-[90vh] rounded-md">
+      <DialogContent className="border-2 border-gray-700 overflow-y-scroll h-[90vh] rounded-md">
         <NodeProvider excalEl={excalEl}>
           <NodeModalContent />
         </NodeProvider>
@@ -67,16 +68,23 @@ function NodeModalContent() {
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="flex gap-2 mt-[-8px]">
-          <p className="text-gray-500">Element Data</p>
+        <DialogTitle className="flex gap-2 mt-[-10px] mr-5 justify-end">
+          <p className="text-gray-400">Element Data</p>
           <p className="text-gray-400">{node?.nanoId}</p>
         </DialogTitle>
       </DialogHeader>
-      <div className="flex flex-col gap-4 mt-2">
+      <div className="flex flex-col gap-3 mt-2">
         <NodeTitle />
         <NodeDescription />
         <div className="flex justify-between mt-3">
-          <div></div>
+          <div className="mt-2">
+            <Button variant="ghost">
+              <Share2 />
+            </Button>
+            <Button variant="ghost">
+              <Star />
+            </Button>
+          </div>
           <NodeAuthor
             author={node.creator!}
             updatedAt={node.updatedAt}
