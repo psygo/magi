@@ -20,8 +20,7 @@ import { Progress } from "../common/exports"
 
 import { CommentSection } from "../comments/exports"
 
-import { NodeTitle } from "./NodeTitle"
-import { NodeDescription } from "./NodeDescription"
+import { NodeTitle, NodeDescription } from "./NodeTitle"
 import { NodeAuthor } from "./NodeAuthor"
 import { NodeVotePointsSection } from "./NodeVotePointsSection"
 
@@ -47,7 +46,7 @@ export function NodeModal({
           {voteTotal}
         </Button>
       </DialogTrigger>
-      <DialogContent className="overflow-y-scroll max-h-[90vh]">
+      <DialogContent className="overflow-y-scroll max-h-[90vh] rounded-md">
         <NodeProvider excalEl={excalEl}>
           <NodeModalContent />
         </NodeProvider>
@@ -66,15 +65,13 @@ function NodeModalContent() {
     <>
       <DialogHeader>
         <DialogTitle className="flex gap-2">
-          <p className="text-gray-500">Node Data</p>
-          <p className="text-gray-400">{node?.excalId}</p>
+          <p className="text-gray-500">Element Data</p>
+          <p className="text-gray-400">{node?.nanoId}</p>
         </DialogTitle>
       </DialogHeader>
       <div className="flex flex-col gap-4 mt-4">
         <NodeTitle />
-        <NodeDescription
-          aF={node.title !== "" || node.description !== ""}
-        />
+        <NodeDescription />
         <NodeAuthor author={node.creator!} />
         <NodeVotePointsSection
           excalId={node.excalId}

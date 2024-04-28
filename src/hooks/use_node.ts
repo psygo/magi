@@ -5,14 +5,14 @@ import { useEffect, useState } from "react"
 import {
   type ExcalId,
   LoadingState,
-  type SelectNodeWithCreatorAndStats,
+  type SelectNodeWithCreatorAndStatsAndCreatorStats,
 } from "@types"
 
 import { getNode } from "@actions"
 
 export function useNode(excalId: ExcalId) {
   const [node, setNode] =
-    useState<SelectNodeWithCreatorAndStats>()
+    useState<SelectNodeWithCreatorAndStatsAndCreatorStats>()
 
   const [loading, setLoading] = useState<LoadingState>(
     LoadingState.NotYet,

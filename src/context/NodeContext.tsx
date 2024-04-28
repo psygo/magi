@@ -1,12 +1,12 @@
 "use client"
 
-import { createContext, useContext } from "react"
+import { createContext, useContext, useState } from "react"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 import {
   type WithReactChildren,
-  type LoadingState,
+  LoadingState,
   type SelectNodeWithCreatorAndStatsAndCreatorStats,
 } from "@types"
 
@@ -24,6 +24,7 @@ type NodeContext = {
     title?: string,
     description?: string,
   ) => Promise<void>
+  loadingUpdate: LoadingState
 }
 
 const NodeContext = createContext<NodeContext | null>(null)
@@ -37,12 +38,16 @@ export function NodeProvider({
   children,
 }: NodeProviderProps) {
   const { node, setNode, loading } = useNode(excalEl.id)
+  const [loadingUpdate, setLoadingUpdate] =
+    useState<LoadingState>(LoadingState.NotYet)
 
   async function updateNode(
     title?: string,
     description?: string,
   ) {
     if (node) {
+      setLoadingUpdate(LoadingState.Loading)
+
       const newNode = await putNode(
         node.excalId,
         title ?? node.title ?? "",
@@ -50,6 +55,8 @@ export function NodeProvider({
       )
 
       setNode(newNode)
+
+      setLoadingUpdate(LoadingState.Loaded)
     }
   }
 
@@ -60,6 +67,7 @@ export function NodeProvider({
         node,
         loading,
         updateNode,
+        loadingUpdate,
       }}
     >
       {children}

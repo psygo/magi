@@ -1,76 +1,68 @@
 "use client"
 
-import { useState } from "react"
-
 import { useUser } from "@clerk/nextjs"
 
-import { Input, Label } from "@shad"
-
-import { stringIsEmpty } from "@utils"
+import { LoadingState } from "@types"
 
 import { useNodeData } from "@context"
 
-import {
-  EditableContentContainerEdit,
-  EditableContentContainerView,
-  autoFocusDefault,
-} from "../common/exports"
+import { EditableField, FieldType } from "../common/exports"
 
-export type TitleProps = {
-  aF?: boolean
-}
-
-export function NodeTitle({ aF = true }: TitleProps) {
-  const { node, updateNode } = useNodeData()
+export function NodeTitle() {
+  const { node, updateNode, loadingUpdate } = useNodeData()
 
   const { user } = useUser()
   const userIsAuthor = !!(
     user && user.id === node!.creator!.clerkId
   )
 
-  const [isEditing, setIsEditing] = useState(
-    stringIsEmpty(node?.title),
+  if (!node) return
+
+  return (
+    <EditableField
+      content={
+        node.title === "" ? "No title yet" : node.title
+      }
+      contentClassName="text-2xl font-bold"
+      isEditable={userIsAuthor}
+      label="Title"
+      placeholder="Your title here"
+      initialFieldValue={node.title}
+      onSaveHook={async (v) =>
+        await updateNode(v, node.description)
+      }
+      loading={loadingUpdate === LoadingState.Loading}
+    />
   )
+}
 
-  const [title, setTitle] = useState(node?.title)
+export function NodeDescription() {
+  const { node, updateNode, loadingUpdate } = useNodeData()
 
-  const aFocus = { ...autoFocusDefault, autoFocus: aF }
+  const { user } = useUser()
+  const userIsAuthor = !!(
+    user && user.id === node!.creator!.clerkId
+  )
 
   if (!node) return
 
-  if (isEditing && userIsAuthor) {
-    return (
-      <EditableContentContainerEdit
-        onCancel={() => setIsEditing(false)}
-        onSave={async () => {
-          await updateNode(title, node.description)
-
-          setIsEditing(false)
-        }}
-      >
-        <Label htmlFor="title">Title</Label>
-        <Input
-          id="title"
-          placeholder="A Great Title"
-          {...aFocus}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </EditableContentContainerEdit>
-    )
-  } else {
-    return (
-      <EditableContentContainerView
-        onEdit={() => {
-          setIsEditing(true)
-        }}
-        iconSize={13}
-        showEditButton={userIsAuthor}
-      >
-        <h2 className="text-3xl font-bold">
-          {node.title !== "" ? node.title : "—"}
-        </h2>
-      </EditableContentContainerView>
-    )
-  }
+  return (
+    <EditableField
+      type={FieldType.textarea}
+      content={
+        node.description === ""
+          ? "No title yet"
+          : node.description
+      }
+      contentClassName="text-gray-400"
+      isEditable={userIsAuthor}
+      label="Description"
+      placeholder="Your description here"
+      initialFieldValue={node.description}
+      onSaveHook={async (v) =>
+        await updateNode(node.title, v)
+      }
+      loading={loadingUpdate === LoadingState.Loading}
+    />
+  )
 }
