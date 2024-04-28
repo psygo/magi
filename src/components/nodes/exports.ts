@@ -1,1 +1,1 @@
-export * from "./NodeCardDialog"
+export * from "./NodeModal"

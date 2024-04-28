@@ -8,9 +8,10 @@ import { type Point } from "@types"
 
 import { useCanvas } from "@context"
 
-import { NodeCardDialog } from "../nodes/exports"
+import { NodeModal } from "../nodes/exports"
 
 import { UserAvatar } from "../users/exports"
+import { useUser } from "@clerk/nextjs"
 
 type ShapeInfoButtonsProps = {
   excalEl: ExcalidrawElement
@@ -19,6 +20,8 @@ type ShapeInfoButtonsProps = {
 export function ShapeInfoButtons({
   excalEl,
 }: ShapeInfoButtonsProps) {
+  const { user } = useUser()
+
   const { nodes, excalAppState } = useCanvas()
 
   if (excalEl.isDeleted) return
@@ -56,6 +59,8 @@ export function ShapeInfoButtons({
   const node = nodes[excalEl.id]
   const voteTotal = node?.stats?.voteTotal ?? 0
 
+  const zoom = excalAppState.zoom.value
+
   return (
     <section
       className="flex gap-1 items-center"
@@ -66,8 +71,12 @@ export function ShapeInfoButtons({
         top: y,
       }}
     >
-      <UserAvatar excalId={excalEl.id} />
-      <NodeCardDialog
+      <UserAvatar
+        username={node?.creator?.username ?? user?.username}
+        imageUrl={node?.creator?.imageUrl ?? user?.imageUrl}
+        zoom={zoom}
+      />
+      <NodeModal
         excalEl={excalEl}
         voteTotal={voteTotal}
       />

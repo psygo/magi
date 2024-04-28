@@ -125,7 +125,7 @@ export function Canvas() {
   }
 
   return (
-    <div>
+    <>
       <section
         className="fixed top-0 w-screen h-screen"
         onPointerUp={delayedExcalUpdate}
@@ -139,6 +139,6 @@ export function Canvas() {
             <ShapeInfoButtons key={i} excalEl={excalEl} />
           ))}
       </section>
-    </div>
+    </>
   )
 }

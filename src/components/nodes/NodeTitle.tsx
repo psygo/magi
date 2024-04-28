@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useState } from "react"
+import { useState } from "react"
 
 import { useUser } from "@clerk/nextjs"
 
-import { Label, Textarea } from "@shad"
+import { Input, Label } from "@shad"
 
 import { stringIsEmpty } from "@utils"
 
@@ -16,13 +16,11 @@ import {
   autoFocusDefault,
 } from "../common/exports"
 
-import { type TitleProps } from "./Title"
+export type TitleProps = {
+  aF?: boolean
+}
 
-type DescriptionProps = TitleProps
-
-export function Description({
-  aF = true,
-}: DescriptionProps) {
+export function NodeTitle({ aF = true }: TitleProps) {
   const { node, updateNode } = useNodeData()
 
   const { user } = useUser()
@@ -31,12 +29,10 @@ export function Description({
   )
 
   const [isEditing, setIsEditing] = useState(
-    stringIsEmpty(node?.description),
+    stringIsEmpty(node?.title),
   )
 
-  const [description, setDescription] = useState(
-    node?.description,
-  )
+  const [title, setTitle] = useState(node?.title)
 
   const aFocus = { ...autoFocusDefault, autoFocus: aF }
 
@@ -47,31 +43,33 @@ export function Description({
       <EditableContentContainerEdit
         onCancel={() => setIsEditing(false)}
         onSave={async () => {
-          await updateNode(node.title, description)
+          await updateNode(title, node.description)
 
           setIsEditing(false)
         }}
       >
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          placeholder="A great description"
+        <Label htmlFor="title">Title</Label>
+        <Input
+          id="title"
+          placeholder="A Great Title"
           {...aFocus}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </EditableContentContainerEdit>
     )
   } else {
     return (
       <EditableContentContainerView
-        onEdit={() => setIsEditing(true)}
+        onEdit={() => {
+          setIsEditing(true)
+        }}
         iconSize={13}
         showEditButton={userIsAuthor}
       >
-        <p className="">
-          {node.description !== "" ? node.description : "—"}
-        </p>
+        <h2 className="text-3xl font-bold">
+          {node.title !== "" ? node.title : "—"}
+        </h2>
       </EditableContentContainerView>
     )
   }

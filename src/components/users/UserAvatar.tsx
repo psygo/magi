@@ -1,34 +1,22 @@
 import "@utils/string"
 
-import { useUser } from "@clerk/nextjs"
-
-import { type ExcalId } from "@types"
-
 import { Avatar, AvatarFallback, AvatarImage } from "@shad"
 
-import { useCanvas } from "@context"
-
 type UserAvatarProps = {
-  excalId: ExcalId
+  username: string | null | undefined
+  imageUrl: string | null | undefined
+  zoom?: number
   iconSize?: number
   fontSize?: number
 }
 
 export function UserAvatar({
-  excalId,
+  username,
+  imageUrl,
   iconSize = 18,
   fontSize = 12,
+  zoom = 1,
 }: UserAvatarProps) {
-  const { user } = useUser()
-
-  const { nodes, excalAppState } = useCanvas()
-  const node = nodes[excalId]
-
-  const zoom = excalAppState.zoom.value
-
-  const username = node?.creator?.username ?? user?.username
-  const imageUrl = node?.creator?.imageUrl ?? user?.imageUrl
-
   const zoomedIconSize = iconSize * zoom
   const zoomedFontSize = (fontSize * zoom) / 2
 
