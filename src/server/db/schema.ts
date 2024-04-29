@@ -185,7 +185,7 @@ export const comments = createTable("comments", {
   // Metadata
   ...dateTimeCols(),
   // Data
-  content: varchar("content", { length: 4096 }),
+  content: varchar("content", { length: 4096 }).notNull(),
   // Relationships
   commenterId: integer("commenter_id").notNull(),
   nodeId: varchar("node_id"),

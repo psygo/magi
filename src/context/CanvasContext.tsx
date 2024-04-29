@@ -42,7 +42,7 @@ export const initialAppState: AppState = {
 export function nodesArrayToRecords(
   nodes: SelectNodeWithCreatorAndStats[],
 ) {
-  const records = {} as NodesRecords
+  const records: NodesRecords = {}
   nodes.forEach((n) => (records[n.excalId] = n))
   return records
 }

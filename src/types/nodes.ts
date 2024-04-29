@@ -28,9 +28,7 @@ export type SelectNodeWithCreatorAndStats = SelectNode &
 export type SelectNodeWithCreatorAndStatsAndCreatorStats =
   SelectNode & WithNodeStats & WithCreatorAndCreatorStats
 
-// export type NodesRecords = Record<
-//   ExcalId,
-//   SelectNodeWithCreatorAndStats
-// >
-
-export type NodesRecords = {[key: ExcalId]: SelectNodeWithCreatorAndStats}
+export type NodesRecords = Record<
+  ExcalId,
+  SelectNodeWithCreatorAndStats
+>

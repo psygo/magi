@@ -1,16 +1,17 @@
 # Tasks
 
-1. [ ] Test another user
+1. [ ] Refactor Comments
+2. [ ] ShapeInfoButtons `voteTotal` should be inside the dialog instead of a parameter
+3. [ ] Fix syncing between the canvas and the node modal.
+4. [ ] Push IDs to the URL path
 
 ## Deployment
 
-1. [ ] Vercel Postgres
-2. [ ] PostHog
-3. [ ] Sentry
+1. [ ] PostHog
+1. [ ] Sentry
 
 ## Second Version
 
-1. [ ] Push IDs to the URL path
 1. [ ] Edit Excalidraw Controls
 1. [ ] Number of Comments on the info detail
 1. [ ] List connections on a node on the info card

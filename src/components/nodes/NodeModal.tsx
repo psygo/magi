@@ -27,6 +27,7 @@ import {
 import { NodeAuthor } from "./NodeAuthor"
 import { NodeVotePointsSection } from "./NodeVotePointsSection"
 import { Share2, Star } from "lucide-react"
+import { CommentsProvider } from "../../context/CommentsContext"
 
 type NodeEdgeCardDialogProps = {
   excalEl: ExcalidrawElement
@@ -101,7 +102,9 @@ function NodeModalContent() {
           />
         </div>
         <Separator className="my-2" />
-        <CommentSection excalId={node.excalId} />
+        <CommentsProvider>
+          <CommentSection />
+        </CommentsProvider>
       </div>
     </>
   )
