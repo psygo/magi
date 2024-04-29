@@ -1,62 +1,41 @@
 "use client"
 
-import { useState } from "react"
-
 import { useUser } from "@clerk/nextjs"
-
-import { type ExcalId, type ClerkId } from "@types"
-
-import { postVote } from "@actions"
 
 import { cn, pointsColor } from "@styles"
 
+import { useNodeData } from "@context"
+
 import { VoteButton } from "../votes/exports"
 
-type NodeVotePointsSectionProps = {
-  excalId: ExcalId
-  creatorClerkId: ClerkId
-  initialVoteTotal?: number
-  initialUserVotedPoints?: number
-}
-
-export function NodeVotePointsSection({
-  excalId,
-  creatorClerkId,
-  initialVoteTotal = 0,
-  initialUserVotedPoints = 0,
-}: NodeVotePointsSectionProps) {
+export function NodeVotePointsSection() {
   const { user } = useUser()
 
-  const [voteTotal, setVoteTotal] = useState(
-    initialVoteTotal ?? 0,
-  )
+  const { node, vote, loadingVote } = useNodeData()
 
-  const [userVotedPoints, setUserVotedPoints] = useState(
-    initialUserVotedPoints,
-  )
+  const votedPoints = node?.stats?.votedPoints ?? 0
+  const voteTotal = node?.stats?.voteTotal ?? 0
 
   return (
     <div className="flex items-center h-max">
       <VoteButton
         up
         onClick={async () => {
-          if (user?.id === creatorClerkId) return
-          await postVote(excalId, true)
-          setVoteTotal(initialUserVotedPoints + 1)
-          setUserVotedPoints(1)
+          if (user?.id === node?.creator?.clerkId) return
+          await vote(true)
         }}
         iconSize={24}
-        votedPoints={userVotedPoints}
+        votedPoints={votedPoints}
+        loading={loadingVote}
       />
       <VoteButton
         onClick={async () => {
-          if (user?.id === creatorClerkId) return
-          await postVote(excalId, false)
-          setVoteTotal(initialUserVotedPoints - 1)
-          setUserVotedPoints(-1)
+          if (user?.id === node?.creator?.clerkId) return
+          await vote(false)
         }}
         iconSize={24}
-        votedPoints={userVotedPoints}
+        votedPoints={votedPoints}
+        loading={loadingVote}
       />
       <p
         className={cn(

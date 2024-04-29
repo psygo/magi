@@ -6,7 +6,7 @@ import "@utils/array"
 
 import { type ExcalId } from "@types"
 
-import { db, votes } from "@server"
+import { db, getNode, votes } from "@server"
 
 import { userIdFromClerk } from "../../utils/exports"
 
@@ -27,7 +27,7 @@ export async function postVote(
         ),
       )
 
-    const voteData = await db
+    await db
       .insert(votes)
       .values({
         points: up ? 1 : -1,
@@ -36,7 +36,7 @@ export async function postVote(
       })
       .returning({ id: votes.id })
 
-    return voteData.first()
+    return await getNode(excalId)
   } catch (e) {
     console.error(e)
   }

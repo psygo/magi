@@ -88,14 +88,7 @@ function NodeModalContent() {
         <NodeDescription />
         <div className="flex justify-between mt-3">
           <div className="flex flex-col gap-1 mt-[6px]">
-            <NodeVotePointsSection
-              excalId={node.excalId}
-              creatorClerkId={node.creator!.clerkId}
-              initialUserVotedPoints={
-                node.stats?.votedPoints
-              }
-              initialVoteTotal={node.stats?.voteTotal}
-            />
+            <NodeVotePointsSection />
             <div className="flex gap-1 mt-2 ml-[2px]">
               <Button variant="ghost">
                 <Share2 className="h-5 w-5" />

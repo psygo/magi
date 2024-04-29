@@ -10,9 +10,11 @@ import {
   type SelectNodeWithCreatorAndStatsAndCreatorStats,
 } from "@types"
 
-import { putNode } from "@actions"
+import { postVote, putNode } from "@actions"
 
 import { useNode } from "@hooks"
+
+import { useCanvas } from "./CanvasContext"
 
 type NodeContext = {
   excalEl: ExcalidrawElement
@@ -25,6 +27,8 @@ type NodeContext = {
     description?: string,
   ) => Promise<void>
   loadingUpdate: LoadingState
+  vote: (up: boolean) => Promise<void>
+  loadingVote: LoadingState
 }
 
 const NodeContext = createContext<NodeContext | null>(null)
@@ -37,8 +41,14 @@ export function NodeProvider({
   excalEl,
   children,
 }: NodeProviderProps) {
-  const { node, setNode, loading } = useNode(excalEl.id)
+  const { nodes, setNodes } = useCanvas()
+  const excalId = excalEl.id
+
+  const { node, setNode, loading } = useNode(excalId)
+
   const [loadingUpdate, setLoadingUpdate] =
+    useState<LoadingState>(LoadingState.NotYet)
+  const [loadingVote, setLoadingVote] =
     useState<LoadingState>(LoadingState.NotYet)
 
   async function updateNode(
@@ -49,7 +59,7 @@ export function NodeProvider({
       setLoadingUpdate(LoadingState.Loading)
 
       const newNode = await putNode(
-        node.excalId,
+        excalId,
         title ?? node.title ?? "",
         description ?? node.description ?? "",
       )
@@ -60,6 +70,22 @@ export function NodeProvider({
     }
   }
 
+  async function vote(up: boolean) {
+    setLoadingVote(LoadingState.Loading)
+
+    const newNode = await postVote(excalId, up)
+
+    if (newNode) {
+      setNode(newNode)
+      setNodes({
+        ...nodes,
+        excalId: newNode,
+      })
+    }
+
+    setLoadingVote(LoadingState.Loaded)
+  }
+
   return (
     <NodeContext.Provider
       value={{
@@ -68,6 +94,8 @@ export function NodeProvider({
         loading,
         updateNode,
         loadingUpdate,
+        vote,
+        loadingVote,
       }}
     >
       {children}

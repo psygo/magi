@@ -4,6 +4,8 @@ import { useState } from "react"
 
 import { ArrowDown, ArrowUp } from "lucide-react"
 
+import { LoadingState } from "@types"
+
 import { Button } from "@shad"
 
 type VoteButtonProps = {
@@ -11,6 +13,7 @@ type VoteButtonProps = {
   onClick: () => void
   iconSize?: number
   votedPoints?: number
+  loading?: LoadingState
 }
 
 export function VoteButton({
@@ -18,12 +21,14 @@ export function VoteButton({
   onClick,
   iconSize = 18,
   votedPoints = 0,
+  loading = LoadingState.NotYet,
 }: VoteButtonProps) {
   const [hovered, setHovered] = useState(false)
 
   return (
     <Button
       variant="ghost"
+      disabled={loading === LoadingState.Loading}
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

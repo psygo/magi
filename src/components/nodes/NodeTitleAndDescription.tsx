@@ -59,7 +59,7 @@ export function NodeDescription() {
           type={FieldType.textarea}
           content={
             node.description === ""
-              ? "No title yet"
+              ? "No description yet"
               : node.description
           }
           isEditable={userIsAuthor}
