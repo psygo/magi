@@ -1,3 +1,7 @@
+"use client"
+
+import { Share2, Star } from "lucide-react"
+
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 import {
@@ -12,7 +16,12 @@ import {
 
 import { LoadingState } from "@types"
 
-import { NodeProvider, useNodeData } from "@context"
+import {
+  CommentsProvider,
+  NodeProvider,
+  useCanvas,
+  useNodeData,
+} from "@context"
 
 import { cn, pointsColor } from "@styles"
 
@@ -26,18 +35,18 @@ import {
 } from "./NodeTitleAndDescription"
 import { NodeAuthor } from "./NodeAuthor"
 import { NodeVotePointsSection } from "./NodeVotePointsSection"
-import { Share2, Star } from "lucide-react"
-import { CommentsProvider } from "../../context/CommentsContext"
 
 type NodeEdgeCardDialogProps = {
   excalEl: ExcalidrawElement
-  voteTotal: number
 }
 
 export function NodeModal({
   excalEl,
-  voteTotal,
 }: NodeEdgeCardDialogProps) {
+  const { nodes } = useCanvas()
+  const node = nodes[excalEl.id]
+  const voteTotal = node?.stats?.voteTotal ?? 0
+
   return (
     <Dialog>
       <DialogTrigger asChild>

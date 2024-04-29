@@ -1,5 +1,7 @@
 "use client"
 
+import { useUser } from "@clerk/nextjs"
+
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
 import "@utils/array"
@@ -11,7 +13,6 @@ import { useCanvas } from "@context"
 import { NodeModal } from "../nodes/exports"
 
 import { UserAvatar } from "../users/exports"
-import { useUser } from "@clerk/nextjs"
 
 type ShapeInfoButtonsProps = {
   excalEl: ExcalidrawElement
@@ -23,13 +24,14 @@ export function ShapeInfoButtons({
   const { user } = useUser()
 
   const { nodes, excalAppState } = useCanvas()
+  const node = nodes[excalEl.id]
 
   if (excalEl.isDeleted) return
   if (excalEl.type === "text" && excalEl.containerId) return
 
-  function getXY() {
-    const zoom = excalAppState.zoom.value
+  const zoom = excalAppState.zoom.value
 
+  function getXY() {
     if (excalEl.type === "arrow") {
       const lastPoint = Array.from(
         excalEl.points,
@@ -56,11 +58,6 @@ export function ShapeInfoButtons({
 
   const [x, y] = getXY()
 
-  const node = nodes[excalEl.id]
-  const voteTotal = node?.stats?.voteTotal ?? 0
-
-  const zoom = excalAppState.zoom.value
-
   return (
     <section
       className="flex gap-1 items-center"
@@ -76,10 +73,7 @@ export function ShapeInfoButtons({
         imageUrl={node?.creator?.imageUrl ?? user?.imageUrl}
         zoom={zoom}
       />
-      <NodeModal
-        excalEl={excalEl}
-        voteTotal={voteTotal}
-      />
+      <NodeModal excalEl={excalEl} />
     </section>
   )
 }

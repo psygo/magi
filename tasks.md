@@ -1,9 +1,7 @@
 # Tasks
 
-1. [ ] Refactor Comments
-2. [ ] ShapeInfoButtons `voteTotal` should be inside the dialog instead of a parameter
-3. [ ] Fix syncing between the canvas and the node modal.
-4. [ ] Push IDs to the URL path
+1. [ ] Fix syncing between the canvas and the node modal.
+2. [ ] Push IDs to the URL path
 
 ## Deployment
 
