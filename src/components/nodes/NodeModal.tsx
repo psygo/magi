@@ -1,5 +1,7 @@
 "use client"
 
+import { useParams } from "next/navigation"
+
 import { Share2, Star } from "lucide-react"
 
 import {
@@ -48,8 +50,12 @@ export function NodeModal({
   const voteTotal = node?.stats?.voteTotal ?? 0
   const zoom = excalAppState.zoom.value as number
 
+  const params = useParams()
+  const open = params.canvas_path?.includes(excalId)
+
   return (
     <Dialog
+      defaultOpen={open}
       onOpenChange={(open) => {
         const searchParams = getCurrentSearchParams()
         const nodePath = open ? `nodes/${excalId}` : ""
