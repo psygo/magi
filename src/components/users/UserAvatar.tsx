@@ -13,8 +13,8 @@ type UserAvatarProps = {
 export function UserAvatar({
   username,
   imageUrl,
-  iconSize = 18,
-  fontSize = 12,
+  iconSize = 20,
+  fontSize = 14,
   zoom = 1,
 }: UserAvatarProps) {
   const zoomedIconSize = iconSize * zoom

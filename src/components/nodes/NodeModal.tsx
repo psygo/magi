@@ -41,9 +41,11 @@ type NodeEdgeCardDialogProps = {
 export function NodeModal({
   excalId,
 }: NodeEdgeCardDialogProps) {
-  const { nodes } = useCanvas()
+  const { nodes, excalAppState } = useCanvas()
+
   const node = nodes[excalId]
   const voteTotal = node?.stats?.voteTotal ?? 0
+  const zoom = excalAppState.zoom.value as number
 
   return (
     <Dialog>
@@ -54,6 +56,7 @@ export function NodeModal({
             "p-0 px-[2px] font-bold text-base",
             pointsColor(voteTotal),
           )}
+          style={{ fontSize: 20 * zoom }}
         >
           {voteTotal}
         </Button>
