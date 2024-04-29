@@ -30,8 +30,7 @@ const CanvasContext = createContext<CanvasContext | null>(
   null,
 )
 
-export const initialAppState: AppState = {
-  viewBackgroundColor: "#a5d8ff",
+export const standardInitialAppState: AppState = {
   scrollX: 0,
   scrollY: 0,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -49,10 +48,12 @@ export function nodesArrayToRecords(
 
 export type CanvasProviderProps = WithReactChildren & {
   initialNodes?: SelectNodeWithCreatorAndStats[]
+  initialAppState?: AppState
 }
 
 export function CanvasProvider({
   initialNodes = [],
+  initialAppState = standardInitialAppState,
   children,
 }: CanvasProviderProps) {
   const [nodes, setNodes] = useState<NodesRecords>(

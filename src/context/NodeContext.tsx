@@ -2,12 +2,11 @@
 
 import { createContext, useContext, useState } from "react"
 
-import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
-
 import {
   type WithReactChildren,
   LoadingState,
   type SelectNodeWithCreatorAndStatsAndCreatorStats,
+  type ExcalId,
 } from "@types"
 
 import { postVote, putNode } from "@actions"
@@ -20,7 +19,6 @@ import {
 } from "./CanvasContext"
 
 type NodeContext = {
-  excalEl: ExcalidrawElement
   node:
     | SelectNodeWithCreatorAndStatsAndCreatorStats
     | undefined
@@ -37,15 +35,14 @@ type NodeContext = {
 const NodeContext = createContext<NodeContext | null>(null)
 
 type NodeProviderProps = WithReactChildren & {
-  excalEl: ExcalidrawElement
+  excalId: ExcalId
 }
 
 export function NodeProvider({
-  excalEl,
+  excalId,
   children,
 }: NodeProviderProps) {
   const { nodes, setNodes } = useCanvas()
-  const excalId = excalEl.id
 
   const { node, setNode, loading } = useNode(excalId)
 
@@ -90,7 +87,6 @@ export function NodeProvider({
   return (
     <NodeContext.Provider
       value={{
-        excalEl,
         node,
         loading,
         updateNode,

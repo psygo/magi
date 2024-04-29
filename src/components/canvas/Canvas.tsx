@@ -23,6 +23,7 @@ import {
 import { Progress } from "@components"
 
 import { ShapeInfoButtons } from "./ShapeInfoButton"
+import { useRouter } from "next/navigation"
 
 const Excalidraw = dynamic(
   async () => {
@@ -59,17 +60,28 @@ export function Canvas() {
     new Date(),
   )
 
+  const router = useRouter()
+
   const Excal = useMemo(() => {
     return (
       <Excalidraw
         initialData={{
           elements: excalElements,
           appState: excalAppState,
-          scrollToContent: true,
+          // scrollToContent: true,
         }}
         theme={theme}
         excalidrawAPI={(api) => {
           setExcalidrawAPI(api)
+        }}
+        onScrollChange={() => {
+          const appState = excalidrawAPI!.getAppState()
+          const scrollX = Math.round(appState.scrollX)
+          const scrollY = Math.round(appState.scrollY)
+          const zoom = appState.zoom.value.toFixed(2)
+          router.replace(
+            `/open-public?scrollX=${scrollX}&scrollY=${scrollY}&zoom=${zoom}`,
+          )
         }}
         onChange={() => {
           const els =
@@ -123,7 +135,7 @@ export function Canvas() {
   }
 
   return (
-    <>
+    <div>
       <section
         className="fixed top-0 w-screen h-screen"
         onPointerUp={delayedExcalUpdate}
@@ -137,6 +149,6 @@ export function Canvas() {
             <ShapeInfoButtons key={i} excalEl={excalEl} />
           ))}
       </section>
-    </>
+    </div>
   )
 }

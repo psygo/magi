@@ -73,7 +73,7 @@ export function ShapeInfoButtons({
         imageUrl={node?.creator?.imageUrl ?? user?.imageUrl}
         zoom={zoom}
       />
-      <NodeModal excalEl={excalEl} />
+      <NodeModal excalId={excalEl.id} />
     </section>
   )
 }

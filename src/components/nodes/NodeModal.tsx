@@ -2,8 +2,6 @@
 
 import { Share2, Star } from "lucide-react"
 
-import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
-
 import {
   Button,
   Dialog,
@@ -14,7 +12,7 @@ import {
   Separator,
 } from "@shad"
 
-import { LoadingState } from "@types"
+import { type ExcalId, LoadingState } from "@types"
 
 import {
   CommentsProvider,
@@ -37,14 +35,14 @@ import { NodeAuthor } from "./NodeAuthor"
 import { NodeVotePointsSection } from "./NodeVotePointsSection"
 
 type NodeEdgeCardDialogProps = {
-  excalEl: ExcalidrawElement
+  excalId: ExcalId
 }
 
 export function NodeModal({
-  excalEl,
+  excalId,
 }: NodeEdgeCardDialogProps) {
   const { nodes } = useCanvas()
-  const node = nodes[excalEl.id]
+  const node = nodes[excalId]
   const voteTotal = node?.stats?.voteTotal ?? 0
 
   return (
@@ -61,7 +59,7 @@ export function NodeModal({
         </Button>
       </DialogTrigger>
       <DialogContent className="border-2 border-gray-700 overflow-y-scroll h-[90vh] rounded-md">
-        <NodeProvider excalEl={excalEl}>
+        <NodeProvider excalId={excalId}>
           <NodeModalContent />
         </NodeProvider>
       </DialogContent>
@@ -80,7 +78,7 @@ function NodeModalContent() {
       <DialogHeader>
         <DialogTitle className="flex gap-2 mt-[-10px] mr-5 justify-end">
           <p className="text-gray-400">Element Data</p>
-          <p className="text-gray-400">{node?.nanoId}</p>
+          <p className="text-gray-400">{node?.excalId}</p>
         </DialogTitle>
       </DialogHeader>
       <div className="flex flex-col gap-3 mt-2">
