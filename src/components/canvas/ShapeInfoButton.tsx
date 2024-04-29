@@ -60,12 +60,15 @@ export function ShapeInfoButtons({
 
   return (
     <section
-      className="flex gap-1 items-center"
+      className="flex gap-1 items-center hover:shadow-md hover:border-gray-500 hover:border-2 hover:rounded-md"
       style={{
         position: "fixed",
         zIndex: 10,
         left: x,
         top: y,
+        height: 40 * zoom,
+        paddingRight: 1 * zoom,
+        paddingLeft: 1 * zoom,
       }}
     >
       <UserAvatar
