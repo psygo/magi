@@ -41,14 +41,22 @@ type NodeEdgeCardDialogProps = {
 export function NodeModal({
   excalId,
 }: NodeEdgeCardDialogProps) {
-  const { nodes, excalAppState } = useCanvas()
+  const { nodes, excalAppState, getCurrentSearchParams } =
+    useCanvas()
 
   const node = nodes[excalId]
   const voteTotal = node?.stats?.voteTotal ?? 0
   const zoom = excalAppState.zoom.value as number
 
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(open) => {
+        const searchParams = getCurrentSearchParams()
+        const nodePath = open ? `nodes/${excalId}` : ""
+        const route = `/canvases/open-public/${nodePath}?${searchParams.toString()}`
+        window.history.pushState(null, "", route)
+      }}
+    >
       <DialogTrigger asChild>
         <Button
           variant="link"

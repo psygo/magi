@@ -54,6 +54,7 @@ export function Canvas() {
     setExcalElements,
     excalAppState,
     setExcalAppState,
+    getCurrentSearchParams,
   } = useCanvas()
 
   const [lastUpdated, setLastUpdated] = useState<Date>(
@@ -68,19 +69,17 @@ export function Canvas() {
         initialData={{
           elements: excalElements,
           appState: excalAppState,
-          // scrollToContent: true,
         }}
         theme={theme}
         excalidrawAPI={(api) => {
           setExcalidrawAPI(api)
         }}
         onScrollChange={() => {
-          const appState = excalidrawAPI!.getAppState()
-          const scrollX = Math.round(appState.scrollX)
-          const scrollY = Math.round(appState.scrollY)
-          const zoom = appState.zoom.value.toFixed(2)
+          const searchParams = getCurrentSearchParams(
+            excalidrawAPI!.getAppState(),
+          )
           router.replace(
-            `/open-public?scrollX=${scrollX}&scrollY=${scrollY}&zoom=${zoom}`,
+            `/canvases/open-public?${searchParams.toString()}`,
           )
         }}
         onChange={() => {
