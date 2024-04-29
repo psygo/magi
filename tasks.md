@@ -1,7 +1,6 @@
 # Tasks
 
-1. [ ] Fix syncing between the canvas and the node modal.
-2. [ ] Push IDs to the URL path
+1. [ ] Push IDs to the URL path
 
 ## Deployment
 

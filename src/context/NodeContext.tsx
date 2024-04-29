@@ -14,7 +14,10 @@ import { postVote, putNode } from "@actions"
 
 import { useNode } from "@hooks"
 
-import { useCanvas } from "./CanvasContext"
+import {
+  nodesArrayToRecords,
+  useCanvas,
+} from "./CanvasContext"
 
 type NodeContext = {
   excalEl: ExcalidrawElement
@@ -77,10 +80,8 @@ export function NodeProvider({
 
     if (newNode) {
       setNode(newNode)
-      setNodes({
-        ...nodes,
-        excalId: newNode,
-      })
+      const newNodes = [...Object.values(nodes), newNode]
+      setNodes(nodesArrayToRecords(newNodes))
     }
 
     setLoadingVote(LoadingState.Loaded)
