@@ -1,3 +1,3 @@
-export * from "./EditableContent"
+export * from "./EditableField"
 export * from "./Progress"
 export * from "./TopNav"

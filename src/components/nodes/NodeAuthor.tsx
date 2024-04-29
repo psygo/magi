@@ -29,11 +29,14 @@ export function NodeAuthor({
             fontSize={14}
           />
           <div className="flex flex-col gap-1">
-            <h6 className="text-sm text-blue-500">
-              @{author.username}
+            <h6 className="text-md text-blue-500 font-bold">
+              {author.username}
             </h6>
             <h6
-              className={cn("text-md pl-[2.5px]", pointsColor(points))}
+              className={cn(
+                "text-md font-bold",
+                pointsColor(points),
+              )}
             >
               {points}
             </h6>
@@ -50,7 +53,7 @@ type NodeDateProps = {
 
 export function NodeDate({ updatedAt }: NodeDateProps) {
   return (
-    <div className="flex flex-col gap-1">
+    <div>
       <p className="text-xs text-gray-500">
         updated at{" "}
         {updatedAt.toLocaleString("en-us", {

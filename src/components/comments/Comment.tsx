@@ -6,7 +6,11 @@ import { Loader2 } from "lucide-react"
 
 import { useUser } from "@clerk/nextjs"
 
-import { LoadingState, type NanoId } from "@types"
+import {
+  LoadingState,
+  type SelectCommentWithCreator,
+  type NanoId,
+} from "@types"
 
 import { useComments, useNodeData } from "@context"
 
@@ -17,6 +21,8 @@ import {
   FieldType,
   Progress,
 } from "../common/exports"
+
+import { NodeDate } from "../nodes/NodeAuthor"
 
 export function CommentSection() {
   const { isSignedIn } = useUser()
@@ -107,7 +113,23 @@ function Comment({ nanoId }: CommentProps) {
           }}
           loading={loadingUpdate === LoadingState.Loading}
         />
+        <CommentAuthor comment={comment} />
       </CardContent>
     </Card>
+  )
+}
+
+type CommentAuthorProps = {
+  comment: SelectCommentWithCreator
+}
+
+function CommentAuthor({ comment }: CommentAuthorProps) {
+  return (
+    <div className="flex gap-2 items-center">
+      <p className="text-sm text-blue-500 font-bold">
+        {comment.creator!.username}
+      </p>
+      <NodeDate updatedAt={comment.updatedAt} />
+    </div>
   )
 }
