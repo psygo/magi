@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 
-import { Moon, Sun } from "lucide-react"
+import { Check, Moon, Sun, X } from "lucide-react"
 
 import dynamic from "next/dynamic"
 import { useRouter } from "next/navigation"
@@ -64,6 +64,8 @@ export function Canvas() {
     new Date(),
   )
 
+  const [showMeta, setShowMeta] = useState(true)
+
   const router = useRouter()
 
   const Excal = useMemo(() => {
@@ -124,6 +126,18 @@ export function Canvas() {
           >
             Toggle Theme
           </MainMenu.Item>
+          <MainMenu.Item
+            onSelect={() => setShowMeta(!showMeta)}
+            icon={
+              showMeta ? (
+                <Check style={{ height: 14, width: 14 }} />
+              ) : (
+                <X style={{ height: 14, width: 14 }} />
+              )
+            }
+          >
+            Show Metadata
+          </MainMenu.Item>
           <MainMenu.DefaultItems.Export />
           <MainMenu.DefaultItems.SaveAsImage />
           <MainMenu.DefaultItems.Help />
@@ -131,7 +145,7 @@ export function Canvas() {
       </Excalidraw>
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [excalidrawAPI, theme])
+  }, [excalidrawAPI, theme, showMeta])
 
   async function onExcalUpdate() {
     const notUpdatedYet = excalElements.filter(
@@ -175,6 +189,7 @@ export function Canvas() {
       </section>
       <section>
         {loading === LoadingState.Loaded &&
+          showMeta &&
           excalElements.map((excalEl, i) => (
             <ShapeInfoButtons key={i} excalEl={excalEl} />
           ))}
