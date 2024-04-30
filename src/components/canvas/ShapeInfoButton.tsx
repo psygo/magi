@@ -13,6 +13,7 @@ import { useCanvas } from "@context"
 import { NodeModal } from "../nodes/exports"
 
 import { UserAvatar } from "../users/exports"
+import { useState } from "react"
 
 type ShapeInfoButtonsProps = {
   excalEl: ExcalidrawElement
@@ -25,6 +26,8 @@ export function ShapeInfoButtons({
 
   const { nodes, excalAppState } = useCanvas()
   const node = nodes[excalEl.id]
+
+  const [isHovered, setIsHovered] = useState(false)
 
   if (excalEl.isDeleted) return
   if (excalEl.type === "text" && excalEl.containerId) return
@@ -60,16 +63,18 @@ export function ShapeInfoButtons({
 
   return (
     <section
-      className="flex gap-1 items-center hover:shadow-md hover:border-gray-500 hover:border-2 hover:rounded-md"
+      className="flex gap-1 items-center shadow-md border-gray-500 hover:border-2 rounded-md bg-gray-200 dark:bg-gray-600"
       style={{
         position: "fixed",
-        zIndex: 5,
+        zIndex: isHovered ? 50 : 5,
         left: x,
         top: y,
-        height: 40 * zoom,
-        paddingRight: 1 * zoom,
-        paddingLeft: 2 * zoom,
+        height: 32 * zoom,
+        paddingLeft: 6 * zoom,
+        paddingRight: 4 * zoom,
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <UserAvatar
         username={node?.creator?.username ?? user?.username}
