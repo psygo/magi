@@ -1,6 +1,7 @@
 # Tasks
 
 1. [ ] Edit Excalidraw Controls
+2. [ ] Image Upload with UploadThing
 
 ## Second Version
 

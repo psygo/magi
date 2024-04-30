@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@clerk/nextjs':
         specifier: 5.0.0-beta.43
-        version: 5.0.0-beta.43(eslint@8.57.0)(next@14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)
+        version: 5.0.0-beta.43(eslint@8.57.0)(next@14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.51.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)
       '@excalidraw/excalidraw':
-        specifier: ^0.17.5
-        version: 0.17.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: 0.17.6
+        version: 0.17.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@hookform/resolvers':
         specifier: ^3.3.4
         version: 3.3.4(react-hook-form@7.51.3(react@18.2.0))
@@ -55,7 +55,7 @@ importers:
         version: 5.0.7
       next:
         specifier: ^14.2.1
-        version: 14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.51.0)
       postgres:
         specifier: ^3.4.3
         version: 3.4.4
@@ -476,8 +476,8 @@ packages:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@excalidraw/excalidraw@0.17.5':
-    resolution: {integrity: sha512-XtFtzhQvt5g8quj1KmVQ6LBgv3M5WGDOm50dTcQz9Royc6AImh2X1Zw6ULcsujsjMFFBbG46nJLELsd/6yLlIw==}
+  '@excalidraw/excalidraw@0.17.6':
+    resolution: {integrity: sha512-fyCl+zG/Z5yhHDh5Fq2ZGmphcrALmuOdtITm8gN4d8w4ntnaopTXcTfnAAaU3VleDC6LhTkoLOTG6P5kgREiIg==}
     peerDependencies:
       react: ^17.0.2 || ^18.2.0
       react-dom: ^17.0.2 || ^18.2.0
@@ -1889,6 +1889,9 @@ packages:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
     engines: {node: '>= 4'}
 
+  immutable@4.3.5:
+    resolution: {integrity: sha512-8eabxkth9gZatlwl5TBuJnCsoTADlL6ftEr7A4qgdaTsPyreilDSnUk57SO+jfKcNtxPa22U5KK6DSeAYhpBJw==}
+
   import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -2611,6 +2614,11 @@ packages:
     resolution: {integrity: sha512-CdASjNJPvRa7roO6Ra/gLYBTzYzzPyyBXxIMdGW3USQLyjWEls2RgW5UBTXaQVp+OrpeCK3bLem8smtmheoRuw==}
     engines: {node: '>= 0.4'}
 
+  sass@1.51.0:
+    resolution: {integrity: sha512-haGdpTgywJTvHC2b91GSq+clTKGbtkkZmVAb82jZQN/wTy6qs8DdFm2lhEQbEwrY0QDRgSQ3xDurqM977C3noA==}
+    engines: {node: '>=12.0.0'}
+    hasBin: true
+
   scheduler@0.23.0:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
 
@@ -3002,13 +3010,13 @@ snapshots:
       - supports-color
       - typescript
 
-  '@clerk/nextjs@5.0.0-beta.43(eslint@8.57.0)(next@14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)':
+  '@clerk/nextjs@5.0.0-beta.43(eslint@8.57.0)(next@14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.51.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)':
     dependencies:
       '@clerk/backend': 1.0.0-beta.35(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@clerk/clerk-react': 5.0.0-beta.38(eslint@8.57.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.4.5)
       '@clerk/shared': 2.0.0-beta.21(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       crypto-js: 4.2.0
-      next: 14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      next: 14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.51.0)
       path-to-regexp: 6.2.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -3201,7 +3209,7 @@ snapshots:
 
   '@eslint/js@8.57.0': {}
 
-  '@excalidraw/excalidraw@0.17.5(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@excalidraw/excalidraw@0.17.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -4902,6 +4910,9 @@ snapshots:
 
   ignore@5.3.1: {}
 
+  immutable@4.3.5:
+    optional: true
+
   import-fresh@3.3.0:
     dependencies:
       parent-module: 1.0.1
@@ -5192,7 +5203,7 @@ snapshots:
 
   next-tick@1.1.0: {}
 
-  next@14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  next@14.2.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.51.0):
     dependencies:
       '@next/env': 14.2.1
       '@swc/helpers': 0.5.5
@@ -5213,6 +5224,7 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 14.2.1
       '@next/swc-win32-ia32-msvc': 14.2.1
       '@next/swc-win32-x64-msvc': 14.2.1
+      sass: 1.51.0
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
@@ -5547,6 +5559,13 @@ snapshots:
       call-bind: 1.0.7
       es-errors: 1.3.0
       is-regex: 1.1.4
+
+  sass@1.51.0:
+    dependencies:
+      chokidar: 3.6.0
+      immutable: 4.3.5
+      source-map-js: 1.2.0
+    optional: true
 
   scheduler@0.23.0:
     dependencies:

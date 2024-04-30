@@ -8,8 +8,11 @@
 /*--------------------------------------------------------*/
 /* Excalidraw */
 
-.App-bottom-bar,
-.App-top-bar {
+.help-icon {
+  display: none !important;
+}
+
+.layer-ui__wrapper {
   z-index: 10 !important;
 }
 

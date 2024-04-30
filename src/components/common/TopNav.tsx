@@ -7,13 +7,11 @@ import {
 
 import { Button } from "~/components/common/shad/exports"
 
-import { ThemeButton } from "./ThemeButton"
-
 export function TopNav() {
   return (
     <nav className="absolute top-[2px] desktop:top-14 w-screen p-4 flex justify-between">
       <LeftTopnav />
-      <RightTopnav />
+      {/* <RightTopnav /> */}
     </nav>
   )
 }
@@ -33,7 +31,6 @@ function RightTopnav() {
       <SignedIn>
         <UserButton />
       </SignedIn>
-      <ThemeButton />
     </div>
   )
 }

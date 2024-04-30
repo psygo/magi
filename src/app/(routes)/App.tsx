@@ -28,7 +28,7 @@ export function App({ children }: WithReactChildren) {
         )}
       >
         <TopNav />
-        <main>{children}</main>
+        <main className="fixed">{children}</main>
       </body>
     </html>
   )

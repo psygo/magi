@@ -2,17 +2,21 @@
 
 import { useMemo, useState } from "react"
 
+import { Moon, Sun } from "lucide-react"
+
 import dynamic from "next/dynamic"
+import { useRouter } from "next/navigation"
 
 import { useUser } from "@clerk/nextjs"
 
 import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
+import { MainMenu } from "@excalidraw/excalidraw"
 
 import { toDate } from "@utils"
 
-import { LoadingState } from "@types"
+import { LoadingState, Theme } from "@types"
 
-import { postNodes } from "@actions"
+import { postNodes, saveTheme } from "@actions"
 
 import {
   nodesArrayToRecords,
@@ -23,7 +27,6 @@ import {
 import { Progress } from "@components"
 
 import { ShapeInfoButtons } from "./ShapeInfoButton"
-import { useRouter } from "next/navigation"
 
 const Excalidraw = dynamic(
   async () => {
@@ -37,7 +40,7 @@ const Excalidraw = dynamic(
 )
 
 export function Canvas() {
-  const { theme } = useTheme()
+  const { theme, cycleTheme } = useTheme()
 
   const { isSignedIn } = useUser()
 
@@ -66,6 +69,13 @@ export function Canvas() {
   const Excal = useMemo(() => {
     return (
       <Excalidraw
+        name=""
+        UIOptions={{
+          canvasActions: {
+            clearCanvas: false,
+            toggleTheme: true,
+          },
+        }}
         initialData={{
           elements: excalElements,
           appState: excalAppState,
@@ -97,7 +107,28 @@ export function Canvas() {
 
           if (els) setExcalElements([...els])
         }}
-      />
+      >
+        <MainMenu>
+          <MainMenu.Item
+            onSelect={async () => {
+              const nextTheme = cycleTheme()
+              await saveTheme(nextTheme)
+            }}
+            icon={
+              theme === Theme.light ? (
+                <Sun style={{ height: 14, width: 14 }} />
+              ) : (
+                <Moon style={{ height: 14, width: 14 }} />
+              )
+            }
+          >
+            Toggle Theme
+          </MainMenu.Item>
+          <MainMenu.DefaultItems.Export />
+          <MainMenu.DefaultItems.SaveAsImage />
+          <MainMenu.DefaultItems.Help />
+        </MainMenu>
+      </Excalidraw>
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI, theme])
@@ -136,7 +167,7 @@ export function Canvas() {
   return (
     <div>
       <section
-        className="fixed top-0 w-screen h-screen"
+        className="absolute w-screen h-screen"
         onPointerUp={delayedExcalUpdate}
         onKeyUp={delayedExcalUpdate}
       >
