@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { Check, Moon, Sun, X } from "lucide-react"
 
@@ -9,7 +9,10 @@ import { useRouter } from "next/navigation"
 
 import { useUser } from "@clerk/nextjs"
 
-import { type ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types"
+import {
+  type BinaryFileData,
+  type ExcalidrawImperativeAPI,
+} from "@excalidraw/excalidraw/types/types"
 import { MainMenu } from "@excalidraw/excalidraw"
 
 import { toDate } from "@utils"
@@ -27,6 +30,7 @@ import {
 import { Progress } from "@components"
 
 import { ShapeInfoButtons } from "./ShapeInfoButton"
+import { ExcalidrawImageElement } from "@excalidraw/excalidraw/types/element/types"
 
 const Excalidraw = dynamic(
   async () => {
@@ -68,6 +72,87 @@ export function Canvas() {
 
   const router = useRouter()
 
+  useEffect(() => {
+    async function getImages() {
+      const imgsUrls: string[] = [
+        // "https://upload.wikimedia.org/wikipedia/commons/f/f6/Sinner_MCM23_%288%29_%2852883593853%29.jpg",
+        // "https://upload.wikimedia.org/wikipedia/commons/b/b7/Alcaraz_MCM22_%2827%29_%2852036462443%29_%28edited%29.jpg",
+      ]
+
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      imgsUrls.forEach(async (imgUrl) => {
+        // const imgUrl =
+        //   "https://upload.wikimedia.org/wikipedia/commons/f/f6/Sinner_MCM23_%288%29_%2852883593853%29.jpg"
+
+        const res = await fetch(imgUrl)
+        const imgData = await res.blob()
+        const reader = new FileReader()
+
+        reader.onload = () => {
+          const imgFile: BinaryFileData = {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            id: imgUrl,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            dataURL: reader.result!,
+            mimeType: "image/jpeg",
+            created: 1714504957800,
+          }
+          const imgEl: ExcalidrawImageElement = {
+            id: imgUrl,
+            type: "image",
+            x: 231,
+            y: 277.5,
+            width: 190,
+            height: 285,
+            angle: 0,
+            strokeColor: "transparent",
+            backgroundColor: "transparent",
+            fillStyle: "solid",
+            strokeWidth: 2,
+            strokeStyle: "solid",
+            roughness: 1,
+            opacity: 100,
+            groupIds: [],
+            frameId: null,
+            roundness: null,
+            seed: 1479136073,
+            version: 4,
+            versionNonce: 1468320745,
+            isDeleted: false,
+            boundElements: null,
+            updated: 1714504957809,
+            link: null,
+            locked: false,
+            status: "saved",
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            fileId: imgUrl,
+            scale: [1, 1],
+          }
+
+          if (excalidrawAPI) {
+            excalidrawAPI?.addFiles([imgFile])
+            excalidrawAPI?.updateScene({
+              elements: [
+                ...excalidrawAPI?.getSceneElementsIncludingDeleted(),
+                imgEl,
+              ],
+              appState: excalidrawAPI.getAppState(),
+              commitToHistory: false,
+            })
+          }
+        }
+
+        reader.readAsDataURL(imgData)
+      })
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    getImages()
+  }, [excalidrawAPI])
+
   const Excal = useMemo(() => {
     return (
       <Excalidraw
@@ -83,9 +168,7 @@ export function Canvas() {
           appState: excalAppState,
         }}
         theme={theme}
-        excalidrawAPI={(api) => {
-          setExcalidrawAPI(api)
-        }}
+        excalidrawAPI={(api) => setExcalidrawAPI(api)}
         onScrollChange={() => {
           const searchParams = getCurrentSearchParams(
             excalidrawAPI!.getAppState(),
@@ -151,6 +234,14 @@ export function Canvas() {
     const notUpdatedYet = excalElements.filter(
       (el) => toDate(el.updated) > lastUpdated,
     )
+
+    // console.log("app state", excalAppState)
+    // console.log(
+    //   "all elements",
+    //   excalidrawAPI?.getSceneElementsIncludingDeleted(),
+    // )
+    // console.log("not updated", notUpdatedYet)
+    // console.log("files", excalidrawAPI?.getFiles())
 
     if (notUpdatedYet.length > 0) {
       const newNodes = await postNodes(notUpdatedYet)
