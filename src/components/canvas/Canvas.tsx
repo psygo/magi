@@ -92,6 +92,13 @@ export function Canvas() {
         // "https://upload.wikimedia.org/wikipedia/commons/f/f6/Sinner_MCM23_%288%29_%2852883593853%29.jpg",
         // "https://upload.wikimedia.org/wikipedia/commons/b/b7/Alcaraz_MCM22_%2827%29_%2852036462443%29_%28edited%29.jpg",
       ]
+      const imgUrls = excalElements
+        .filter((excalEl) => excalEl.type === "image")
+        .map((excalImg) => {
+          const fileId = (
+            excalImg as ExcalidrawImageElement
+          ).fileId
+        })
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       imgsUrls.forEach(async (imgUrl) => {
@@ -113,48 +120,14 @@ export function Canvas() {
             mimeType: "image/jpeg",
             created: 1714504957800,
           }
-          const imgEl: ExcalidrawImageElement = {
-            id: imgUrl,
-            type: "image",
-            x: 231,
-            y: 277.5,
-            width: 190,
-            height: 285,
-            angle: 0,
-            strokeColor: "transparent",
-            backgroundColor: "transparent",
-            fillStyle: "solid",
-            strokeWidth: 2,
-            strokeStyle: "solid",
-            roughness: 1,
-            opacity: 100,
-            groupIds: [],
-            frameId: null,
-            roundness: null,
-            seed: 1479136073,
-            version: 4,
-            versionNonce: 1468320745,
-            isDeleted: false,
-            boundElements: null,
-            updated: 1714504957809,
-            link: null,
-            locked: false,
-            status: "saved",
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            fileId: imgUrl,
-            scale: [1, 1],
-          }
 
           if (excalidrawAPI) {
             excalidrawAPI?.addFiles([imgFile])
             excalidrawAPI?.updateScene({
               elements: [
                 ...excalidrawAPI?.getSceneElementsIncludingDeleted(),
-                imgEl,
               ],
               appState: excalidrawAPI.getAppState(),
-              commitToHistory: false,
             })
           }
         }
@@ -165,6 +138,7 @@ export function Canvas() {
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getImages()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI])
 
   const Excal = useMemo(() => {
@@ -248,51 +222,31 @@ export function Canvas() {
   }, [excalidrawAPI, theme, showMeta])
 
   useEffect(() => {
-    const notUpdatedYetFiles = Object.values(files)
-      .filter((f) => toDate(f.created) > lastUpdated)
-      .map((f) => {
-        // console.log(f.dataURL)
-        // const url =
-        //   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
-        // const dataString = url.split(",")[1]!
-        // const buff = Buffer.from(dataString, "base64")
-        // return new File([buff], f.id, {
-        //   type: f.mimeType,
-        // })
-        const ext = f.mimeType.split("/").second()
-        return new File(
-          [
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            Uint8Array.from(
-              atob(f.dataURL.split(",")[1]!),
-              (m) => m.codePointAt(0),
-            ),
-            // Buffer.from(f.dataURL),
-          ],
-          `${f.id}.${ext}`,
-          { type: f.mimeType },
-        )
-      })
+    async function uploadFiles() {
+      const notUpdatedYetFiles = Object.values(files)
+        .filter((f) => toDate(f.created) > lastUpdated)
+        .map((f) => {
+          const ext = f.mimeType.split("/").second()
+          return new File(
+            [
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              Uint8Array.from(
+                atob(f.dataURL.split(",")[1]!),
+                (m) => m.codePointAt(0),
+              ),
+            ],
+            `${f.id}`,
+            { type: "image/*" },
+          )
+        })
 
-    if (notUpdatedYetFiles.length > 0) {
-      const selectedFiles = Array.from(notUpdatedYetFiles)
-      const result = startUpload(selectedFiles)
+      if (notUpdatedYetFiles.length > 0)
+        await startUpload(notUpdatedYetFiles)
     }
 
-    // // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    // notUpdatedYetFiles.forEach(async (f) => {
-    //   // const file = new File([f.dataURL], "1", {
-    //   //   type: "image/png",
-    //   // })
-    //   console.log(f)
-    //   console.log("uploading")
-    //   await startUpload([f])
-    //   // await uploadFiles("imageUploader", {
-    //   //   files: [f],
-    //   // })
-    //   console.log("uploaded")
-    // })
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    uploadFiles()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files])
 
@@ -352,62 +306,6 @@ export function Canvas() {
             <ShapeInfoButtons key={i} excalEl={excalEl} />
           ))}
       </section>
-      {/* <div
-        style={{
-          // position: "absolute",
-          zIndex: 1000,
-          bottom: 0,
-          right: 0,
-        }}
-      >
-        <label
-          htmlFor="upload-button"
-          className="cursor-pointer"
-        >
-          Here
-        </label>
-        <input
-          id="upload-button"
-          type="file"
-          onChange={async (e) => {
-            if (!e.target.files) return
-
-            console.log(e.target.files)
-
-            const url =
-              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
-            // // const res = await fetch(url)
-            // // const blob = await res.blob()
-            // const f = new File(
-            //   [new Blob([url.split(",")[1]!])],
-            //   "a",
-            //   {
-            //     type: "image/png",
-            //   },
-            // )
-            const f = new File(
-              [
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                // Uint8Array.from(
-                //   atob(url.split(",")[1]!),
-                //   (m) => m.codePointAt(0),
-                // ),
-                Buffer.from(url),
-              ],
-              "myfilename.png",
-              { type: "image/png" },
-            )
-
-            console.log(f)
-
-            const selectedFiles = Array.from([f])
-            const result = await startUpload(selectedFiles)
-
-            console.log("uploaded files", result)
-          }}
-        /> */}
-      {/* </div> */}
     </div>
   )
 }
