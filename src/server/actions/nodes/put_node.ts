@@ -12,8 +12,9 @@ import { userIdFromClerk } from "../../utils/exports"
 
 export async function putNode(
   excalId: ExcalId,
-  title?: string,
-  description?: string,
+  title: string,
+  description: string,
+  imageUrl: string,
 ) {
   try {
     const userId = await userIdFromClerk()
@@ -24,6 +25,7 @@ export async function putNode(
       .set({
         title: title ?? "",
         description: description ?? "",
+        imageUrl: imageUrl ?? "",
         updatedAt: new Date(),
       })
       .where(

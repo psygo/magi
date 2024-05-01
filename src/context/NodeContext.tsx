@@ -62,6 +62,7 @@ export function NodeProvider({
         excalId,
         title ?? node.title ?? "",
         description ?? node.description ?? "",
+        node.imageUrl ?? "",
       )
 
       setNode(newNode)

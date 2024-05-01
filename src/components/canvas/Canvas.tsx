@@ -1,5 +1,10 @@
 "use client"
 
+import {
+  useUploadThing,
+  uploadFiles,
+} from "@utils/uploadthing"
+
 import { useEffect, useMemo, useState } from "react"
 
 import { Check, Moon, Sun, X } from "lucide-react"
@@ -10,6 +15,7 @@ import { useRouter } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
 
 import {
+  type BinaryFiles,
   type BinaryFileData,
   type ExcalidrawImperativeAPI,
 } from "@excalidraw/excalidraw/types/types"
@@ -30,7 +36,7 @@ import {
 import { Progress } from "@components"
 
 import { ShapeInfoButtons } from "./ShapeInfoButton"
-import { ExcalidrawImageElement } from "@excalidraw/excalidraw/types/element/types"
+import { type ExcalidrawImageElement } from "@excalidraw/excalidraw/types/element/types"
 
 const Excalidraw = dynamic(
   async () => {
@@ -68,9 +74,17 @@ export function Canvas() {
     new Date(),
   )
 
+  const [files, setFiles] = useState<BinaryFiles>({})
+
   const [showMeta, setShowMeta] = useState(true)
 
   const router = useRouter()
+
+  const { startUpload } = useUploadThing("imageUploader", {
+    onClientUploadComplete: () => {
+      console.log("upload complete")
+    },
+  })
 
   useEffect(() => {
     async function getImages() {
@@ -184,6 +198,9 @@ export function Canvas() {
           const appState = excalidrawAPI!.getAppState()
           setExcalAppState(appState)
 
+          const newAllFiles = excalidrawAPI!.getFiles()
+          setFiles({ ...newAllFiles })
+
           setLoading(
             appState.isLoading
               ? LoadingState.Loading
@@ -230,6 +247,55 @@ export function Canvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI, theme, showMeta])
 
+  useEffect(() => {
+    const notUpdatedYetFiles = Object.values(files)
+      .filter((f) => toDate(f.created) > lastUpdated)
+      .map((f) => {
+        // console.log(f.dataURL)
+        // const url =
+        //   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+        // const dataString = url.split(",")[1]!
+        // const buff = Buffer.from(dataString, "base64")
+        // return new File([buff], f.id, {
+        //   type: f.mimeType,
+        // })
+        const ext = f.mimeType.split("/").second()
+        return new File(
+          [
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            Uint8Array.from(
+              atob(f.dataURL.split(",")[1]!),
+              (m) => m.codePointAt(0),
+            ),
+            // Buffer.from(f.dataURL),
+          ],
+          `${f.id}.${ext}`,
+          { type: f.mimeType },
+        )
+      })
+
+    if (notUpdatedYetFiles.length > 0) {
+      const selectedFiles = Array.from(notUpdatedYetFiles)
+      const result = startUpload(selectedFiles)
+    }
+
+    // // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    // notUpdatedYetFiles.forEach(async (f) => {
+    //   // const file = new File([f.dataURL], "1", {
+    //   //   type: "image/png",
+    //   // })
+    //   console.log(f)
+    //   console.log("uploading")
+    //   await startUpload([f])
+    //   // await uploadFiles("imageUploader", {
+    //   //   files: [f],
+    //   // })
+    //   console.log("uploaded")
+    // })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files])
+
   async function onExcalUpdate() {
     const notUpdatedYet = excalElements.filter(
       (el) => toDate(el.updated) > lastUpdated,
@@ -241,7 +307,8 @@ export function Canvas() {
     //   excalidrawAPI?.getSceneElementsIncludingDeleted(),
     // )
     // console.log("not updated", notUpdatedYet)
-    // console.log("files", excalidrawAPI?.getFiles())
+    // // console.log("files", excalidrawAPI?.getFiles())
+    // console.log("files", files)
 
     if (notUpdatedYet.length > 0) {
       const newNodes = await postNodes(notUpdatedYet)
@@ -285,6 +352,62 @@ export function Canvas() {
             <ShapeInfoButtons key={i} excalEl={excalEl} />
           ))}
       </section>
+      {/* <div
+        style={{
+          // position: "absolute",
+          zIndex: 1000,
+          bottom: 0,
+          right: 0,
+        }}
+      >
+        <label
+          htmlFor="upload-button"
+          className="cursor-pointer"
+        >
+          Here
+        </label>
+        <input
+          id="upload-button"
+          type="file"
+          onChange={async (e) => {
+            if (!e.target.files) return
+
+            console.log(e.target.files)
+
+            const url =
+              "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
+            // // const res = await fetch(url)
+            // // const blob = await res.blob()
+            // const f = new File(
+            //   [new Blob([url.split(",")[1]!])],
+            //   "a",
+            //   {
+            //     type: "image/png",
+            //   },
+            // )
+            const f = new File(
+              [
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                // Uint8Array.from(
+                //   atob(url.split(",")[1]!),
+                //   (m) => m.codePointAt(0),
+                // ),
+                Buffer.from(url),
+              ],
+              "myfilename.png",
+              { type: "image/png" },
+            )
+
+            console.log(f)
+
+            const selectedFiles = Array.from([f])
+            const result = await startUpload(selectedFiles)
+
+            console.log("uploaded files", result)
+          }}
+        /> */}
+      {/* </div> */}
     </div>
   )
 }
