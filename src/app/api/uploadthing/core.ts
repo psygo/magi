@@ -13,12 +13,12 @@ export const ourFileRouter = {
   imageUploader: f({ image: { maxFileSize: "4MB" } })
     .middleware(async ({ req }) => {
       // TODO: add user guard
-      console.log("req", req)
+      // console.log("req", req)
       return {}
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("file", file)
-      console.log("metadata", metadata)
+      // console.log("file", file)
+      // console.log("metadata", metadata)
     }),
 } satisfies FileRouter
 

@@ -222,6 +222,8 @@ export function Canvas() {
   }, [excalidrawAPI, theme, showMeta])
 
   useEffect(() => {
+    // TODO: This will upload like crazy when not
+    //       copy-pasting!!!
     async function uploadFiles() {
       const notUpdatedYetFiles = Object.values(files)
         .filter((f) => toDate(f.created) > lastUpdated)
@@ -236,8 +238,8 @@ export function Canvas() {
                 (m) => m.codePointAt(0),
               ),
             ],
-            `${f.id}`,
-            { type: "image/*" },
+            `${f.id}.${ext}`,
+            { type: f.mimeType },
           )
         })
 
