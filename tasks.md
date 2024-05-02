@@ -1,17 +1,14 @@
 # Tasks
 
-1. [ ] Edit Excalidraw Controls
-2. [ ] Image Upload with UploadThing
+1. [ ] YouTube `<iframe>`
+   1. [ ] For YouTube at least, it's possible to simply use the [thumbnails](https://stackoverflow.com/a/2068371/4756173)
+2. [ ] 2D Pagination
+3. [ ] Create Canvases
 
 ## Second Version
 
 1. [ ] Number of Comments on the info detail
 1. [ ] List connections on a node on the info card
-1. [ ] Throttling
-1. [ ] `<iframe>` and other solutions
-   1. [ ] For YouTube at least, it's possible to simply use the [thumbnails](https://stackoverflow.com/a/2068371/4756173)
-   2. [ ] For other websites, we could probably render their `<meta>`?
-1. [ ] Create Canvases
 
 ## Deployment
 
