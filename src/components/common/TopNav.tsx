@@ -9,9 +9,9 @@ import { Button } from "~/components/common/shad/exports"
 
 export function TopNav() {
   return (
-    <nav className="absolute top-[2px] desktop:top-14 w-screen p-4 flex justify-between">
+    <nav className="absolute top-[2px] desktop:top-4 w-screen p-4 flex justify-between">
       <LeftTopnav />
-      {/* <RightTopnav /> */}
+      <RightTopnav />
     </nav>
   )
 }
