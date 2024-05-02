@@ -4,7 +4,12 @@ import { nanoid } from "nanoid"
 
 import { useUploadThing } from "@utils/uploadthing"
 
-import { useEffect, useMemo, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react"
 
 import { Check, Moon, Sun, X } from "lucide-react"
 
@@ -18,7 +23,10 @@ import {
   type ExcalidrawImperativeAPI,
 } from "@excalidraw/excalidraw/types/types"
 import { MainMenu } from "@excalidraw/excalidraw"
-import { type ExcalidrawImageElement } from "@excalidraw/excalidraw/types/element/types"
+import {
+  ExcalidrawElement,
+  type ExcalidrawImageElement,
+} from "@excalidraw/excalidraw/types/element/types"
 
 import { toDate } from "@utils"
 
@@ -167,39 +175,44 @@ export function Canvas() {
     // showMeta
   ])
 
-  async function onExcalUpdate() {
-    console.log("all els onExcalUpdate", excalElements)
-    const notUpdatedYet = excalElements.filter(
-      (el) => toDate(el.updated) > lastUpdated,
-    )
+  useEffect(() => {
+    async function uploadShape(els: ExcalidrawElement[]) {
+      const isUploadingShape =
+        localStorage.getItem("isUploadingShape") === "true"
 
-    console.log("not updated yet", notUpdatedYet)
-    if (notUpdatedYet.length > 0) {
-      const newNodes = await postNodes(notUpdatedYet)
-      console.log("posted nodes")
+      if (isUploadingShape) return
 
-      if (newNodes) {
-        const newNodesRecords =
-          nodesArrayToRecords(newNodes)
+      localStorage.setItem("isUploadingShape", "true")
+      const newNodes = await postNodes(els)
+      localStorage.setItem("isUploadingShape", "false")
 
-        setNodes({
-          ...nodes,
-          ...newNodesRecords,
-        })
+      if (!newNodes) return
 
-        setLastUpdated(new Date())
-      }
+      const newNodesRecords = nodesArrayToRecords(newNodes)
+
+      setNodes({
+        ...nodes,
+        ...newNodesRecords,
+      })
+
+      setLastUpdated(new Date())
     }
-  }
 
-  function delayedExcalUpdate() {
     if (!isSignedIn) return
 
-    // The delay here is used because apparently the
-    // snapping of the arrow is not done immediately.
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    setTimeout(async () => await onExcalUpdate(), 100)
-  }
+    setTimeout(() => {
+      const notUpdatedYet = excalElements.filter(
+        (el) => toDate(el.updated) > lastUpdated,
+      )
+
+      if (notUpdatedYet.length === 0) return
+
+      uploadShape(notUpdatedYet).catch(() =>
+        console.error("error"),
+      )
+    }, 250)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [excalElements, lastUpdated, isSignedIn])
 
   // async function uploadFiles() {
   //   const allFiles = excalidrawAPI!.getFiles()
@@ -312,11 +325,7 @@ export function Canvas() {
 
   return (
     <div>
-      <section
-        className="absolute w-screen h-screen"
-        onPointerMove={delayedExcalUpdate}
-        // onKeyUp={delayedExcalUpdate}
-      >
+      <section className="absolute w-screen h-screen">
         {Excal}
       </section>
       <section>
