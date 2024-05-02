@@ -1,7 +1,7 @@
 {
   "console.log": {
     "prefix": "csl",
-    "body": "console.log(${1:\"here\"})"
+    "body": "console.log(\"${1:here}\")"
   },
   "console.error": {
     "prefix": "cse",

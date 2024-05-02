@@ -37,6 +37,7 @@ import { Progress } from "@components"
 
 import { ShapeInfoButtons } from "./ShapeInfoButton"
 import { type ExcalidrawImageElement } from "@excalidraw/excalidraw/types/element/types"
+import { nanoid } from "nanoid"
 
 const Excalidraw = dynamic(
   async () => {
@@ -73,6 +74,8 @@ export function Canvas() {
   const [lastUpdated, setLastUpdated] = useState<Date>(
     new Date(),
   )
+  const [lastUpdatedFiles, setLastUpdatedFiles] =
+    useState<Date>(new Date())
 
   const [files, setFiles] = useState<BinaryFiles>({})
 
@@ -85,61 +88,6 @@ export function Canvas() {
       console.log("upload complete")
     },
   })
-
-  useEffect(() => {
-    async function getImages() {
-      const imgsUrls: string[] = [
-        // "https://upload.wikimedia.org/wikipedia/commons/f/f6/Sinner_MCM23_%288%29_%2852883593853%29.jpg",
-        // "https://upload.wikimedia.org/wikipedia/commons/b/b7/Alcaraz_MCM22_%2827%29_%2852036462443%29_%28edited%29.jpg",
-      ]
-      const imgUrls = excalElements
-        .filter((excalEl) => excalEl.type === "image")
-        .map((excalImg) => {
-          const fileId = (
-            excalImg as ExcalidrawImageElement
-          ).fileId
-        })
-
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      imgsUrls.forEach(async (imgUrl) => {
-        // const imgUrl =
-        //   "https://upload.wikimedia.org/wikipedia/commons/f/f6/Sinner_MCM23_%288%29_%2852883593853%29.jpg"
-
-        const res = await fetch(imgUrl)
-        const imgData = await res.blob()
-        const reader = new FileReader()
-
-        reader.onload = () => {
-          const imgFile: BinaryFileData = {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            id: imgUrl,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            dataURL: reader.result!,
-            mimeType: "image/jpeg",
-            created: 1714504957800,
-          }
-
-          if (excalidrawAPI) {
-            excalidrawAPI?.addFiles([imgFile])
-            excalidrawAPI?.updateScene({
-              elements: [
-                ...excalidrawAPI?.getSceneElementsIncludingDeleted(),
-              ],
-              appState: excalidrawAPI.getAppState(),
-            })
-          }
-        }
-
-        reader.readAsDataURL(imgData)
-      })
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getImages()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [excalidrawAPI])
 
   const Excal = useMemo(() => {
     return (
@@ -157,6 +105,10 @@ export function Canvas() {
         }}
         theme={theme}
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        generateIdForFile={(f) => {
+          const ext = f.type.split("/").second()
+          return `${nanoid()}.${ext}`
+        }}
         onScrollChange={() => {
           const searchParams = getCurrentSearchParams(
             excalidrawAPI!.getAppState(),
@@ -221,65 +173,24 @@ export function Canvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI, theme, showMeta])
 
-  useEffect(() => {
-    // TODO: This will upload like crazy when not
-    //       copy-pasting!!!
-    async function uploadFiles() {
-      const notUpdatedYetFiles = Object.values(files)
-        .filter((f) => toDate(f.created) > lastUpdated)
-        .map((f) => {
-          const ext = f.mimeType.split("/").second()
-          return new File(
-            [
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              Uint8Array.from(
-                atob(f.dataURL.split(",")[1]!),
-                (m) => m.codePointAt(0),
-              ),
-            ],
-            `${f.id}.${ext}`,
-            { type: f.mimeType },
-          )
-        })
-
-      if (notUpdatedYetFiles.length > 0)
-        await startUpload(notUpdatedYetFiles)
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    uploadFiles()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [files])
-
   async function onExcalUpdate() {
     const notUpdatedYet = excalElements.filter(
       (el) => toDate(el.updated) > lastUpdated,
     )
 
-    // console.log("app state", excalAppState)
-    // console.log(
-    //   "all elements",
-    //   excalidrawAPI?.getSceneElementsIncludingDeleted(),
-    // )
-    // console.log("not updated", notUpdatedYet)
-    // // console.log("files", excalidrawAPI?.getFiles())
-    // console.log("files", files)
+    if (!(notUpdatedYet.length > 0)) return
 
-    if (notUpdatedYet.length > 0) {
-      const newNodes = await postNodes(notUpdatedYet)
+    const newNodes = await postNodes(notUpdatedYet)
 
-      if (newNodes) {
-        const newNodesRecords =
-          nodesArrayToRecords(newNodes)
+    if (newNodes) {
+      const newNodesRecords = nodesArrayToRecords(newNodes)
 
-        setNodes({
-          ...nodes,
-          ...newNodesRecords,
-        })
+      setNodes({
+        ...nodes,
+        ...newNodesRecords,
+      })
 
-        setLastUpdated(new Date())
-      }
+      setLastUpdated(new Date())
     }
   }
 
@@ -291,6 +202,108 @@ export function Canvas() {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     setTimeout(async () => await onExcalUpdate(), 100)
   }
+
+  async function uploadFiles() {
+    const allFiles = excalidrawAPI!.getFiles()
+    const notUpdatedYetFiles = Object.values(allFiles)
+      .filter((f) => toDate(f.created) > lastUpdatedFiles)
+      .map((f) => {
+        return new File(
+          [
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            Uint8Array.from(
+              atob(f.dataURL.split(",")[1]!),
+              (m) => m.codePointAt(0),
+            ),
+          ],
+          f.id,
+          { type: f.mimeType },
+        )
+      })
+
+    if (notUpdatedYetFiles.length > 0) {
+      await startUpload(notUpdatedYetFiles)
+      setLastUpdatedFiles(new Date())
+    }
+  }
+
+  useEffect(() => {
+    localStorage.setItem("isSaving", "false")
+  }, [])
+
+  useEffect(() => {
+    async function upload() {
+      const isSaving =
+        localStorage.getItem("isSaving") === "true"
+
+      if (isSaving) return
+
+      localStorage.setItem("isSaving", "true")
+      await uploadFiles()
+      localStorage.setItem("isSaving", "false")
+    }
+
+    if (!excalidrawAPI) return
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    upload()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files])
+
+  // useEffect(() => {
+  //   async function getImages() {
+  //     const imgsUrls: string[] = [
+  //       // "https://upload.wikimedia.org/wikipedia/commons/f/f6/Sinner_MCM23_%288%29_%2852883593853%29.jpg",
+  //       // "https://upload.wikimedia.org/wikipedia/commons/b/b7/Alcaraz_MCM22_%2827%29_%2852036462443%29_%28edited%29.jpg",
+  //     ]
+  //     const imgUrls = excalElements
+  //       .filter((excalEl) => excalEl.type === "image")
+  //       .map((excalImg) => {
+  //         const fileId = (
+  //           excalImg as ExcalidrawImageElement
+  //         ).fileId
+  //       })
+
+  //     // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  //     imgsUrls.forEach(async (imgUrl) => {
+  //       // const imgUrl =
+  //       //   "https://upload.wikimedia.org/wikipedia/commons/f/f6/Sinner_MCM23_%288%29_%2852883593853%29.jpg"
+
+  //       const res = await fetch(imgUrl)
+  //       const imgData = await res.blob()
+  //       const reader = new FileReader()
+
+  //       reader.onload = () => {
+  //         const imgFile: BinaryFileData = {
+  //           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //           // @ts-ignore
+  //           id: imgUrl,
+  //           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //           // @ts-ignore
+  //           dataURL: reader.result!,
+  //           mimeType: "image/jpeg",
+  //           created: 1714504957800,
+  //         }
+
+  //         if (excalidrawAPI) {
+  //           excalidrawAPI?.addFiles([imgFile])
+  //           excalidrawAPI?.updateScene({
+  //             elements: [
+  //               ...excalidrawAPI?.getSceneElementsIncludingDeleted(),
+  //             ],
+  //             appState: excalidrawAPI.getAppState(),
+  //           })
+  //         }
+  //       }
+
+  //       reader.readAsDataURL(imgData)
+  //     })
+  //   }
+
+  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  //   getImages()
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [excalidrawAPI])
 
   return (
     <div>
