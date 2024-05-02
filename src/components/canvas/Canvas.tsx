@@ -4,12 +4,7 @@ import { nanoid } from "nanoid"
 
 import { useUploadThing } from "@utils/uploadthing"
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react"
+import { useEffect, useMemo, useState } from "react"
 
 import { Check, Moon, Sun, X } from "lucide-react"
 
@@ -19,12 +14,13 @@ import { useRouter } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
 
 import {
+  type BinaryFileData,
   type BinaryFiles,
   type ExcalidrawImperativeAPI,
 } from "@excalidraw/excalidraw/types/types"
 import { MainMenu } from "@excalidraw/excalidraw"
 import {
-  ExcalidrawElement,
+  type ExcalidrawElement,
   type ExcalidrawImageElement,
 } from "@excalidraw/excalidraw/types/element/types"
 
@@ -79,20 +75,20 @@ export function Canvas() {
   const [lastUpdated, setLastUpdated] = useState<Date>(
     new Date(),
   )
-  // const [lastUpdatedFiles, setLastUpdatedFiles] =
-  //   useState<Date>(new Date())
+  const [lastUpdatedFiles, setLastUpdatedFiles] =
+    useState<Date>(new Date())
 
-  // const [files, setFiles] = useState<BinaryFiles>({})
+  const [files, setFiles] = useState<BinaryFiles>({})
 
-  // const [showMeta, setShowMeta] = useState(true)
+  const [showMeta, setShowMeta] = useState(true)
 
   const router = useRouter()
 
-  // const { startUpload } = useUploadThing("imageUploader", {
-  //   onClientUploadComplete: () => {
-  //     console.log("upload complete")
-  //   },
-  // })
+  const { startUpload } = useUploadThing("imageUploader", {
+    onClientUploadComplete: () => {
+      console.log("upload complete")
+    },
+  })
 
   const Excal = useMemo(() => {
     return (
@@ -110,28 +106,30 @@ export function Canvas() {
         }}
         theme={theme}
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
-        // generateIdForFile={(f) => {
-        //   const ext = f.type.split("/").second()
-        //   return `${nanoid()}.${ext}`
-        // }}
-        // onScrollChange={() => {
-        //   const searchParams = getCurrentSearchParams(
-        //     excalidrawAPI!.getAppState(),
-        //   )
-        //   router.replace(
-        //     `/canvases/open-public?${searchParams.toString()}`,
-        //   )
-        // }}
-        onChange={(elements, appState) => {
+        generateIdForFile={(f) => {
+          const ext = f.type.split("/").second()
+          return `${nanoid()}.${ext}`
+        }}
+        onScrollChange={() => {
+          const searchParams = getCurrentSearchParams(
+            excalidrawAPI!.getAppState(),
+          )
+          router.replace(
+            `/canvases/open-public?${searchParams.toString()}`,
+          )
+        }}
+        onChange={(elements, appState, files) => {
+          if (elements) setExcalElements([...elements])
+
           setExcalAppState(appState)
+
+          setFiles({ ...files })
 
           setLoading(
             appState.isLoading
               ? LoadingState.Loading
               : LoadingState.Loaded,
           )
-
-          if (elements) setExcalElements([...elements])
         }}
       >
         <MainMenu>
@@ -150,7 +148,7 @@ export function Canvas() {
           >
             Toggle Theme
           </MainMenu.Item>
-          {/* <MainMenu.Item
+          <MainMenu.Item
             onSelect={() => setShowMeta(!showMeta)}
             icon={
               showMeta ? (
@@ -161,7 +159,7 @@ export function Canvas() {
             }
           >
             Show Metadata
-          </MainMenu.Item> */}
+          </MainMenu.Item>
           <MainMenu.DefaultItems.Export />
           <MainMenu.DefaultItems.SaveAsImage />
           <MainMenu.DefaultItems.Help />
@@ -169,35 +167,35 @@ export function Canvas() {
       </Excalidraw>
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    excalidrawAPI,
-    theme,
-    // showMeta
-  ])
+  }, [excalidrawAPI, theme, showMeta])
 
   useEffect(() => {
-    async function uploadShape(els: ExcalidrawElement[]) {
-      const isUploadingShape =
-        localStorage.getItem("isUploadingShape") === "true"
+    localStorage.setItem("isUploadingShape", "false")
+  }, [])
 
-      if (isUploadingShape) return
+  async function uploadShape(els: ExcalidrawElement[]) {
+    const isUploadingShape =
+      localStorage.getItem("isUploadingShape") === "true"
 
-      localStorage.setItem("isUploadingShape", "true")
-      const newNodes = await postNodes(els)
-      localStorage.setItem("isUploadingShape", "false")
+    if (isUploadingShape) return
 
-      if (!newNodes) return
+    localStorage.setItem("isUploadingShape", "true")
+    const newNodes = await postNodes(els)
+    localStorage.setItem("isUploadingShape", "false")
 
-      const newNodesRecords = nodesArrayToRecords(newNodes)
+    if (!newNodes) return
 
-      setNodes({
-        ...nodes,
-        ...newNodesRecords,
-      })
+    const newNodesRecords = nodesArrayToRecords(newNodes)
 
-      setLastUpdated(new Date())
-    }
+    setNodes({
+      ...nodes,
+      ...newNodesRecords,
+    })
 
+    setLastUpdated(new Date())
+  }
+
+  useEffect(() => {
     if (!isSignedIn) return
 
     setTimeout(() => {
@@ -214,114 +212,125 @@ export function Canvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalElements, lastUpdated, isSignedIn])
 
-  // async function uploadFiles() {
-  //   const allFiles = excalidrawAPI!.getFiles()
-  //   const notUpdatedYetFiles = Object.values(allFiles)
-  //     .filter((f) => toDate(f.created) > lastUpdatedFiles)
-  //     .map((f) => {
-  //       return new File(
-  //         [
-  //           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //           // @ts-ignore
-  //           Uint8Array.from(
-  //             atob(f.dataURL.split(",")[1]!),
-  //             (m) => m.codePointAt(0),
-  //           ),
-  //         ],
-  //         f.id,
-  //         { type: f.mimeType },
-  //       )
-  //     })
+  async function uploadFiles() {
+    const allFiles = excalidrawAPI!.getFiles()
+    const notUpdatedYetFiles = Object.values(allFiles)
+      .filter((f) => toDate(f.created) > lastUpdatedFiles)
+      .map((f) => {
+        return new File(
+          [
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            Uint8Array.from(
+              atob(f.dataURL.split(",")[1]!),
+              (m) => m.codePointAt(0),
+            ),
+          ],
+          f.id,
+          { type: f.mimeType },
+        )
+      })
 
-  //   if (notUpdatedYetFiles.length > 0) {
-  //     await startUpload(notUpdatedYetFiles)
-  //     setLastUpdatedFiles(new Date())
-  //   }
-  // }
+    if (notUpdatedYetFiles.length > 0) {
+      const res = await startUpload(notUpdatedYetFiles)
+      if (!res) return
 
-  // useEffect(() => {
-  //   localStorage.setItem("isSaving", "false")
-  // }, [])
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      notUpdatedYetFiles.forEach(async (f) => {
+        const newFileId = res.find(
+          (r) => r.name === f.name,
+        )!.url
 
-  // useEffect(() => {
-  //   async function upload() {
-  //     const isSaving =
-  //       localStorage.getItem("isSaving") === "true"
+        const toBeUpdatedShapes = excalElements
+          .filter(
+            (el) =>
+              el.type === "image" && el.fileId === f.name,
+          )
+          .map((el) => {
+            const e = el as ExcalidrawImageElement
+            return {
+              ...e,
+              fileId: newFileId,
+            } as ExcalidrawImageElement
+          })
 
-  //     if (isSaving) return
+        await uploadShape(toBeUpdatedShapes)
+      })
 
-  //     localStorage.setItem("isSaving", "true")
-  //     await uploadFiles()
-  //     localStorage.setItem("isSaving", "false")
-  //   }
+      setLastUpdatedFiles(new Date())
+    }
+  }
 
-  //   if (!excalidrawAPI) return
-  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   upload()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [files])
+  useEffect(() => {
+    localStorage.setItem("isSavingFiles", "false")
+  }, [])
 
-  // useEffect(() => {
-  //   async function getImages() {
-  //     console.log(
-  //       "all scene elements",
-  //       excalidrawAPI?.getSceneElements(),
-  //     )
-  //     console.log("excal elements", excalElements)
-  //     const imgsUrls = excalElements
-  //       .filter(
-  //         (excalEl) =>
-  //           excalEl.type === "image" && !excalEl.isDeleted,
-  //       )
-  //       .map((excalImg) => {
-  //         const fileId = (
-  //           excalImg as ExcalidrawImageElement
-  //         ).fileId
-  //         return fileId!
-  //       })
+  useEffect(() => {
+    async function upload() {
+      const isSaving =
+        localStorage.getItem("isSavingFiles") === "true"
 
-  //     console.log(imgsUrls)
+      if (isSaving) return
 
-  //     // // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  //     // imgsUrls.forEach(async (fileId) => {
-  //     //   const res = await fetch(
-  //     //     `https://utfs.io/f/${fileId}`,
-  //     //   )
-  //     //   const imgData = await res.blob()
-  //     //   const reader = new FileReader()
+      localStorage.setItem("isSavingFiles", "true")
+      await uploadFiles()
+      localStorage.setItem("isSavingFiles", "false")
+    }
 
-  //     //   reader.onload = () => {
-  //     //     const imgFile: BinaryFileData = {
-  //     //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     //       // @ts-ignore
-  //     //       id: fileId,
-  //     //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     //       // @ts-ignore
-  //     //       dataURL: reader.result!,
-  //     //       // mimeType: "image/jpeg",
-  //     //       // created: 1714504957800,
-  //     //     }
+    if (!excalidrawAPI) return
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    upload()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files])
 
-  //     //     if (excalidrawAPI) {
-  //     //       excalidrawAPI?.addFiles([imgFile])
-  //     //       excalidrawAPI?.updateScene({
-  //     //         elements: [
-  //     //           ...excalidrawAPI.getSceneElementsIncludingDeleted(),
-  //     //         ],
-  //     //         appState: excalidrawAPI.getAppState(),
-  //     //       })
-  //     //     }
-  //     //   }
+  useEffect(() => {
+    async function getImages() {
+      const imgsUrls = excalElements
+        .filter(
+          (excalEl) =>
+            excalEl.type === "image" && !excalEl.isDeleted,
+        )
+        .map((excalImg) => {
+          const fileId = (
+            excalImg as ExcalidrawImageElement
+          ).fileId
+          return fileId!
+        })
 
-  //     //   reader.readAsDataURL(imgData)
-  //     // })
-  //   }
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      imgsUrls.forEach(async (fileId) => {
+        const res = await fetch(fileId)
+        const imgData = await res.blob()
+        const reader = new FileReader()
 
-  //   if (!excalidrawAPI) return
-  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   getImages()
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [excalidrawAPI])
+        reader.onload = () => {
+          const imgFile: BinaryFileData = {
+            id: fileId,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            dataURL: reader.result!,
+          }
+
+          if (excalidrawAPI) {
+            excalidrawAPI?.addFiles([imgFile])
+            excalidrawAPI?.updateScene({
+              elements: [
+                ...excalidrawAPI.getSceneElementsIncludingDeleted(),
+              ],
+              appState: excalidrawAPI.getAppState(),
+            })
+          }
+        }
+
+        reader.readAsDataURL(imgData)
+      })
+    }
+
+    if (!excalidrawAPI) return
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    getImages()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [excalidrawAPI])
 
   return (
     <div>
@@ -330,7 +339,7 @@ export function Canvas() {
       </section>
       <section>
         {loading === LoadingState.Loaded &&
-          // showMeta &&
+          showMeta &&
           excalElements.map((excalEl, i) => (
             <ShapeInfoButtons key={i} excalEl={excalEl} />
           ))}
