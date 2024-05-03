@@ -71,24 +71,22 @@ export function Canvas() {
     setExcalAppState,
     getCurrentSearchParams,
   } = useCanvas()
-
-  const [lastUpdated, setLastUpdated] = useState<Date>(
-    new Date(),
-  )
-  const [lastUpdatedFiles, setLastUpdatedFiles] =
+  const [lastUpdatedShapes, setLastUpdatedShapes] =
     useState<Date>(new Date())
 
   const [files, setFiles] = useState<BinaryFiles>({})
-
-  const [showMeta, setShowMeta] = useState(true)
-
-  const router = useRouter()
+  const [lastUpdatedFiles, setLastUpdatedFiles] =
+    useState<Date>(new Date())
 
   const { startUpload } = useUploadThing("imageUploader", {
     onClientUploadComplete: () => {
       console.log("upload complete")
     },
   })
+
+  const [showMeta, setShowMeta] = useState(true)
+
+  const router = useRouter()
 
   const Excal = useMemo(() => {
     return (
@@ -119,12 +117,9 @@ export function Canvas() {
           )
         }}
         onChange={(elements, appState, files) => {
-          if (elements) setExcalElements([...elements])
-
+          setExcalElements([...elements])
           setExcalAppState(appState)
-
-          setFiles({ ...files })
-
+          setFiles(files)
           setLoading(
             appState.isLoading
               ? LoadingState.Loading
@@ -169,6 +164,9 @@ export function Canvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI, theme, showMeta])
 
+  /*------------------------------------------------------*/
+  /* Upload Shape */
+
   useEffect(() => {
     localStorage.setItem("isUploadingShape", "false")
   }, [])
@@ -192,7 +190,7 @@ export function Canvas() {
       ...newNodesRecords,
     })
 
-    setLastUpdated(new Date())
+    setLastUpdatedShapes(new Date())
   }
 
   useEffect(() => {
@@ -200,7 +198,7 @@ export function Canvas() {
 
     setTimeout(() => {
       const notUpdatedYet = excalElements.filter(
-        (el) => toDate(el.updated) > lastUpdated,
+        (el) => toDate(el.updated) > lastUpdatedShapes,
       )
 
       if (notUpdatedYet.length === 0) return
@@ -210,7 +208,10 @@ export function Canvas() {
       )
     }, 250)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [excalElements, lastUpdated, isSignedIn])
+  }, [excalElements, lastUpdatedShapes, isSignedIn])
+
+  /*------------------------------------------------------*/
+  /* Upload Files */
 
   async function uploadFiles() {
     const allFiles = excalidrawAPI!.getFiles()
@@ -331,6 +332,8 @@ export function Canvas() {
     getImages()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI])
+
+  /*------------------------------------------------------*/
 
   return (
     <div>
