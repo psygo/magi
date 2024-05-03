@@ -167,19 +167,26 @@ export function Canvas() {
   /*------------------------------------------------------*/
   /* Upload Shape */
 
-  useEffect(() => {
-    localStorage.setItem("isUploadingShape", "false")
-  }, [])
+  function getIsUploadingShape() {
+    return (
+      localStorage.getItem("isUploadingShape") === "true"
+    )
+  }
+
+  function setIsUploadingShape(v: boolean) {
+    localStorage.setItem("isUploadingShape", v.toString())
+  }
+
+  useEffect(() => setIsUploadingShape(false), [])
 
   async function uploadShape(els: ExcalidrawElement[]) {
-    const isUploadingShape =
-      localStorage.getItem("isUploadingShape") === "true"
+    const isUploadingShape = getIsUploadingShape()
 
     if (isUploadingShape) return
 
-    localStorage.setItem("isUploadingShape", "true")
+    setIsUploadingShape(true)
     const newNodes = await postNodes(els)
-    localStorage.setItem("isUploadingShape", "false")
+    setIsUploadingShape(false)
 
     if (!newNodes) return
 
@@ -262,20 +269,27 @@ export function Canvas() {
     }
   }
 
-  useEffect(() => {
-    localStorage.setItem("isSavingFiles", "false")
-  }, [])
+  function getIsUploadingFiles() {
+    return (
+      localStorage.getItem("isUploadingFiles") === "true"
+    )
+  }
+
+  function setIsUploadingFiles(v: boolean) {
+    localStorage.setItem("isUploadingFiles", v.toString())
+  }
+
+  useEffect(() => setIsUploadingFiles(false), [])
 
   useEffect(() => {
     async function upload() {
-      const isSaving =
-        localStorage.getItem("isSavingFiles") === "true"
+      const isSaving = getIsUploadingFiles()
 
       if (isSaving) return
 
-      localStorage.setItem("isSavingFiles", "true")
+      setIsUploadingFiles(true)
       await uploadFiles()
-      localStorage.setItem("isSavingFiles", "false")
+      setIsUploadingFiles(false)
     }
 
     if (!excalidrawAPI) return
