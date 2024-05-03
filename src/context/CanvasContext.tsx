@@ -24,7 +24,7 @@ type CanvasContext = {
   setExcalAppState: React.Dispatch<
     React.SetStateAction<AppState>
   >
-  getCurrentSearchParams: (
+  getCurrentCanvasSearchParams: (
     appState?: AppState,
   ) => URLSearchParams
 }
@@ -74,7 +74,9 @@ export function CanvasProvider({
   const [excalAppState, setExcalAppState] =
     useState<AppState>(initialAppState)
 
-  function getCurrentSearchParams(appState?: AppState) {
+  function getCurrentCanvasSearchParams(
+    appState?: AppState,
+  ) {
     const state = appState ?? excalAppState
 
     const scrollX = Math.round(state.scrollX)
@@ -98,7 +100,7 @@ export function CanvasProvider({
         setExcalElements,
         excalAppState,
         setExcalAppState,
-        getCurrentSearchParams,
+        getCurrentCanvasSearchParams,
       }}
     >
       {children}

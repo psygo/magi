@@ -9,7 +9,7 @@ import { CanvasProvider } from "@context"
 import { Canvas } from "@components"
 
 type CanvasPageProps = {
-  params: { canvas_path: string }
+  params: { canvas_id: string; node_id: string }
   searchParams: Record<
     string,
     string | string[] | undefined

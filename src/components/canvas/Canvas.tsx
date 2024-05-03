@@ -71,7 +71,7 @@ export function Canvas() {
     setExcalElements,
     excalAppState,
     setExcalAppState,
-    getCurrentSearchParams,
+    getCurrentCanvasSearchParams: getCurrentSearchParams,
   } = useCanvas()
   const [lastUpdatedShapes, setLastUpdatedShapes] =
     useState<Date>(new Date())
@@ -117,8 +117,9 @@ export function Canvas() {
           const searchParams = getCurrentSearchParams(
             excalidrawAPI!.getAppState(),
           )
+          const searchParamsString = `?${searchParams.toString()}`
           router.replace(
-            `/canvases/open-public?${searchParams.toString()}`,
+            `/canvases/open-public${searchParamsString}`,
           )
         }}
         onChange={(elements, appState, files) => {

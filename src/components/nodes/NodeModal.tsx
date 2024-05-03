@@ -4,8 +4,14 @@ import { useParams } from "next/navigation"
 
 import { Share2, Star } from "lucide-react"
 
+import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
+
+import "@utils/array"
+
 import {
   Button,
+  Card,
+  CardContent,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -43,23 +49,29 @@ type NodeEdgeCardDialogProps = {
 export function NodeModal({
   excalId,
 }: NodeEdgeCardDialogProps) {
-  const { nodes, excalAppState, getCurrentSearchParams } =
-    useCanvas()
+  const {
+    nodes,
+    excalAppState,
+    getCurrentCanvasSearchParams,
+  } = useCanvas()
 
   const node = nodes[excalId]
   const voteTotal = node?.stats?.voteTotal ?? 0
   const zoom = excalAppState.zoom.value as number
 
   const params = useParams()
-  const open = params.canvas_path?.includes(excalId)
+  const defaultOpen = params.node_id
+    ?.toString()
+    .includes(excalId)
 
   return (
     <Dialog
-      defaultOpen={open}
+      defaultOpen={defaultOpen}
       onOpenChange={(open) => {
-        const searchParams = getCurrentSearchParams()
-        const nodePath = open ? `nodes/${excalId}` : ""
-        const route = `/canvases/open-public/${nodePath}?${searchParams.toString()}`
+        const searchParams = getCurrentCanvasSearchParams()
+        const searchParamsString = `?${searchParams.toString()}`
+        const nodePath = open ? `/nodes/${excalId}` : ""
+        const route = `/canvases/open-public${nodePath}${searchParamsString}`
         window.history.pushState(null, "", route)
       }}
     >
@@ -101,6 +113,7 @@ function NodeModalContent() {
       <div className="flex flex-col gap-3 mt-2">
         <NodeTitle />
         <NodeDescription />
+        <NodeLink />
         <div className="flex justify-between mt-3">
           <div className="flex flex-col gap-1 mt-[6px]">
             <NodeVotePointsSection />
@@ -124,5 +137,45 @@ function NodeModalContent() {
         </CommentsProvider>
       </div>
     </>
+  )
+}
+
+export function NodeLink() {
+  const { node } = useNodeData()
+
+  const excalData = node?.excalData as ExcalidrawElement
+  const link = excalData?.link
+
+  if (!link) return
+
+  const isYouTube =
+    link.includes("youtube.com") ||
+    link.includes("youtu.be")
+
+  function getYouTubeEmbeddedLink() {
+    const youtubeId = link!.split("/").last()
+    return `https://www.youtube.com/embed/${youtubeId}`
+  }
+
+  return (
+    <Card>
+      <CardContent className="py-2 flex flex-col gap-2">
+        <a className="text-blue-500" href={link}>
+          {link}
+        </a>
+        {isYouTube && (
+          <iframe
+            width="100%"
+            height="200"
+            src={getYouTubeEmbeddedLink()}
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          ></iframe>
+        )}
+      </CardContent>
+    </Card>
   )
 }
