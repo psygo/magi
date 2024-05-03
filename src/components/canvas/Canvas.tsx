@@ -30,6 +30,8 @@ import { LoadingState, Theme } from "@types"
 
 import { postNodes, saveTheme } from "@actions"
 
+import { useLocalStorage } from "@hooks"
+
 import {
   nodesArrayToRecords,
   useCanvas,
@@ -88,6 +90,9 @@ export function Canvas() {
 
   const router = useRouter()
 
+  const { get: getIsDragging, set: setIsDragging } =
+    useLocalStorage("isDragging")
+
   const Excal = useMemo(() => {
     return (
       <Excalidraw
@@ -117,6 +122,12 @@ export function Canvas() {
           )
         }}
         onChange={(elements, appState, files) => {
+          if (appState.pendingImageElementId) return
+
+          appState.draggingElement
+            ? setIsDragging(true)
+            : setIsDragging(false)
+
           setExcalElements([...elements])
           setExcalAppState(appState)
           setFiles(files)
@@ -167,22 +178,18 @@ export function Canvas() {
   /*------------------------------------------------------*/
   /* Upload Shape */
 
-  function getIsUploadingShape() {
-    return (
-      localStorage.getItem("isUploadingShape") === "true"
-    )
-  }
+  const {
+    get: getIsUploadingShape,
+    set: setIsUploadingShape,
+  } = useLocalStorage("isUploadingShape")
 
-  function setIsUploadingShape(v: boolean) {
-    localStorage.setItem("isUploadingShape", v.toString())
-  }
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => setIsUploadingShape(false), [])
 
   async function uploadShape(els: ExcalidrawElement[]) {
     const isUploadingShape = getIsUploadingShape()
 
-    if (isUploadingShape) return
+    if (isUploadingShape || getIsDragging()) return
 
     setIsUploadingShape(true)
     const newNodes = await postNodes(els)
@@ -240,6 +247,10 @@ export function Canvas() {
       })
 
     if (notUpdatedYetFiles.length > 0) {
+      excalidrawAPI!.setToast({
+        message: "Uploading File(s)",
+      })
+
       const res = await startUpload(notUpdatedYetFiles)
       if (!res) return
 
@@ -266,19 +277,20 @@ export function Canvas() {
       })
 
       setLastUpdatedFiles(new Date())
+
+      excalidrawAPI!.setToast({
+        message: "Upload Complete",
+        duration: 2_000,
+      })
     }
   }
 
-  function getIsUploadingFiles() {
-    return (
-      localStorage.getItem("isUploadingFiles") === "true"
-    )
-  }
+  const {
+    get: getIsUploadingFiles,
+    set: setIsUploadingFiles,
+  } = useLocalStorage("isUploadingFiles")
 
-  function setIsUploadingFiles(v: boolean) {
-    localStorage.setItem("isUploadingFiles", v.toString())
-  }
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => setIsUploadingFiles(false), [])
 
   useEffect(() => {
@@ -351,7 +363,15 @@ export function Canvas() {
 
   return (
     <div>
-      <section className="absolute w-screen h-screen">
+      <section
+        onDragStart={() => {
+          console.log("dragstart")
+        }}
+        onDragEnd={() => {
+          console.log("dragend")
+        }}
+        className="absolute w-screen h-screen"
+      >
         {Excal}
       </section>
       <section>
