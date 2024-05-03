@@ -9,6 +9,8 @@ import {
   type ExcalidrawElement,
 } from "@excalidraw/excalidraw/types/element/types"
 
+import { toInt } from "@utils"
+
 import { userIdFromClerk } from "../../utils/exports"
 
 export async function postNodes(
@@ -37,6 +39,8 @@ export async function postNodes(
             title: "",
             description: "",
             excalData: el,
+            x: toInt(el.x),
+            y: toInt(el.y),
             isDeleted: el.isDeleted,
             creatorId: userId,
             ...arrowData,
@@ -50,6 +54,8 @@ export async function postNodes(
           excalData: sql.raw(
             `excluded.${nodes.excalData.name}`,
           ),
+          x: sql.raw(`excluded.${nodes.x.name}`),
+          y: sql.raw(`excluded.${nodes.y.name}`),
           isDeleted: sql.raw(
             `excluded.${nodes.isDeleted.name}`,
           ),

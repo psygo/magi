@@ -117,6 +117,8 @@ export const nodes = createTable("nodes", {
   }).notNull(),
   imageUrl: varchar("image_url", { length: 1024 }),
   excalData: json("excal_data"),
+  x: integer("x").notNull(),
+  y: integer("y").notNull(),
   isDeleted: boolean("is_deleted").notNull().default(false),
   // Relationships
   creatorId: integer("creator_id").notNull(),

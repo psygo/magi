@@ -122,6 +122,9 @@ export function Canvas() {
             `/canvases/open-public${searchParamsString}`,
           )
         }}
+        onPointerUpdate={(p) => {
+          console.log(p.pointer)
+        }}
         onChange={(elements, appState, files) => {
           if (appState.pendingImageElementId) return
 

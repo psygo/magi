@@ -28,6 +28,7 @@ const canvasAppStateSchema = z.object({
 })
 
 export default async function CanvasPage({
+  params,
   searchParams,
 }: CanvasPageProps) {
   const parsedSearchParams =

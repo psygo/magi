@@ -1,6 +1,14 @@
 "use server"
 
-import { desc, eq, sql, getTableColumns } from "drizzle-orm"
+import {
+  desc,
+  eq,
+  sql,
+  getTableColumns,
+  and,
+  gte,
+  lte,
+} from "drizzle-orm"
 
 import "@utils/array"
 
@@ -44,11 +52,21 @@ function getNodeQuery() {
     .groupBy(nodes.id, users.id)
 }
 
-export async function getNodes() {
+export async function getNodes(
+  xLeft = 0,
+  xRight = 1_000,
+  yBottom = 0,
+  yTop = 1_000,
+) {
   try {
-    const n = await getNodeQuery().orderBy(
-      desc(nodes.updatedAt),
-    )
+    const n = await getNodeQuery()
+      .where(
+        and(
+          and(gte(nodes.x, xLeft), lte(nodes.x, xRight)),
+          and(gte(nodes.y, yBottom), lte(nodes.x, yTop)),
+        ),
+      )
+      .orderBy(desc(nodes.updatedAt))
 
     return n as SelectNodeWithCreatorAndStats[]
   } catch (e) {
