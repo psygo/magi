@@ -4,14 +4,10 @@ import { useParams } from "next/navigation"
 
 import { Share2, Star } from "lucide-react"
 
-import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
-
 import "@utils/array"
 
 import {
   Button,
-  Card,
-  CardContent,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -41,6 +37,7 @@ import {
 } from "./NodeTitleAndDescription"
 import { NodeAuthor } from "./NodeAuthor"
 import { NodeVotePointsSection } from "./NodeVotePointsSection"
+import { NodeLink } from "./NodeLink"
 
 type NodeEdgeCardDialogProps = {
   excalId: ExcalId
@@ -137,45 +134,5 @@ function NodeModalContent() {
         </CommentsProvider>
       </div>
     </>
-  )
-}
-
-export function NodeLink() {
-  const { node } = useNodeData()
-
-  const excalData = node?.excalData as ExcalidrawElement
-  const link = excalData?.link
-
-  if (!link) return
-
-  const isYouTube =
-    link.includes("youtube.com") ||
-    link.includes("youtu.be")
-
-  function getYouTubeEmbeddedLink() {
-    const youtubeId = link!.split("/").last()
-    return `https://www.youtube.com/embed/${youtubeId}`
-  }
-
-  return (
-    <Card>
-      <CardContent className="py-2 flex flex-col gap-2">
-        <a className="text-blue-500" href={link}>
-          {link}
-        </a>
-        {isYouTube && (
-          <iframe
-            width="100%"
-            height="200"
-            src={getYouTubeEmbeddedLink()}
-            title="YouTube video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
-        )}
-      </CardContent>
-    </Card>
   )
 }
