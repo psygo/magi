@@ -70,7 +70,7 @@ export function Canvas() {
     setExcalElements,
     excalAppState,
     setExcalAppState,
-    getCurrentCanvasSearchParams,
+    updateSearchParams,
     getMoreNodes,
   } = useCanvas()
   const [lastUpdatedShapes, setLastUpdatedShapes] =
@@ -87,8 +87,6 @@ export function Canvas() {
   })
 
   const [showMeta, setShowMeta] = useState(true)
-
-  const router = useRouter()
 
   const { get: getIsDragging, set: setIsDragging } =
     useLocalStorage("isDragging")
@@ -115,12 +113,7 @@ export function Canvas() {
         }}
         gridModeEnabled
         onScrollChange={async () => {
-          const searchParams =
-            getCurrentCanvasSearchParams()
-          const searchParamsString = `?${searchParams.toString()}`
-          router.replace(
-            `/canvases/open-public${searchParamsString}`,
-          )
+          updateSearchParams()
 
           const appState = excalidrawAPI!.getAppState()
 

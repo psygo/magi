@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useState } from "react"
 
+import { useRouter } from "next/navigation"
+
 import {
   type ExcalidrawImperativeAPI,
   type AppState,
@@ -38,7 +40,7 @@ type CanvasContext = {
   setExcalAppState: React.Dispatch<
     React.SetStateAction<AppState>
   >
-  getCurrentCanvasSearchParams: () => URLSearchParams
+  updateSearchParams: () => void
   getMoreNodes: (f: FieldOfView) => Promise<void>
 }
 
@@ -87,19 +89,24 @@ export function CanvasProvider({
   const [excalAppState, setExcalAppState] =
     useState<AppState>(initialAppState)
 
-  function getCurrentCanvasSearchParams() {
+  const router = useRouter()
+
+  function updateSearchParams() {
     const state = excalidrawAPI!.getAppState()
 
     const scrollX = Math.round(state.scrollX)
     const scrollY = Math.round(state.scrollY)
     const zoom = toPrecision(state.zoom.value)
 
-    const params = new URLSearchParams()
-    params.set("scrollX", scrollX.toString())
-    params.set("scrollY", scrollY.toString())
-    params.set("zoom", zoom.toString())
+    const searchParams = new URLSearchParams()
+    searchParams.set("scrollX", scrollX.toString())
+    searchParams.set("scrollY", scrollY.toString())
+    searchParams.set("zoom", zoom.toString())
 
-    return params
+    const searchParamsString = `?${searchParams.toString()}`
+    router.replace(
+      `/canvases/open-public${searchParamsString}`,
+    )
   }
 
   const [isPaginating, setIsPaginating] = useState(false)
@@ -145,7 +152,7 @@ export function CanvasProvider({
         setExcalElements,
         excalAppState,
         setExcalAppState,
-        getCurrentCanvasSearchParams,
+        updateSearchParams,
         getMoreNodes,
       }}
     >
