@@ -2,6 +2,7 @@
 
 1. [ ] 2D Pagination
 1. [ ] Create Canvases
+1. [ ] GUI with the Current Coordinates
 
 ## Second Version
 

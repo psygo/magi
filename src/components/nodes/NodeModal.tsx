@@ -1,6 +1,6 @@
 "use client"
 
-import { useParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 
 import { Share2, Star } from "lucide-react"
 
@@ -46,11 +46,7 @@ type NodeEdgeCardDialogProps = {
 export function NodeModal({
   excalId,
 }: NodeEdgeCardDialogProps) {
-  const {
-    nodes,
-    excalAppState,
-    getCurrentCanvasSearchParams,
-  } = useCanvas()
+  const { nodes, excalAppState } = useCanvas()
 
   const node = nodes[excalId]
   const voteTotal = node?.stats?.voteTotal ?? 0
@@ -61,11 +57,12 @@ export function NodeModal({
     ?.toString()
     .includes(excalId)
 
+  const searchParams = useSearchParams()
+
   return (
     <Dialog
       defaultOpen={defaultOpen}
       onOpenChange={(open) => {
-        const searchParams = getCurrentCanvasSearchParams()
         const searchParamsString = `?${searchParams.toString()}`
         const nodePath = open ? `/nodes/${excalId}` : ""
         const route = `/canvases/open-public${nodePath}${searchParamsString}`

@@ -16,7 +16,6 @@ import { useUser } from "@clerk/nextjs"
 import {
   type BinaryFileData,
   type BinaryFiles,
-  type ExcalidrawImperativeAPI,
 } from "@excalidraw/excalidraw/types/types"
 import { MainMenu } from "@excalidraw/excalidraw"
 import {
@@ -24,7 +23,7 @@ import {
   type ExcalidrawImageElement,
 } from "@excalidraw/excalidraw/types/element/types"
 
-import { toDate } from "@utils"
+import { toDate, toPrecision } from "@utils"
 
 import { LoadingState, Theme } from "@types"
 
@@ -58,20 +57,21 @@ export function Canvas() {
 
   const { isSignedIn } = useUser()
 
-  const [excalidrawAPI, setExcalidrawAPI] =
-    useState<ExcalidrawImperativeAPI>()
   const [loading, setLoading] = useState(
     LoadingState.NotYet,
   )
 
   const {
+    excalidrawAPI,
+    setExcalidrawAPI,
     nodes,
     setNodes,
     excalElements,
     setExcalElements,
     excalAppState,
     setExcalAppState,
-    getCurrentCanvasSearchParams: getCurrentSearchParams,
+    getCurrentCanvasSearchParams,
+    getMoreNodes,
   } = useCanvas()
   const [lastUpdatedShapes, setLastUpdatedShapes] =
     useState<Date>(new Date())
@@ -113,17 +113,43 @@ export function Canvas() {
           const ext = f.type.split("/").second()
           return `${nanoid()}.${ext}`
         }}
-        onScrollChange={() => {
-          const searchParams = getCurrentSearchParams(
-            excalidrawAPI!.getAppState(),
-          )
+        gridModeEnabled
+        onScrollChange={async () => {
+          const searchParams =
+            getCurrentCanvasSearchParams()
           const searchParamsString = `?${searchParams.toString()}`
           router.replace(
             `/canvases/open-public${searchParamsString}`,
           )
-        }}
-        onPointerUpdate={(p) => {
-          console.log(p.pointer)
+
+          const appState = excalidrawAPI!.getAppState()
+
+          const scrollX = Math.round(appState.scrollX)
+          const scrollY = Math.round(appState.scrollY)
+          const zoom = toPrecision(appState.zoom.value)
+          const height = Math.round(appState.height / zoom)
+          const width = Math.round(appState.width / zoom)
+
+          const currentScreen = {
+            xLeft: -scrollX,
+            xRight: -scrollX + width,
+            yTop: -scrollY,
+            yBottom: -scrollY + height,
+          }
+
+          await getMoreNodes(currentScreen)
+
+          // if (
+          //   currentScreen.xLeft <
+          //     fieldOfView.xLeft + width ||
+          //   currentScreen.xRight >
+          //     fieldOfView.xRight - width ||
+          //   currentScreen.yTop <
+          //     fieldOfView.yTop + height ||
+          //   currentScreen.yBottom >
+          //     fieldOfView.yBottom - height
+          // ) {
+          // }
         }}
         onChange={(elements, appState, files) => {
           if (appState.pendingImageElementId) return
@@ -186,9 +212,6 @@ export function Canvas() {
     get: getIsUploadingShape,
     set: setIsUploadingShape,
   } = useLocalStorage("isUploadingShape")
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => setIsUploadingShape(false), [])
 
   async function uploadShape(els: ExcalidrawElement[]) {
     const isUploadingShape = getIsUploadingShape()
@@ -293,9 +316,6 @@ export function Canvas() {
     get: getIsUploadingFiles,
     set: setIsUploadingFiles,
   } = useLocalStorage("isUploadingFiles")
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => setIsUploadingFiles(false), [])
 
   useEffect(() => {
     async function upload() {

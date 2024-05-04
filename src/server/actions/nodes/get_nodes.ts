@@ -16,6 +16,7 @@ import {
   type SelectNodeWithCreatorAndStatsAndCreatorStats,
   type ExcalId,
   type SelectNodeWithCreatorAndStats,
+  type FieldOfView,
 } from "@types"
 
 import {
@@ -53,17 +54,21 @@ function getNodeQuery() {
 }
 
 export async function getNodes(
-  xLeft = 0,
-  xRight = 1_000,
-  yBottom = 0,
-  yTop = 1_000,
+  fieldOfView: FieldOfView = {
+    xLeft: 0,
+    xRight: 1_000,
+    yTop: 0,
+    yBottom: 1_000,
+  },
 ) {
   try {
     const n = await getNodeQuery()
       .where(
         and(
-          and(gte(nodes.x, xLeft), lte(nodes.x, xRight)),
-          and(gte(nodes.y, yBottom), lte(nodes.x, yTop)),
+          gte(nodes.x, fieldOfView.xLeft),
+          lte(nodes.x, fieldOfView.xRight),
+          gte(nodes.y, fieldOfView.yTop),
+          lte(nodes.y, fieldOfView.yBottom),
         ),
       )
       .orderBy(desc(nodes.updatedAt))

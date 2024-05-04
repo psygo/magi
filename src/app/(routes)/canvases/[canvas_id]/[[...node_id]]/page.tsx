@@ -21,7 +21,7 @@ const canvasAppStateSchema = z.object({
   scrollY: z.string().default("0").transform(Number),
   zoom: z
     .string()
-    .default("0.8")
+    .default("1")
     .transform((v) => ({
       value: parseFloat(v),
     })),
@@ -36,11 +36,11 @@ export default async function CanvasPage({
   const initialAppState: AppState =
     parsedSearchParams as AppState
 
-  const nodes = await getNodes()
+  // const nodes = await getNodes()
 
   return (
     <CanvasProvider
-      initialNodes={nodes}
+      // initialNodes={nodes}
       initialAppState={initialAppState}
     >
       <Canvas />
