@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Check, Moon, Sun, X } from "lucide-react"
 
 import dynamic from "next/dynamic"
+import { useSearchParams } from "next/navigation"
 
 import { useCookies } from "next-client-cookies"
 
@@ -44,9 +45,8 @@ import {
 
 import { Progress } from "@components"
 
+import { Coordinates } from "./Coordinates"
 import { ShapeInfoButtons } from "./ShapeInfoButton"
-import { useSearchParams } from "next/navigation"
-import { Card, CardContent } from "../common/shad/card"
 
 const Excalidraw = dynamic(
   async () => {
@@ -495,27 +495,5 @@ export function Canvas() {
         y={excalAppState.scrollY}
       />
     </div>
-  )
-}
-
-type CoordinatesProps = {
-  x: number
-  y: number
-}
-
-export function Coordinates({ x, y }: CoordinatesProps) {
-  return (
-    <Card className="p-3 fixed z-50 bottom-[68px] right-4">
-      <CardContent className="p-0 flex flex-col gap-2">
-        <div className="flex gap-2">
-          <p>X</p>
-          <p className="font-bold">{x}</p>
-        </div>
-        <div className="flex gap-2">
-          <p>Y</p>
-          <p className="font-bold">{y}</p>
-        </div>
-      </CardContent>
-    </Card>
   )
 }
