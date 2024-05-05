@@ -24,9 +24,13 @@ import {
   type ExcalidrawImageElement,
 } from "@excalidraw/excalidraw/types/element/types"
 
-import { toDate, toPrecision } from "@utils"
+import { toDate, toNumber, toPrecision } from "@utils"
 
-import { FieldOfView, LoadingState, Theme } from "@types"
+import {
+  type FieldOfView,
+  LoadingState,
+  Theme,
+} from "@types"
 
 import { postNodes, saveTheme } from "@actions"
 
@@ -41,6 +45,8 @@ import {
 import { Progress } from "@components"
 
 import { ShapeInfoButtons } from "./ShapeInfoButton"
+import { useSearchParams } from "next/navigation"
+import { Card, CardContent } from "../common/shad/card"
 
 const Excalidraw = dynamic(
   async () => {
@@ -92,25 +98,117 @@ export function Canvas() {
   const { get: getIsDragging, set: setIsDragging } =
     useLocalStorage("isDragging", false)
 
+  /*------------------------------------------------------*/
+  /* 2D Pagination */
+
   const cookies = useCookies()
+  const searchParams = useSearchParams()
+  const [initialScrollX, initialScrollY] = [
+    toNumber(searchParams.get("scrollX") ?? 0),
+    toNumber(searchParams.get("scrollY") ?? 0),
+  ]
 
   const initialFieldOfView: FieldOfView = {
-    xLeft: -window.innerWidth,
-    xRight: 2 * window.innerWidth,
-    yTop: -window.innerHeight,
-    yBottom: 2 * window.innerHeight,
+    xLeft: -initialScrollX - window.innerWidth,
+    xRight: -initialScrollX + 2 * window.innerWidth,
+    yTop: -initialScrollY - window.innerHeight,
+    yBottom: -initialScrollY + 2 * window.innerHeight,
   }
 
   useEffect(() => {
     if (!excalidrawAPI) return
+
     cookies.set(
       "fieldOfView",
       JSON.stringify(initialFieldOfView),
     )
+
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     getMoreNodes()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI])
+
+  async function pagination() {
+    const appState = excalidrawAPI!.getAppState()
+
+    const scrollX = Math.round(appState.scrollX)
+    const scrollY = Math.round(appState.scrollY)
+    const zoom = toPrecision(appState.zoom.value)
+    const height = Math.round(appState.height / zoom)
+    const width = Math.round(appState.width / zoom)
+
+    const currentScreen = {
+      xLeft: -scrollX,
+      xRight: -scrollX + width,
+      yTop: -scrollY,
+      yBottom: -scrollY + height,
+    }
+
+    const currentFieldOfView: FieldOfView = JSON.parse(
+      cookies.get("fieldOfView")!,
+    ) as FieldOfView
+
+    if (
+      currentScreen.xLeft < currentFieldOfView.xLeft ||
+      currentScreen.xRight > currentFieldOfView.xRight ||
+      currentScreen.yTop < currentFieldOfView.yTop ||
+      currentScreen.yBottom > currentFieldOfView.yBottom
+    ) {
+      // const newFieldOfView: FieldOfView = {
+      //   xLeft:
+      //     currentScreen.xLeft <
+      //     currentFieldOfView.xLeft + width
+      //       ? currentFieldOfView.xLeft - width
+      //       : currentFieldOfView.xLeft,
+      //   xRight:
+      //     currentScreen.xRight >
+      //     currentFieldOfView.xRight - width
+      //       ? currentFieldOfView.xRight + width
+      //       : currentFieldOfView.xRight,
+      //   yTop:
+      //     currentScreen.yTop <
+      //     currentFieldOfView.yTop + height
+      //       ? currentFieldOfView.yTop - height
+      //       : currentFieldOfView.yTop,
+      //   yBottom:
+      //     currentScreen.yBottom >
+      //     currentFieldOfView.yBottom - height
+      //       ? currentFieldOfView.yBottom + height
+      //       : currentFieldOfView.yBottom,
+      // }
+
+      const newFieldOfView: FieldOfView = {
+        xLeft: Math.min(
+          currentFieldOfView.xLeft,
+          currentScreen.xLeft,
+        ),
+        xRight: Math.max(
+          currentFieldOfView.xRight,
+          currentScreen.xRight,
+        ),
+        yTop: Math.min(
+          currentFieldOfView.yTop,
+          currentScreen.yTop,
+        ),
+        yBottom: Math.max(
+          currentFieldOfView.yBottom,
+          currentScreen.yBottom,
+        ),
+      }
+
+      console.log("current screen", currentScreen)
+      console.log("new fov", newFieldOfView)
+
+      cookies.set(
+        "fieldOfView",
+        JSON.stringify(newFieldOfView),
+      )
+
+      await getMoreNodes()
+    }
+  }
+
+  /*------------------------------------------------------*/
 
   const Excal = useMemo(() => {
     return (
@@ -133,69 +231,9 @@ export function Canvas() {
           return `${nanoid()}.${ext}`
         }}
         gridModeEnabled
-        // onPointerUpdate={({ pointer }) => {
-        //   console.log("pointer", pointer)
-        // }}
         onScrollChange={async () => {
           updateSearchParams()
-
-          const appState = excalidrawAPI!.getAppState()
-
-          const scrollX = Math.round(appState.scrollX)
-          const scrollY = Math.round(appState.scrollY)
-          const zoom = toPrecision(appState.zoom.value)
-          const height = Math.round(appState.height / zoom)
-          const width = Math.round(appState.width / zoom)
-
-          const currentScreen = {
-            xLeft: -scrollX,
-            xRight: -scrollX + width,
-            yTop: -scrollY,
-            yBottom: -scrollY + height,
-          }
-
-          const currentFieldOfView: FieldOfView =
-            JSON.parse(
-              cookies.get("fieldOfView")!,
-            ) as FieldOfView
-
-          if (
-            currentScreen.xLeft <
-              currentFieldOfView.xLeft ||
-            currentScreen.xRight >
-              currentFieldOfView.xRight ||
-            currentScreen.yTop < currentFieldOfView.yTop ||
-            currentScreen.yBottom >
-              currentFieldOfView.yBottom
-          ) {
-            const newFieldOfView: FieldOfView = {
-              xLeft: Math.min(
-                currentFieldOfView.xLeft,
-                currentScreen.xLeft,
-              ),
-              xRight: Math.max(
-                currentFieldOfView.xRight,
-                currentScreen.xRight,
-              ),
-              yTop: Math.min(
-                currentFieldOfView.yTop,
-                currentScreen.yTop,
-              ),
-              yBottom: Math.max(
-                currentFieldOfView.yBottom,
-                currentScreen.yBottom,
-              ),
-            }
-
-            cookies.set(
-              "fieldOfView",
-              JSON.stringify(newFieldOfView),
-            )
-
-            console.log("new fov", newFieldOfView)
-
-            await getMoreNodes()
-          }
+          await pagination()
         }}
         onChange={(elements, appState, files) => {
           if (appState.pendingImageElementId) return
@@ -257,12 +295,13 @@ export function Canvas() {
   const {
     get: getIsUploadingShape,
     set: setIsUploadingShape,
-  } = useLocalStorage("isUploadingShape")
+  } = useLocalStorage("isUploadingShape", false)
 
   async function uploadShape(els: ExcalidrawElement[]) {
     const isUploadingShape = getIsUploadingShape()
+    const isDragging = getIsDragging()
 
-    if (isUploadingShape || getIsDragging()) return
+    if (isUploadingShape || isDragging) return
 
     setIsUploadingShape(true)
     const newNodes = await postNodes(els)
@@ -361,7 +400,7 @@ export function Canvas() {
   const {
     get: getIsUploadingFiles,
     set: setIsUploadingFiles,
-  } = useLocalStorage("isUploadingFiles")
+  } = useLocalStorage("isUploadingFiles", false)
 
   useEffect(() => {
     async function upload() {
@@ -451,6 +490,32 @@ export function Canvas() {
             <ShapeInfoButtons key={i} excalEl={excalEl} />
           ))}
       </section>
+      <Coordinates
+        x={excalAppState.scrollX}
+        y={excalAppState.scrollY}
+      />
     </div>
+  )
+}
+
+type CoordinatesProps = {
+  x: number
+  y: number
+}
+
+export function Coordinates({ x, y }: CoordinatesProps) {
+  return (
+    <Card className="p-3 fixed z-50 bottom-[68px] right-4">
+      <CardContent className="p-0 flex flex-col gap-2">
+        <div className="flex gap-2">
+          <p>X</p>
+          <p className="font-bold">{x}</p>
+        </div>
+        <div className="flex gap-2">
+          <p>Y</p>
+          <p className="font-bold">{y}</p>
+        </div>
+      </CardContent>
+    </Card>
   )
 }

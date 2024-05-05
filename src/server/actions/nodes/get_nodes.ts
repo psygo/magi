@@ -56,9 +56,9 @@ function getNodeQuery() {
 
 const defaultFieldOfView = {
   xLeft: 0,
-  xRight: 1_000,
+  xRight: 2_000,
   yTop: 0,
-  yBottom: 1_000,
+  yBottom: 2_000,
 }
 
 export async function getNodes() {
@@ -71,11 +71,6 @@ export async function getNodes() {
           cookieStore.get("fieldOfView")!.value,
         ) as FieldOfView)
       : defaultFieldOfView
-
-    // cookieStore.set(
-    //   "fieldOfView",
-    //   JSON.stringify(fieldOfViewRequest),
-    // )
 
     const n = await getNodeQuery()
       .where(

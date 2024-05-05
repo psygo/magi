@@ -16,7 +16,6 @@ import {
   type SelectNodeWithCreatorAndStats,
   type WithReactChildren,
   type NodesRecords,
-  type FieldOfView,
 } from "@types"
 
 import { getNodes } from "@actions"
@@ -112,12 +111,6 @@ export function CanvasProvider({
   const [isPaginating, setIsPaginating] = useState(false)
 
   async function getMoreNodes() {
-  // currentScreen: FieldOfView = {
-  //   xLeft: 0,
-  //   xRight: window.innerWidth,
-  //   yTop: 0,
-  //   yBottom: window.innerHeight,
-  // },
     if (isPaginating) return
 
     setIsPaginating(true)

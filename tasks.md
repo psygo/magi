@@ -1,6 +1,7 @@
 # Tasks
 
 1. [ ] 2D Pagination
+1. [ ] Grid Mode on Excalidraw's Menu
 1. [ ] Create Canvases
 1. [ ] GUI with the Current Coordinates
 

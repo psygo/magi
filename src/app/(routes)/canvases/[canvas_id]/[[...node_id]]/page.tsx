@@ -2,8 +2,6 @@ import { z } from "zod"
 
 import { type AppState } from "@excalidraw/excalidraw/types/types"
 
-import { getNodes } from "@actions"
-
 import { CanvasProvider } from "@context"
 
 import { Canvas } from "@components"
@@ -28,7 +26,6 @@ const canvasAppStateSchema = z.object({
 })
 
 export default async function CanvasPage({
-  params,
   searchParams,
 }: CanvasPageProps) {
   const parsedSearchParams =
@@ -36,13 +33,8 @@ export default async function CanvasPage({
   const initialAppState: AppState =
     parsedSearchParams as AppState
 
-  // const nodes = await getNodes()
-
   return (
-    <CanvasProvider
-      // initialNodes={nodes}
-      initialAppState={initialAppState}
-    >
+    <CanvasProvider initialAppState={initialAppState}>
       <Canvas />
     </CanvasProvider>
   )
