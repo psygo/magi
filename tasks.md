@@ -1,12 +1,12 @@
 # Tasks
 
-1. [ ] 2D Pagination
 1. [ ] Grid Mode on Excalidraw's Menu
-1. [ ] Create Canvases
-1. [ ] GUI with the Current Coordinates
+1. [ ] Improve Deployment
 
 ## Second Version
 
+1. [ ] Create Canvases
+1. [ ] 2D Pagination Throttling
 1. [ ] Number of Comments on the info detail
 1. [ ] List connections on a node on the info card
 

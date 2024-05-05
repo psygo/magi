@@ -154,29 +154,6 @@ export function Canvas() {
       currentScreen.yTop < currentFieldOfView.yTop ||
       currentScreen.yBottom > currentFieldOfView.yBottom
     ) {
-      // const newFieldOfView: FieldOfView = {
-      //   xLeft:
-      //     currentScreen.xLeft <
-      //     currentFieldOfView.xLeft + width
-      //       ? currentFieldOfView.xLeft - width
-      //       : currentFieldOfView.xLeft,
-      //   xRight:
-      //     currentScreen.xRight >
-      //     currentFieldOfView.xRight - width
-      //       ? currentFieldOfView.xRight + width
-      //       : currentFieldOfView.xRight,
-      //   yTop:
-      //     currentScreen.yTop <
-      //     currentFieldOfView.yTop + height
-      //       ? currentFieldOfView.yTop - height
-      //       : currentFieldOfView.yTop,
-      //   yBottom:
-      //     currentScreen.yBottom >
-      //     currentFieldOfView.yBottom - height
-      //       ? currentFieldOfView.yBottom + height
-      //       : currentFieldOfView.yBottom,
-      // }
-
       const newFieldOfView: FieldOfView = {
         xLeft: Math.min(
           currentFieldOfView.xLeft,
@@ -195,9 +172,6 @@ export function Canvas() {
           currentScreen.yBottom,
         ),
       }
-
-      console.log("current screen", currentScreen)
-      console.log("new fov", newFieldOfView)
 
       cookies.set(
         "fieldOfView",
