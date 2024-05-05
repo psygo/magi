@@ -2,6 +2,8 @@ import "@styles/globals.css"
 
 import { cookies } from "next/headers"
 
+import { CookiesProvider } from "next-client-cookies/server"
+
 import { ClerkProvider } from "@clerk/nextjs"
 
 import { type WithReactChildren, Theme } from "@types"
@@ -26,7 +28,9 @@ export default function RootLayout({
   return (
     <ThemeProvider initialTheme={theme}>
       <ClerkProvider>
-        <App>{children}</App>
+        <CookiesProvider>
+          <App>{children}</App>
+        </CookiesProvider>
       </ClerkProvider>
     </ThemeProvider>
   )

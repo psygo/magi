@@ -41,7 +41,7 @@ type CanvasContext = {
     React.SetStateAction<AppState>
   >
   updateSearchParams: () => void
-  getMoreNodes: (f: FieldOfView) => Promise<void>
+  getMoreNodes: () => Promise<void>
 }
 
 const CanvasContext = createContext<CanvasContext | null>(
@@ -111,18 +111,17 @@ export function CanvasProvider({
 
   const [isPaginating, setIsPaginating] = useState(false)
 
-  async function getMoreNodes(
-    currentScreen: FieldOfView = {
-      xLeft: 0,
-      xRight: window.innerWidth,
-      yTop: 0,
-      yBottom: window.innerHeight,
-    },
-  ) {
+  async function getMoreNodes() {
+  // currentScreen: FieldOfView = {
+  //   xLeft: 0,
+  //   xRight: window.innerWidth,
+  //   yTop: 0,
+  //   yBottom: window.innerHeight,
+  // },
     if (isPaginating) return
 
     setIsPaginating(true)
-    const newNodes = await getNodes(currentScreen)
+    const newNodes = await getNodes()
     setIsPaginating(false)
 
     if (!newNodes) return

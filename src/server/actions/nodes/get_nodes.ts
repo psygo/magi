@@ -29,6 +29,7 @@ import {
 } from "@server"
 
 import { getUser } from "../users/exports"
+import { cookies } from "next/headers"
 
 function getNodeQuery() {
   return db
@@ -53,15 +54,29 @@ function getNodeQuery() {
     .groupBy(nodes.id, users.id)
 }
 
-export async function getNodes(
-  fieldOfView: FieldOfView = {
-    xLeft: 0,
-    xRight: 1_000,
-    yTop: 0,
-    yBottom: 1_000,
-  },
-) {
+const defaultFieldOfView = {
+  xLeft: 0,
+  xRight: 1_000,
+  yTop: 0,
+  yBottom: 1_000,
+}
+
+export async function getNodes() {
   try {
+    const cookieStore = cookies()
+    const fieldOfView: FieldOfView = cookieStore.get(
+      "fieldOfView",
+    )
+      ? (JSON.parse(
+          cookieStore.get("fieldOfView")!.value,
+        ) as FieldOfView)
+      : defaultFieldOfView
+
+    // cookieStore.set(
+    //   "fieldOfView",
+    //   JSON.stringify(fieldOfViewRequest),
+    // )
+
     const n = await getNodeQuery()
       .where(
         and(

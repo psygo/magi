@@ -9,7 +9,8 @@ import { useEffect, useMemo, useState } from "react"
 import { Check, Moon, Sun, X } from "lucide-react"
 
 import dynamic from "next/dynamic"
-import { useRouter } from "next/navigation"
+
+import { useCookies } from "next-client-cookies"
 
 import { useUser } from "@clerk/nextjs"
 
@@ -25,7 +26,7 @@ import {
 
 import { toDate, toPrecision } from "@utils"
 
-import { LoadingState, Theme } from "@types"
+import { FieldOfView, LoadingState, Theme } from "@types"
 
 import { postNodes, saveTheme } from "@actions"
 
@@ -89,7 +90,27 @@ export function Canvas() {
   const [showMeta, setShowMeta] = useState(true)
 
   const { get: getIsDragging, set: setIsDragging } =
-    useLocalStorage("isDragging")
+    useLocalStorage("isDragging", false)
+
+  const cookies = useCookies()
+
+  const initialFieldOfView: FieldOfView = {
+    xLeft: -window.innerWidth,
+    xRight: 2 * window.innerWidth,
+    yTop: -window.innerHeight,
+    yBottom: 2 * window.innerHeight,
+  }
+
+  useEffect(() => {
+    if (!excalidrawAPI) return
+    cookies.set(
+      "fieldOfView",
+      JSON.stringify(initialFieldOfView),
+    )
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    getMoreNodes()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [excalidrawAPI])
 
   const Excal = useMemo(() => {
     return (
@@ -112,6 +133,9 @@ export function Canvas() {
           return `${nanoid()}.${ext}`
         }}
         gridModeEnabled
+        // onPointerUpdate={({ pointer }) => {
+        //   console.log("pointer", pointer)
+        // }}
         onScrollChange={async () => {
           updateSearchParams()
 
@@ -130,19 +154,48 @@ export function Canvas() {
             yBottom: -scrollY + height,
           }
 
-          await getMoreNodes(currentScreen)
+          const currentFieldOfView: FieldOfView =
+            JSON.parse(
+              cookies.get("fieldOfView")!,
+            ) as FieldOfView
 
-          // if (
-          //   currentScreen.xLeft <
-          //     fieldOfView.xLeft + width ||
-          //   currentScreen.xRight >
-          //     fieldOfView.xRight - width ||
-          //   currentScreen.yTop <
-          //     fieldOfView.yTop + height ||
-          //   currentScreen.yBottom >
-          //     fieldOfView.yBottom - height
-          // ) {
-          // }
+          if (
+            currentScreen.xLeft <
+              currentFieldOfView.xLeft ||
+            currentScreen.xRight >
+              currentFieldOfView.xRight ||
+            currentScreen.yTop < currentFieldOfView.yTop ||
+            currentScreen.yBottom >
+              currentFieldOfView.yBottom
+          ) {
+            const newFieldOfView: FieldOfView = {
+              xLeft: Math.min(
+                currentFieldOfView.xLeft,
+                currentScreen.xLeft,
+              ),
+              xRight: Math.max(
+                currentFieldOfView.xRight,
+                currentScreen.xRight,
+              ),
+              yTop: Math.min(
+                currentFieldOfView.yTop,
+                currentScreen.yTop,
+              ),
+              yBottom: Math.max(
+                currentFieldOfView.yBottom,
+                currentScreen.yBottom,
+              ),
+            }
+
+            cookies.set(
+              "fieldOfView",
+              JSON.stringify(newFieldOfView),
+            )
+
+            console.log("new fov", newFieldOfView)
+
+            await getMoreNodes()
+          }
         }}
         onChange={(elements, appState, files) => {
           if (appState.pendingImageElementId) return
