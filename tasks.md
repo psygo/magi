@@ -1,6 +1,7 @@
 # Tasks
 
-1. [ ] Grid Mode on Excalidraw's Menu
+1. [ ] User Icon on the Menu
+1. [ ] User points...
 1. [ ] Improve Deployment
 
 ## Second Version

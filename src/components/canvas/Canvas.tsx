@@ -6,7 +6,14 @@ import { useUploadThing } from "@utils/uploadthing"
 
 import { useEffect, useMemo, useState } from "react"
 
-import { Check, Moon, Sun, X } from "lucide-react"
+import {
+  Braces,
+  Grid3X3,
+  Moon,
+  Move3D,
+  Sun,
+  X,
+} from "lucide-react"
 
 import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation"
@@ -88,12 +95,14 @@ export function Canvas() {
     useState<Date>(new Date())
 
   const { startUpload } = useUploadThing("imageUploader", {
-    onClientUploadComplete: () => {
-      console.log("upload complete")
-    },
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    onClientUploadComplete: () => {},
   })
 
   const [showMeta, setShowMeta] = useState(true)
+  const [gridModeEnabled, setGridModeEnabled] =
+    useState(true)
+  const [showCoords, setShowCoords] = useState(true)
 
   const { get: getIsDragging, set: setIsDragging } =
     useLocalStorage("isDragging", false)
@@ -187,7 +196,7 @@ export function Canvas() {
   const Excal = useMemo(() => {
     return (
       <Excalidraw
-        name=""
+        name="Magi"
         UIOptions={{
           canvasActions: {
             clearCanvas: false,
@@ -199,12 +208,12 @@ export function Canvas() {
           appState: excalAppState,
         }}
         theme={theme}
+        gridModeEnabled={gridModeEnabled}
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
         generateIdForFile={(f) => {
           const ext = f.type.split("/").second()
           return `${nanoid()}.${ext}`
         }}
-        gridModeEnabled
         onScrollChange={async () => {
           updateSearchParams()
           await pagination()
@@ -246,13 +255,41 @@ export function Canvas() {
             onSelect={() => setShowMeta(!showMeta)}
             icon={
               showMeta ? (
-                <Check style={{ height: 14, width: 14 }} />
+                <Braces style={{ height: 14, width: 14 }} />
               ) : (
                 <X style={{ height: 14, width: 14 }} />
               )
             }
           >
             Show Metadata
+          </MainMenu.Item>
+          <MainMenu.Item
+            onSelect={() =>
+              setGridModeEnabled(!gridModeEnabled)
+            }
+            icon={
+              gridModeEnabled ? (
+                <Grid3X3
+                  style={{ height: 14, width: 14 }}
+                />
+              ) : (
+                <X style={{ height: 14, width: 14 }} />
+              )
+            }
+          >
+            Show Grid
+          </MainMenu.Item>
+          <MainMenu.Item
+            onSelect={() => setShowCoords(!showCoords)}
+            icon={
+              showCoords ? (
+                <Move3D style={{ height: 14, width: 14 }} />
+              ) : (
+                <X style={{ height: 14, width: 14 }} />
+              )
+            }
+          >
+            Show Coordinates
           </MainMenu.Item>
           <MainMenu.DefaultItems.Export />
           <MainMenu.DefaultItems.SaveAsImage />
@@ -261,7 +298,13 @@ export function Canvas() {
       </Excalidraw>
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [excalidrawAPI, theme, showMeta])
+  }, [
+    excalidrawAPI,
+    theme,
+    showMeta,
+    gridModeEnabled,
+    showCoords,
+  ])
 
   /*------------------------------------------------------*/
   /* Upload Shape */
@@ -464,10 +507,12 @@ export function Canvas() {
             <ShapeInfoButtons key={i} excalEl={excalEl} />
           ))}
       </section>
-      <Coordinates
-        x={excalAppState.scrollX}
-        y={excalAppState.scrollY}
-      />
+      {showCoords && (
+        <Coordinates
+          x={excalAppState.scrollX}
+          y={excalAppState.scrollY}
+        />
+      )}
     </div>
   )
 }
