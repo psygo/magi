@@ -6,8 +6,6 @@ import { useTheme } from "@context"
 
 import { type WithReactChildren } from "@types"
 
-import { TopNav } from "@components"
-
 import { cn } from "@styles"
 
 const inter = Inter({
@@ -27,7 +25,6 @@ export function App({ children }: WithReactChildren) {
           theme,
         )}
       >
-        <TopNav />
         <main className="fixed">{children}</main>
       </body>
     </html>

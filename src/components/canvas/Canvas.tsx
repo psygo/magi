@@ -2,8 +2,6 @@
 
 import { nanoid } from "nanoid"
 
-import { useUploadThing } from "@utils/uploadthing"
-
 import { useEffect, useMemo, useState } from "react"
 
 import {
@@ -33,6 +31,7 @@ import {
 } from "@excalidraw/excalidraw/types/element/types"
 
 import { toDate, toNumber, toPrecision } from "@utils"
+import { useUploadThing } from "@utils/uploadthing"
 
 import {
   type FieldOfView,
@@ -50,7 +49,9 @@ import {
   useTheme,
 } from "@context"
 
-import { Progress } from "@components"
+import { Progress } from "../common/exports"
+
+import { AccountButton } from "../users/exports"
 
 import { Coordinates } from "./Coordinates"
 import { ShapeInfoButtons } from "./ShapeInfoButton"
@@ -209,6 +210,7 @@ export function Canvas() {
         }}
         theme={theme}
         gridModeEnabled={gridModeEnabled}
+        renderTopRightUI={() => <AccountButton />}
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
         generateIdForFile={(f) => {
           const ext = f.type.split("/").second()
@@ -300,6 +302,7 @@ export function Canvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     excalidrawAPI,
+    isSignedIn,
     theme,
     showMeta,
     gridModeEnabled,
@@ -488,18 +491,8 @@ export function Canvas() {
   /*------------------------------------------------------*/
 
   return (
-    <div>
-      <section
-        onDragStart={() => {
-          console.log("dragstart")
-        }}
-        onDragEnd={() => {
-          console.log("dragend")
-        }}
-        className="absolute w-screen h-screen"
-      >
-        {Excal}
-      </section>
+    <div className="absolute w-screen h-screen">
+      {Excal}
       <section>
         {loading === LoadingState.Loaded &&
           showMeta &&

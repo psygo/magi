@@ -7,15 +7,15 @@ type CoordinatesProps = {
 
 export function Coordinates({ x, y }: CoordinatesProps) {
   return (
-    <Card className="p-3 fixed z-50 bottom-[68px] right-4">
-      <CardContent className="p-0 flex flex-col gap-2">
+    <Card className="p-2 fixed z-50 bottom-[68px] left-4 bg-gray-100">
+      <CardContent className="p-0 flex flex-col gap-2 text-xs">
         <div className="flex gap-2">
-          <p>X</p>
-          <p className="font-bold">{x}</p>
+          <p className="text-gray-400">X</p>
+          <p>{Math.round(x)}</p>
         </div>
         <div className="flex gap-2">
-          <p>Y</p>
-          <p className="font-bold">{y}</p>
+          <p className="text-gray-400">Y</p>
+          <p>{Math.round(y)}</p>
         </div>
       </CardContent>
     </Card>
