@@ -20,6 +20,8 @@ import {
 
 import { getNodes } from "@actions"
 
+import { useLocalStorage } from "@hooks"
+
 type CanvasContext = {
   excalidrawAPI: ExcalidrawImperativeAPI | undefined
   setExcalidrawAPI: React.Dispatch<
@@ -108,9 +110,12 @@ export function CanvasProvider({
     )
   }
 
-  const [isPaginating, setIsPaginating] = useState(false)
+  const { get: getIsPaginating, set: setIsPaginating } =
+    useLocalStorage("isDragging", false)
 
   async function getMoreNodes() {
+    const isPaginating = getIsPaginating()
+
     if (isPaginating) return
 
     setIsPaginating(true)
