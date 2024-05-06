@@ -1,9 +1,5 @@
 import "server-only"
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import {
   createUploadthing,
   type FileRouter,
@@ -15,7 +11,7 @@ import { userIdFromClerk } from "@server"
 const f = createUploadthing()
 
 export const ourFileRouter = {
-  imageUploader: f({ image: { maxFileSize: "4MB" } })
+  imageUploader: f({ image: { maxFileSize: "2MB" } })
     .middleware(async () => {
       const userId = await userIdFromClerk()
 

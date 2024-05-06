@@ -13,8 +13,8 @@ import { ThemeProvider } from "@context"
 import { App } from "./App"
 
 export const metadata = {
-  title: "Magnus Index",
-  description: "Magnus Index",
+  title: "Magi",
+  description: "Magi",
 }
 
 export default function RootLayout({
