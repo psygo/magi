@@ -134,7 +134,9 @@ export function Canvas() {
     )
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getMoreNodes()
+    getMoreNodes().then(async () => {
+      await getImages()
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI])
 
@@ -439,54 +441,50 @@ export function Canvas() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files])
 
-  useEffect(() => {
-    async function getImages() {
-      const imgsUrls = excalElements
-        .filter(
-          (excalEl) =>
-            excalEl.type === "image" && !excalEl.isDeleted,
-        )
-        .map((excalImg) => {
-          const fileId = (
-            excalImg as ExcalidrawImageElement
-          ).fileId
-          return fileId!
-        })
+  async function getImages() {
+    if (!excalidrawAPI) return
 
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      imgsUrls.forEach(async (fileId) => {
-        const res = await fetch(fileId)
-        const imgData = await res.blob()
-        const reader = new FileReader()
+    const els = excalidrawAPI.getSceneElements()
 
-        reader.onload = () => {
-          const imgFile: BinaryFileData = {
-            id: fileId,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            dataURL: reader.result!,
-          }
+    const imgsUrls = els
+      .filter(
+        (excalEl) =>
+          excalEl.type === "image" && !excalEl.isDeleted,
+      )
+      .map((excalImg) => {
+        const fileId = (excalImg as ExcalidrawImageElement)
+          .fileId
+        return fileId!
+      })
 
-          if (excalidrawAPI) {
-            excalidrawAPI?.addFiles([imgFile])
-            excalidrawAPI?.updateScene({
-              elements: [
-                ...excalidrawAPI.getSceneElementsIncludingDeleted(),
-              ],
-              appState: excalidrawAPI.getAppState(),
-            })
-          }
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    imgsUrls.forEach(async (fileId) => {
+      const res = await fetch(fileId)
+      const imgData = await res.blob()
+      const reader = new FileReader()
+
+      reader.onload = () => {
+        const imgFile: BinaryFileData = {
+          id: fileId,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          dataURL: reader.result!,
         }
 
-        reader.readAsDataURL(imgData)
-      })
-    }
+        if (excalidrawAPI) {
+          excalidrawAPI?.addFiles([imgFile])
+          excalidrawAPI?.updateScene({
+            elements: [
+              ...excalidrawAPI.getSceneElementsIncludingDeleted(),
+            ],
+            appState: excalidrawAPI.getAppState(),
+          })
+        }
+      }
 
-    if (!excalidrawAPI) return
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getImages()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [excalidrawAPI])
+      reader.readAsDataURL(imgData)
+    })
+  }
 
   /*------------------------------------------------------*/
 

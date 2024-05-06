@@ -84,7 +84,7 @@ export async function POST(req: Request) {
           await deleteUser(userDeletedData.id!)
           break
         default:
-          console.log(`${type} is not a managed event.`)
+          console.error(`${type} is not a managed event.`)
       }
     }
 
