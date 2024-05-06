@@ -1,8 +1,8 @@
 "use client"
 
-import { useParams, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 
-import { Share2, Star } from "lucide-react"
+// import { Share2, Star } from "lucide-react"
 
 import "@utils/array"
 
@@ -52,10 +52,8 @@ export function NodeModal({
   const voteTotal = node?.stats?.voteTotal ?? 0
   const zoom = excalAppState.zoom.value as number
 
-  const params = useParams()
-  const defaultOpen = params.node_id
-    ?.toString()
-    .includes(excalId)
+  const pathname = location.pathname
+  const defaultOpen = pathname.includes(excalId)
 
   const searchParams = useSearchParams()
 
@@ -66,7 +64,7 @@ export function NodeModal({
         const searchParamsString = `?${searchParams.toString()}`
         const nodePath = open ? `/nodes/${excalId}` : ""
         const route = `/canvases/open-public${nodePath}${searchParamsString}`
-        window.history.pushState(null, "", route)
+        history.pushState(null, "", route)
       }}
     >
       <DialogTrigger asChild>
@@ -112,12 +110,12 @@ function NodeModalContent() {
           <div className="flex flex-col gap-1 mt-[6px]">
             <NodeVotePointsSection />
             <div className="flex gap-1 mt-2 ml-[2px]">
-              <Button variant="ghost">
+              {/* <Button variant="ghost">
                 <Share2 className="h-5 w-5" />
               </Button>
               <Button variant="ghost">
                 <Star className="h-5 w-5" />
-              </Button>
+              </Button> */}
             </div>
           </div>
           <NodeAuthor

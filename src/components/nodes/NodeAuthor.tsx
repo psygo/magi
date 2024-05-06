@@ -15,7 +15,7 @@ export function NodeAuthor({
   author,
   updatedAt,
 }: NodeAuthorProps) {
-  const points = author.stats!.voteTotal
+  const points = author.stats!.voteTotal ?? 0
 
   return (
     <Card>

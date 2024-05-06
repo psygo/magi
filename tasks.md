@@ -1,6 +1,5 @@
 # Tasks
 
-1. [ ] User Icon on the Menu
 1. [ ] User points...
 1. [ ] Improve Deployment
 

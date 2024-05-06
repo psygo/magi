@@ -54,7 +54,10 @@ export function ShapeInfoButtons({
           excalAppState.scrollX +
           excalEl.width -
           40,
-        excalEl.y + excalAppState.scrollY + excalEl.height,
+        excalEl.y +
+          excalAppState.scrollY +
+          excalEl.height +
+          5,
       ].map((n) => n * zoom)
     }
   }
