@@ -31,7 +31,7 @@ import {
 import { getUser } from "../users/exports"
 import { cookies } from "next/headers"
 
-function getNodeQuery() {
+function getNodesQuery() {
   return db
     .select({
       ...getTableColumns(nodes),
@@ -72,7 +72,7 @@ export async function getNodes() {
         ) as FieldOfView)
       : defaultFieldOfView
 
-    const n = await getNodeQuery()
+    const n = await getNodesQuery()
       .where(
         and(
           gte(nodes.x, fieldOfView.xLeft),
@@ -92,7 +92,7 @@ export async function getNodes() {
 export async function getNode(excalId: ExcalId) {
   try {
     const n = (
-      await getNodeQuery()
+      await getNodesQuery()
         .where(eq(nodes.excalId, excalId))
         .limit(1)
     ).first() as SelectNodeWithCreatorAndStats
