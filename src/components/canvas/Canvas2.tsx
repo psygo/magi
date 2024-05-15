@@ -5,42 +5,31 @@ import { useEffect, useMemo, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 
 import dynamic from "next/dynamic"
-import { useRouter } from "next/navigation"
-
-import { useCookies } from "next-client-cookies"
 
 import { useUser as useClerkUser } from "@clerk/nextjs"
 
-import {
-  type AppState,
-  type ExcalidrawImperativeAPI,
-} from "@excalidraw/excalidraw/types/types"
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
-import { toDate, toPrecision } from "@utils"
+import { toDate } from "@utils"
 
 import {
+  type ScrollAndZoom,
   type FieldOfView,
-  type SelectNodeWithCreatorAndStats,
 } from "@types"
 
-import { postNodes } from "@actions"
+import { getNodes, postNodes } from "@actions"
 
 import { useLocalStorage } from "@hooks"
-
-import { standardInitialAppState } from "@context"
 
 import { Progress } from "../common/exports"
 
 import { AccountButton } from "../users/exports"
 
 import { Coordinates } from "./Coordinates"
-
-type ScrollAndZoom = {
-  scrollX: number
-  scrollY: number
-  zoom: number
-}
+import {
+  nodesArrayToRecords,
+  useCanvas2,
+} from "../../context/CanvasProvider"
 
 const Excalidraw = dynamic(
   async () => {
@@ -53,85 +42,62 @@ const Excalidraw = dynamic(
   },
 )
 
-type Canvas2Props = {
-  initialNodes?: SelectNodeWithCreatorAndStats[]
-  initialAppState?: AppState
-}
-
-export function Canvas2({
-  initialNodes = [],
-  initialAppState = standardInitialAppState,
-}: Canvas2Props) {
+export function Canvas2() {
   const { isSignedIn } = useClerkUser()
 
-  const [excalidrawAPI, setExcalidrawAPI] =
-    useState<ExcalidrawImperativeAPI>()
+  const {
+    excalidrawAPI,
+    setExcalidrawAPI,
+    excalElements,
+    setExcalElements,
+    excalAppState,
+    setExcalAppState,
+    nodes,
+    setNodes,
+  } = useCanvas2()
 
-  const [excalElements, setExcalElements] = useState<
-    ExcalidrawElement[]
-  >(
-    initialNodes.map(
-      (n) => n.excalData as ExcalidrawElement,
-    ),
-  )
   const [lastUpdatedShapes, setLastUpdatedShapes] =
     useState<Date>(new Date())
 
   const { get: getIsDragging, set: setIsDragging } =
     useLocalStorage("isDragging", false)
 
-  const router = useRouter()
-
-  const [excalAppState, setExcalAppState] =
-    useState<AppState>(initialAppState)
-
   /*------------------------------------------------------*/
   /* 2D Pagination */
 
-  const cookies = useCookies()
-
   const [scrollAndZoom, setScrollAndZoom] =
     useState<ScrollAndZoom>({
-      scrollX: initialAppState.scrollX,
-      scrollY: initialAppState.scrollY,
-      zoom: initialAppState.zoom.value,
+      scrollX: excalAppState.scrollX,
+      scrollY: excalAppState.scrollY,
+      zoom: excalAppState.zoom.value,
     })
+
+  const debouncedScrollAndZoom = useDebouncedCallback(
+    (newScrollAndZoom: ScrollAndZoom) =>
+      setScrollAndZoom({ ...newScrollAndZoom }),
+    250,
+  )
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    pagination()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrollAndZoom])
+
+  const [fov, setFov] = useState<FieldOfView>()
 
   useEffect(() => {
     if (!excalidrawAPI) return
-
-    cookies.set(
-      "fieldOfView",
-      JSON.stringify({
-        xLeft: -scrollAndZoom.scrollX - window.innerWidth,
-        xRight:
-          -scrollAndZoom.scrollX + 2 * window.innerWidth,
-        yTop: -scrollAndZoom.scrollY - window.innerHeight,
-        yBottom:
-          -scrollAndZoom.scrollY + 2 * window.innerHeight,
-      }),
-    )
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const appState = excalidrawAPI.getAppState()
+    setFov({
+      xLeft: 0,
+      xRight: appState.width,
+      yTop: 0,
+      yBottom: appState.height,
+    })
   }, [excalidrawAPI])
 
-  function updateSearchParams() {
-    const scrollX = Math.round(scrollAndZoom.scrollX)
-    const scrollY = Math.round(scrollAndZoom.scrollY)
-    const zoom = toPrecision(scrollAndZoom.zoom)
-
-    const searchParams = new URLSearchParams()
-    searchParams.set("scrollX", scrollX.toString())
-    searchParams.set("scrollY", scrollY.toString())
-    searchParams.set("zoom", zoom.toString())
-
-    const searchParamsString = `?${searchParams.toString()}`
-    router.replace(
-      `/canvases/open-public${searchParamsString}`,
-    )
-  }
-
-  function pagination() {
+  async function pagination() {
     if (!excalidrawAPI) return
     const appState = excalidrawAPI.getAppState()
 
@@ -147,88 +113,106 @@ export function Canvas2({
       yBottom: -scrollY + height,
     }
 
-    const deltaFieldOfView: FieldOfView = cookies.get(
-      "deltaFieldOfView",
-    )
-      ? (JSON.parse(
-          cookies.get("deltaFieldOfView")!,
-        ) as FieldOfView)
-      : currentScreen
+    const fieldOfView: FieldOfView = fov!
 
-    const newFieldOfView: FieldOfView = {
-      xLeft:
-        currentScreen.xLeft < deltaFieldOfView.xLeft
-          ? currentScreen.xLeft
-          : deltaFieldOfView.xRight,
-      xRight:
-        currentScreen.xRight > deltaFieldOfView.xRight
-          ? currentScreen.xRight
-          : deltaFieldOfView.xLeft,
-      yTop:
-        currentScreen.yTop < deltaFieldOfView.yTop
-          ? currentScreen.yTop
-          : deltaFieldOfView.yBottom,
-      yBottom:
-        currentScreen.yBottom > deltaFieldOfView.yBottom
-          ? currentScreen.yBottom
-          : deltaFieldOfView.yTop,
+    if (
+      currentScreen.xLeft < fieldOfView.xLeft ||
+      currentScreen.xRight > fieldOfView.xRight ||
+      currentScreen.yTop < fieldOfView.yTop ||
+      currentScreen.yBottom > fieldOfView.yBottom
+    ) {
+      const newFov: FieldOfView = {
+        xLeft:
+          currentScreen.xLeft < fieldOfView.xLeft
+            ? currentScreen.xLeft
+            : fieldOfView.xLeft,
+        xRight:
+          currentScreen.xRight > fieldOfView.xRight
+            ? currentScreen.xRight
+            : fieldOfView.xRight,
+        yTop:
+          currentScreen.yTop < fieldOfView.yTop
+            ? currentScreen.yTop
+            : fieldOfView.yTop,
+        yBottom:
+          currentScreen.yBottom > fieldOfView.yBottom
+            ? currentScreen.yBottom
+            : fieldOfView.yBottom,
+      }
+
+      const newDeltaFovVertical: FieldOfView = {
+        xLeft:
+          currentScreen.xLeft < fieldOfView.xLeft
+            ? currentScreen.xLeft
+            : fieldOfView.xRight,
+        xRight:
+          currentScreen.xRight > fieldOfView.xRight
+            ? currentScreen.xRight
+            : fieldOfView.xLeft,
+        yTop:
+          currentScreen.yTop < fieldOfView.yTop
+            ? currentScreen.yTop
+            : newFov.yTop,
+        yBottom:
+          currentScreen.yBottom > fieldOfView.yBottom
+            ? currentScreen.yBottom
+            : newFov.yBottom,
+      }
+      const newDeltaFovHorizontal: FieldOfView = {
+        xLeft:
+          currentScreen.xLeft < fieldOfView.xLeft
+            ? newFov.xLeft
+            : fieldOfView.xLeft,
+        xRight:
+          currentScreen.xRight > fieldOfView.xRight
+            ? newFov.xRight
+            : fieldOfView.xRight,
+        yTop:
+          currentScreen.yTop < fieldOfView.yTop
+            ? newFov.yTop
+            : fieldOfView.yBottom,
+        yBottom:
+          currentScreen.yBottom > fieldOfView.yBottom
+            ? newFov.yBottom
+            : fieldOfView.yTop,
+      }
+
+      console.log("current screen", currentScreen)
+      console.log("current fov frontend", fieldOfView)
+      console.log("new delta fov vert", newDeltaFovVertical)
+      console.log(
+        "new delta fov hor",
+        newDeltaFovHorizontal,
+      )
+      console.log("new fov", newFov)
+
+      setFov(newFov)
+
+      await Promise.all([
+        getMoreNodes(newDeltaFovVertical),
+        getMoreNodes(newDeltaFovHorizontal),
+      ])
     }
-
-    cookies.set(
-      "deltaFieldOfView",
-      JSON.stringify(newFieldOfView),
-    )
-    // if (
-    //   currentScreen.xLeft < currentFieldOfView.xLeft ||
-    //   currentScreen.xRight > currentFieldOfView.xRight ||
-    //   currentScreen.yTop < currentFieldOfView.yTop ||
-    //   currentScreen.yBottom > currentFieldOfView.yBottom
-    // ) {
-    //   const newFieldOfView: FieldOfView = {
-    //     xLeft: Math.min(
-    //       currentFieldOfView.xLeft,
-    //       currentScreen.xLeft,
-    //     ),
-    //     xRight: Math.max(
-    //       currentFieldOfView.xRight,
-    //       currentScreen.xRight,
-    //     ),
-    //     yTop: Math.min(
-    //       currentFieldOfView.yTop,
-    //       currentScreen.yTop,
-    //     ),
-    //     yBottom: Math.max(
-    //       currentFieldOfView.yBottom,
-    //       currentScreen.yBottom,
-    //     ),
-    //   }
-
-    //   cookies.set(
-    //     "fieldOfView",
-    //     JSON.stringify(newFieldOfView),
-    //   )
-    // }
   }
 
-  const debouncedScrollAndZoom = useDebouncedCallback(
-    (newScrollAndZoom: ScrollAndZoom) => {
-      setScrollAndZoom({ ...newScrollAndZoom })
-    },
-    1_000,
-  )
+  async function getMoreNodes(fov: FieldOfView) {
+    const newNodes = await getNodes(fov)
 
-  useEffect(() => {
-    console.log("init nodes", initialNodes)
-    cookies.set("calcDelta", "false")
-  }, [initialNodes])
-
-  useEffect(() => {
-    console.log("scroll", scrollAndZoom)
-    cookies.set("calcDelta", "true")
-    pagination()
-    updateSearchParams()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scrollAndZoom])
+    if (!newNodes) return
+    excalidrawAPI!.updateScene({
+      elements: [
+        ...excalidrawAPI!.getSceneElements(),
+        ...newNodes.map(
+          (n) => n.excalData as ExcalidrawElement,
+        ),
+      ],
+      appState: excalidrawAPI!.getAppState(),
+    })
+    setNodes({
+      ...nodes,
+      ...nodesArrayToRecords(newNodes),
+    })
+  }
 
   /*------------------------------------------------------*/
 
@@ -243,6 +227,7 @@ export function Canvas2({
           },
         }}
         gridModeEnabled
+        // onPointerUpdate={(p) => console.log(p)}
         renderTopRightUI={() => <AccountButton />}
         initialData={{
           elements: excalElements,

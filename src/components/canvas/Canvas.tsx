@@ -4,6 +4,8 @@ import { nanoid } from "nanoid"
 
 import { useEffect, useMemo, useState } from "react"
 
+import { useDebouncedCallback } from "use-debounce"
+
 import {
   Braces,
   Grid3X3,
@@ -15,6 +17,7 @@ import {
 
 import dynamic from "next/dynamic"
 import { useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 import { useCookies } from "next-client-cookies"
 
@@ -37,6 +40,7 @@ import {
   type FieldOfView,
   LoadingState,
   Theme,
+  ScrollAndZoom,
 } from "@types"
 
 import { postNodes, saveTheme } from "@actions"
@@ -85,8 +89,6 @@ export function Canvas() {
     setExcalElements,
     excalAppState,
     setExcalAppState,
-    updateSearchParams,
-    getMoreNodes,
   } = useCanvas()
   const [lastUpdatedShapes, setLastUpdatedShapes] =
     useState<Date>(new Date())
@@ -112,42 +114,57 @@ export function Canvas() {
   /* 2D Pagination */
 
   const cookies = useCookies()
-  const searchParams = useSearchParams()
-  const [initialScrollX, initialScrollY] = [
-    toNumber(searchParams.get("scrollX") ?? 0),
-    toNumber(searchParams.get("scrollY") ?? 0),
-  ]
+  const router = useRouter()
 
-  const initialFieldOfView: FieldOfView = {
-    xLeft: -initialScrollX - window.innerWidth,
-    xRight: -initialScrollX + 2 * window.innerWidth,
-    yTop: -initialScrollY - window.innerHeight,
-    yBottom: -initialScrollY + 2 * window.innerHeight,
-  }
+  const [scrollAndZoom, setScrollAndZoom] =
+    useState<ScrollAndZoom>({
+      scrollX: excalAppState.scrollX,
+      scrollY: excalAppState.scrollY,
+      zoom: excalAppState.zoom.value,
+    })
 
   useEffect(() => {
     if (!excalidrawAPI) return
 
     cookies.set(
       "fieldOfView",
-      JSON.stringify(initialFieldOfView),
+      JSON.stringify({
+        xLeft: -scrollAndZoom.scrollX - window.innerWidth,
+        xRight:
+          -scrollAndZoom.scrollX + 2 * window.innerWidth,
+        yTop: -scrollAndZoom.scrollY - window.innerHeight,
+        yBottom:
+          -scrollAndZoom.scrollY + 2 * window.innerHeight,
+      }),
     )
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    getMoreNodes().then(async () => {
-      await getImages()
-    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [excalidrawAPI])
 
-  async function pagination() {
-    const appState = excalidrawAPI!.getAppState()
+  function updateSearchParams() {
+    const scrollX = Math.round(scrollAndZoom.scrollX)
+    const scrollY = Math.round(scrollAndZoom.scrollY)
+    const zoom = toPrecision(scrollAndZoom.zoom)
 
-    const scrollX = Math.round(appState.scrollX)
-    const scrollY = Math.round(appState.scrollY)
-    const zoom = toPrecision(appState.zoom.value)
-    const height = Math.round(appState.height / zoom)
-    const width = Math.round(appState.width / zoom)
+    const searchParams = new URLSearchParams()
+    searchParams.set("scrollX", scrollX.toString())
+    searchParams.set("scrollY", scrollY.toString())
+    searchParams.set("zoom", zoom.toString())
+
+    const searchParamsString = `?${searchParams.toString()}`
+    router.replace(
+      `/canvases/open-public${searchParamsString}`,
+    )
+  }
+
+  function pagination() {
+    if (!excalidrawAPI) return
+    const appState = excalidrawAPI.getAppState()
+
+    const scrollX = scrollAndZoom.scrollX
+    const scrollY = scrollAndZoom.scrollY
+    const height = appState.height
+    const width = appState.width
 
     const currentScreen = {
       xLeft: -scrollX,
@@ -156,43 +173,51 @@ export function Canvas() {
       yBottom: -scrollY + height,
     }
 
-    const currentFieldOfView: FieldOfView = JSON.parse(
-      cookies.get("fieldOfView")!,
-    ) as FieldOfView
+    const deltaFieldOfView: FieldOfView = cookies.get(
+      "deltaFieldOfView",
+    )
+      ? (JSON.parse(
+          cookies.get("deltaFieldOfView")!,
+        ) as FieldOfView)
+      : currentScreen
 
-    if (
-      currentScreen.xLeft < currentFieldOfView.xLeft ||
-      currentScreen.xRight > currentFieldOfView.xRight ||
-      currentScreen.yTop < currentFieldOfView.yTop ||
-      currentScreen.yBottom > currentFieldOfView.yBottom
-    ) {
-      const newFieldOfView: FieldOfView = {
-        xLeft: Math.min(
-          currentFieldOfView.xLeft,
-          currentScreen.xLeft,
-        ),
-        xRight: Math.max(
-          currentFieldOfView.xRight,
-          currentScreen.xRight,
-        ),
-        yTop: Math.min(
-          currentFieldOfView.yTop,
-          currentScreen.yTop,
-        ),
-        yBottom: Math.max(
-          currentFieldOfView.yBottom,
-          currentScreen.yBottom,
-        ),
-      }
-
-      cookies.set(
-        "fieldOfView",
-        JSON.stringify(newFieldOfView),
-      )
-
-      await getMoreNodes()
+    const newFieldOfView: FieldOfView = {
+      xLeft:
+        currentScreen.xLeft < deltaFieldOfView.xLeft
+          ? currentScreen.xLeft
+          : deltaFieldOfView.xRight,
+      xRight:
+        currentScreen.xRight > deltaFieldOfView.xRight
+          ? currentScreen.xRight
+          : deltaFieldOfView.xLeft,
+      yTop:
+        currentScreen.yTop < deltaFieldOfView.yTop
+          ? currentScreen.yTop
+          : deltaFieldOfView.yBottom,
+      yBottom:
+        currentScreen.yBottom > deltaFieldOfView.yBottom
+          ? currentScreen.yBottom
+          : deltaFieldOfView.yTop,
     }
+
+    cookies.set(
+      "deltaFieldOfView",
+      JSON.stringify(newFieldOfView),
+    )
   }
+
+  const debouncedScrollAndZoom = useDebouncedCallback(
+    (newScrollAndZoom: ScrollAndZoom) => {
+      setScrollAndZoom({ ...newScrollAndZoom })
+    },
+    1_000,
+  )
+
+  useEffect(() => {
+    pagination()
+    updateSearchParams()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scrollAndZoom])
 
   /*------------------------------------------------------*/
 
@@ -219,8 +244,14 @@ export function Canvas() {
           return `${nanoid()}.${ext}`
         }}
         onScrollChange={async () => {
-          updateSearchParams()
-          await pagination()
+          // updateSearchParams()
+          // await pagination()
+          const appState = excalidrawAPI!.getAppState()
+          debouncedScrollAndZoom({
+            scrollX: appState.scrollX,
+            scrollY: appState.scrollY,
+            zoom: appState.zoom.value,
+          })
         }}
         onChange={(elements, appState, files) => {
           if (appState.pendingImageElementId) return

@@ -8,6 +8,8 @@ import {
   and,
   gte,
   lte,
+  SQL,
+  or,
 } from "drizzle-orm"
 
 import "@utils/array"
@@ -54,39 +56,31 @@ function getNodesQuery() {
     .groupBy(nodes.id, users.id)
 }
 
-const defaultFieldOfView = {
+const defaultFov: FieldOfView = {
   xLeft: 0,
   xRight: 1_000,
   yTop: 0,
   yBottom: 1_000,
 }
 
-export async function getNodes() {
+export async function getNodes(
+  fov: FieldOfView = defaultFov,
+) {
   try {
-    const cookieStore = cookies()
-
-    const calculateDelta =
-      cookieStore.get("calcDelta")?.value === "true"
-    console.log("here", calculateDelta)
-    const deltaFieldOfView: FieldOfView =
-      calculateDelta && cookieStore.get("deltaFieldOfView")
-        ? (JSON.parse(
-            cookieStore.get("deltaFieldOfView")!.value,
-          ) as FieldOfView)
-        : defaultFieldOfView
-
-    console.log("deltaFov", deltaFieldOfView)
-
     const n = await getNodesQuery()
       .where(
         and(
-          gte(nodes.x, deltaFieldOfView.xLeft),
-          lte(nodes.x, deltaFieldOfView.xRight),
-          gte(nodes.y, deltaFieldOfView.yTop),
-          lte(nodes.y, deltaFieldOfView.yBottom),
+          and(
+            gte(nodes.x, fov.xLeft),
+            lte(nodes.x, fov.xRight),
+            gte(nodes.y, fov.yTop),
+            lte(nodes.y, fov.yBottom),
+          ),
         ),
       )
       .orderBy(desc(nodes.updatedAt))
+
+    console.log("new Nodes", n.length)
 
     return n as SelectNodeWithCreatorAndStats[]
   } catch (e) {
