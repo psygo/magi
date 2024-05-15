@@ -56,29 +56,34 @@ function getNodesQuery() {
 
 const defaultFieldOfView = {
   xLeft: 0,
-  xRight: 2_000,
+  xRight: 1_000,
   yTop: 0,
-  yBottom: 2_000,
+  yBottom: 1_000,
 }
 
 export async function getNodes() {
   try {
     const cookieStore = cookies()
-    const fieldOfView: FieldOfView = cookieStore.get(
-      "fieldOfView",
-    )
-      ? (JSON.parse(
-          cookieStore.get("fieldOfView")!.value,
-        ) as FieldOfView)
-      : defaultFieldOfView
+
+    const calculateDelta =
+      cookieStore.get("calcDelta")?.value === "true"
+    console.log("here", calculateDelta)
+    const deltaFieldOfView: FieldOfView =
+      calculateDelta && cookieStore.get("deltaFieldOfView")
+        ? (JSON.parse(
+            cookieStore.get("deltaFieldOfView")!.value,
+          ) as FieldOfView)
+        : defaultFieldOfView
+
+    console.log("deltaFov", deltaFieldOfView)
 
     const n = await getNodesQuery()
       .where(
         and(
-          gte(nodes.x, fieldOfView.xLeft),
-          lte(nodes.x, fieldOfView.xRight),
-          gte(nodes.y, fieldOfView.yTop),
-          lte(nodes.y, fieldOfView.yBottom),
+          gte(nodes.x, deltaFieldOfView.xLeft),
+          lte(nodes.x, deltaFieldOfView.xRight),
+          gte(nodes.y, deltaFieldOfView.yTop),
+          lte(nodes.y, deltaFieldOfView.yBottom),
         ),
       )
       .orderBy(desc(nodes.updatedAt))

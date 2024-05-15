@@ -8,6 +8,8 @@ import { CanvasProvider } from "@context"
 
 import { Canvas, Canvas2 } from "@components"
 
+import { cookies } from "next/headers"
+
 type CanvasPageProps = {
   params: { canvas_id: string; node_id: string }
   searchParams: Record<

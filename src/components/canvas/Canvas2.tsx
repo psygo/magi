@@ -132,13 +132,13 @@ export function Canvas2({
   }
 
   function pagination() {
-    const appState = excalidrawAPI!.getAppState()
+    if (!excalidrawAPI) return
+    const appState = excalidrawAPI.getAppState()
 
-    const scrollX = Math.round(appState.scrollX)
-    const scrollY = Math.round(appState.scrollY)
-    const zoom = toPrecision(appState.zoom.value)
-    const height = Math.round(appState.height / zoom)
-    const width = Math.round(appState.width / zoom)
+    const scrollX = scrollAndZoom.scrollX
+    const scrollY = scrollAndZoom.scrollY
+    const height = appState.height
+    const width = appState.width
 
     const currentScreen = {
       xLeft: -scrollX,
@@ -147,40 +147,67 @@ export function Canvas2({
       yBottom: -scrollY + height,
     }
 
-    const currentFieldOfView: FieldOfView = JSON.parse(
-      cookies.get("fieldOfView")!,
-    ) as FieldOfView
+    const deltaFieldOfView: FieldOfView = cookies.get(
+      "deltaFieldOfView",
+    )
+      ? (JSON.parse(
+          cookies.get("deltaFieldOfView")!,
+        ) as FieldOfView)
+      : currentScreen
 
-    if (
-      currentScreen.xLeft < currentFieldOfView.xLeft ||
-      currentScreen.xRight > currentFieldOfView.xRight ||
-      currentScreen.yTop < currentFieldOfView.yTop ||
-      currentScreen.yBottom > currentFieldOfView.yBottom
-    ) {
-      const newFieldOfView: FieldOfView = {
-        xLeft: Math.min(
-          currentFieldOfView.xLeft,
-          currentScreen.xLeft,
-        ),
-        xRight: Math.max(
-          currentFieldOfView.xRight,
-          currentScreen.xRight,
-        ),
-        yTop: Math.min(
-          currentFieldOfView.yTop,
-          currentScreen.yTop,
-        ),
-        yBottom: Math.max(
-          currentFieldOfView.yBottom,
-          currentScreen.yBottom,
-        ),
-      }
-
-      cookies.set(
-        "fieldOfView",
-        JSON.stringify(newFieldOfView),
-      )
+    const newFieldOfView: FieldOfView = {
+      xLeft:
+        currentScreen.xLeft < deltaFieldOfView.xLeft
+          ? currentScreen.xLeft
+          : deltaFieldOfView.xRight,
+      xRight:
+        currentScreen.xRight > deltaFieldOfView.xRight
+          ? currentScreen.xRight
+          : deltaFieldOfView.xLeft,
+      yTop:
+        currentScreen.yTop < deltaFieldOfView.yTop
+          ? currentScreen.yTop
+          : deltaFieldOfView.yBottom,
+      yBottom:
+        currentScreen.yBottom > deltaFieldOfView.yBottom
+          ? currentScreen.yBottom
+          : deltaFieldOfView.yTop,
     }
+
+    cookies.set(
+      "deltaFieldOfView",
+      JSON.stringify(newFieldOfView),
+    )
+    // if (
+    //   currentScreen.xLeft < currentFieldOfView.xLeft ||
+    //   currentScreen.xRight > currentFieldOfView.xRight ||
+    //   currentScreen.yTop < currentFieldOfView.yTop ||
+    //   currentScreen.yBottom > currentFieldOfView.yBottom
+    // ) {
+    //   const newFieldOfView: FieldOfView = {
+    //     xLeft: Math.min(
+    //       currentFieldOfView.xLeft,
+    //       currentScreen.xLeft,
+    //     ),
+    //     xRight: Math.max(
+    //       currentFieldOfView.xRight,
+    //       currentScreen.xRight,
+    //     ),
+    //     yTop: Math.min(
+    //       currentFieldOfView.yTop,
+    //       currentScreen.yTop,
+    //     ),
+    //     yBottom: Math.max(
+    //       currentFieldOfView.yBottom,
+    //       currentScreen.yBottom,
+    //     ),
+    //   }
+
+    //   cookies.set(
+    //     "fieldOfView",
+    //     JSON.stringify(newFieldOfView),
+    //   )
+    // }
   }
 
   const debouncedScrollAndZoom = useDebouncedCallback(
@@ -191,8 +218,16 @@ export function Canvas2({
   )
 
   useEffect(() => {
+    console.log("init nodes", initialNodes)
+    cookies.set("calcDelta", "false")
+  }, [initialNodes])
+
+  useEffect(() => {
     console.log("scroll", scrollAndZoom)
+    cookies.set("calcDelta", "true")
+    pagination()
     updateSearchParams()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollAndZoom])
 
   /*------------------------------------------------------*/
