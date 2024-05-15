@@ -80,7 +80,7 @@ export async function getNodes(
       )
       .orderBy(desc(nodes.updatedAt))
 
-    console.log("new Nodes", n.length)
+    console.log("nodes", n.length)
 
     return n as SelectNodeWithCreatorAndStats[]
   } catch (e) {

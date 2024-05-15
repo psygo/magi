@@ -10,7 +10,7 @@ import { useUser as useClerkUser } from "@clerk/nextjs"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
-import { toDate } from "@utils"
+import { toDate, toPrecision } from "@utils"
 
 import {
   type ScrollAndZoom,
@@ -75,12 +75,32 @@ export function Canvas2() {
   const debouncedScrollAndZoom = useDebouncedCallback(
     (newScrollAndZoom: ScrollAndZoom) =>
       setScrollAndZoom({ ...newScrollAndZoom }),
-    250,
+    100,
   )
 
+  function updateSearchParams() {
+    const scrollX = Math.round(scrollAndZoom.scrollX)
+    const scrollY = Math.round(scrollAndZoom.scrollY)
+    const zoom = toPrecision(scrollAndZoom.zoom)
+
+    const searchParams = new URLSearchParams()
+    searchParams.set("scrollX", scrollX.toString())
+    searchParams.set("scrollY", scrollY.toString())
+    searchParams.set("zoom", zoom.toString())
+
+    const searchParamsString = `?${searchParams.toString()}`
+    history.replaceState(
+      {},
+      "",
+      `/canvases/open-public${searchParamsString}`,
+    )
+  }
+
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     pagination()
+      .then(() => updateSearchParams())
+      .catch(() => console.error("error on pagination"))
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollAndZoom])
 
@@ -198,6 +218,8 @@ export function Canvas2() {
   async function getMoreNodes(fov: FieldOfView) {
     const newNodes = await getNodes(fov)
 
+    console.log("new nodes", newNodes)
+
     if (!newNodes) return
     excalidrawAPI!.updateScene({
       elements: [
@@ -227,7 +249,6 @@ export function Canvas2() {
           },
         }}
         gridModeEnabled
-        // onPointerUpdate={(p) => console.log(p)}
         renderTopRightUI={() => <AccountButton />}
         initialData={{
           elements: excalElements,
@@ -235,8 +256,6 @@ export function Canvas2() {
         }}
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
         onScrollChange={async () => {
-          // await pagination()
-          // updateSearchParams()
           const appState = excalidrawAPI!.getAppState()
           debouncedScrollAndZoom({
             scrollX: appState.scrollX,

@@ -4,11 +4,8 @@ import { type AppState } from "@excalidraw/excalidraw/types/types"
 
 import { getNodes } from "@actions"
 
-import { CanvasProvider } from "@context"
+import { Canvas2 } from "@components"
 
-import { Canvas, Canvas2 } from "@components"
-
-import { cookies } from "next/headers"
 import { CanvasProvider2 } from "../../../../../context/CanvasProvider"
 
 type CanvasPageProps = {
@@ -33,10 +30,10 @@ const canvasAppStateSchema = z.object({
 export default async function CanvasPage({
   searchParams,
 }: CanvasPageProps) {
-  // const parsedSearchParams =
-  //   canvasAppStateSchema.parse(searchParams)
-  // const initialAppState: AppState =
-  //   parsedSearchParams as AppState
+  const parsedSearchParams =
+    canvasAppStateSchema.parse(searchParams)
+  const initialAppState: AppState =
+    parsedSearchParams as AppState
 
   const initialNodes = await getNodes()
 
@@ -45,15 +42,9 @@ export default async function CanvasPage({
   return (
     <CanvasProvider2
       initialNodes={initialNodes}
-      // initialAppState={initialAppState}
+      initialAppState={initialAppState}
     >
       <Canvas2 />
     </CanvasProvider2>
-    // <CanvasProvider
-    //   initialNodes={initialNodes}
-    //   initialAppState={initialAppState}
-    // >
-    //   <Canvas />
-    // </CanvasProvider>
   )
 }
