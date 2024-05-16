@@ -158,14 +158,14 @@ export function PaginationProvider({
       const newDeltaFovHorizontalTop: FieldOfView = {
         xLeft: fieldOfView.xLeft,
         xRight: fieldOfView.xRight,
-        yTop: newFov.yTop + extraDelta,
+        yTop: newFov.yTop - extraDelta,
         yBottom: fieldOfView.yTop,
       }
       const newDeltaFovHorizontalBottom: FieldOfView = {
         xLeft: fieldOfView.xLeft,
         xRight: fieldOfView.xRight,
         yTop: fieldOfView.yBottom,
-        yBottom: newFov.yBottom - extraDelta,
+        yBottom: newFov.yBottom + extraDelta,
       }
 
       setFov(newFov)
@@ -214,7 +214,7 @@ export function usePagination() {
 
   if (!context) {
     throw new Error(
-      "`useCanvas` must be used within a `CanvasProvider`.",
+      "`usePagination` must be used within a `PaginationProvider`.",
     )
   }
 

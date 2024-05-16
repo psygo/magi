@@ -15,6 +15,7 @@ import {
 } from "@types"
 
 import { PaginationProvider } from "./PaginationProvider"
+import { ShapesProvider } from "./ShapeProvider"
 
 type CanvasContext = {
   excalidrawAPI: ExcalidrawImperativeAPI | undefined
@@ -95,7 +96,9 @@ export function CanvasProvider2({
         setExcalAppState,
       }}
     >
-      <PaginationProvider>{children}</PaginationProvider>
+      <PaginationProvider>
+        <ShapesProvider>{children}</ShapesProvider>
+      </PaginationProvider>
     </CanvasContext2.Provider>
   )
 }
