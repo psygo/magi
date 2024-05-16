@@ -17,8 +17,6 @@ import { type WithReactChildren } from "@types"
 
 import { postNodes } from "@actions"
 
-import { useLocalStorage } from "@hooks"
-
 import { useCanvas2 } from "./CanvasProvider"
 
 type ShapesContext = {
@@ -42,18 +40,12 @@ export function ShapesProvider({
   const [lastUpdatedShapes, setLastUpdatedShapes] =
     useState<Date>(new Date())
 
-  const { get: getIsDragging, set: setIsDragging } =
-    useLocalStorage("isDragging", false)
+  const [isDragging, setIsDragging] = useState(false)
 
-  const {
-    get: getIsUploadingShape,
-    set: setIsUploadingShape,
-  } = useLocalStorage("isUploadingShape", false)
+  const [isUploadingShape, setIsUploadingShape] =
+    useState(false)
 
   async function uploadShape(els: ExcalidrawElement[]) {
-    const isUploadingShape = getIsUploadingShape()
-    const isDragging = getIsDragging()
-
     if (isUploadingShape || isDragging) return
 
     setIsUploadingShape(true)

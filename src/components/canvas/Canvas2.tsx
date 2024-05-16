@@ -1,5 +1,7 @@
 "use client"
 
+import { nanoid } from "nanoid"
+
 import { useEffect, useMemo, useState } from "react"
 
 import dynamic from "next/dynamic"
@@ -82,9 +84,9 @@ export function Canvas2() {
           appState: excalAppState,
         }}
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
-        onPointerUpdate={({ pointer }) => {
+        onPointerUpdate={({ pointer }) =>
           setPointer(pointer)
-        }}
+        }
         onScrollChange={async () => {
           const appState = excalidrawAPI!.getAppState()
           debouncedScrollAndZoom({
@@ -92,6 +94,10 @@ export function Canvas2() {
             scrollY: appState.scrollY,
             zoom: appState.zoom.value,
           })
+        }}
+        generateIdForFile={(f) => {
+          const ext = f.type.split("/").second()
+          return `${nanoid()}.${ext}`
         }}
         onChange={(elements, appState, files) => {
           if (appState.pendingImageElementId) return
@@ -101,8 +107,8 @@ export function Canvas2() {
             : setIsDragging(false)
 
           setExcalElements([...elements])
-          setExcalAppState({ ...appState })
-          setFiles({ ...files })
+          setExcalAppState(appState)
+          setFiles(files)
         }}
       />
     )
@@ -123,6 +129,8 @@ export function Canvas2() {
 
   async function uploadFiles() {
     const allFiles = excalidrawAPI!.getFiles()
+    console.log("all files", allFiles)
+    console.log("excal elements", excalElements)
     const notUpdatedYetFiles = Object.values(allFiles)
       .filter((f) => toDate(f.created) > lastUpdatedFiles)
       .map((f) => {
@@ -143,6 +151,7 @@ export function Canvas2() {
     if (notUpdatedYetFiles.length > 0) {
       excalidrawAPI!.setToast({
         message: "Uploading File(s)",
+        duration: 10_000,
       })
 
       console.log("not updaed files", notUpdatedYetFiles)
@@ -151,47 +160,43 @@ export function Canvas2() {
       console.log("res", res)
       if (!res) return
 
-      // // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      // notUpdatedYetFiles.forEach(async (f) => {
-      //   const newFileId = res.find(
-      //     (r) => r.name === f.name,
-      //   )!.url
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      notUpdatedYetFiles.forEach(async (f) => {
+        const newFileId = res.find(
+          (r) => r.name === f.name,
+        )!.url
 
-      //   const toBeUpdatedShapes = excalElements
-      //     .filter(
-      //       (el) =>
-      //         el.type === "image" && el.fileId === f.name,
-      //     )
-      //     .map((el) => {
-      //       const e = el as ExcalidrawImageElement
-      //       return {
-      //         ...e,
-      //         fileId: newFileId,
-      //       } as ExcalidrawImageElement
-      //     })
+        const toBeUpdatedShapes = excalElements
+          .filter(
+            (el) =>
+              el.type === "image" && el.fileId === f.name,
+          )
+          .map((el) => {
+            const e = el as ExcalidrawImageElement
+            return {
+              ...e,
+              fileId: newFileId,
+            } as ExcalidrawImageElement
+          })
 
-      //   await uploadShape(toBeUpdatedShapes)
-      // })
+        await uploadShape(toBeUpdatedShapes)
+      })
 
-      // setLastUpdatedFiles(new Date())
+      setLastUpdatedFiles(new Date())
 
-      // excalidrawAPI!.setToast({
-      //   message: "Upload Complete",
-      //   duration: 2_000,
-      // })
+      excalidrawAPI!.setToast({
+        message: "Upload Complete",
+        duration: 2_000,
+      })
     }
   }
 
-  const {
-    get: getIsUploadingFiles,
-    set: setIsUploadingFiles,
-  } = useLocalStorage("isUploadingFiles", false)
+  const [isUploadingFiles, setIsUploadingFiles] =
+    useState(false)
 
   useEffect(() => {
     async function upload() {
-      const isSaving = getIsUploadingFiles()
-
-      if (isSaving) return
+      if (isUploadingFiles) return
 
       setIsUploadingFiles(true)
       await uploadFiles()
@@ -205,11 +210,10 @@ export function Canvas2() {
   }, [files])
 
   // useEffect(() => {
-  //   if (!excalidrawAPI) return
   //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   //   getImages()
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [excalidrawAPI])
+  // }, [excalElements])
 
   // async function getImages() {
   //   if (!excalidrawAPI) return
@@ -262,7 +266,6 @@ export function Canvas2() {
     <div className="absolute w-screen h-screen">
       {Excal}
       {PointerCoords}
-      {/* <Coordinates x={pointer.x} y={pointer.y} /> */}
     </div>
   )
 }
