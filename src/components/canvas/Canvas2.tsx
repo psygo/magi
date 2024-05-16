@@ -6,15 +6,17 @@ import dynamic from "next/dynamic"
 
 import { type Pointer } from "@types"
 
-import { usePagination } from "@context"
-import { useCanvas2 } from "../../context/CanvasProvider"
+import {
+  useCanvas2,
+  usePagination,
+  useShapes,
+} from "@context"
 
 import { Progress } from "../common/exports"
 
 import { AccountButton } from "../users/exports"
 
 import { Coordinates } from "./Coordinates"
-import { useShapes } from "../../context/ShapeProvider"
 
 const Excalidraw = dynamic(
   async () => {

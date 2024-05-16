@@ -182,8 +182,6 @@ export function PaginationProvider({
   async function getMoreNodes(fov: FieldOfView[]) {
     const newNodes = await getNodes(fov)
 
-    console.log("new nodes", newNodes?.length)
-
     if (!newNodes) return
     excalidrawAPI!.updateScene({
       elements: [

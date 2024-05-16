@@ -8,7 +8,6 @@ import {
   and,
   gte,
   lte,
-  SQL,
   or,
 } from "drizzle-orm"
 
@@ -31,7 +30,6 @@ import {
 } from "@server"
 
 import { getUser } from "../users/exports"
-import { cookies } from "next/headers"
 
 function getNodesQuery() {
   return db
@@ -79,20 +77,8 @@ export async function getNodes(
     )
 
     const n = await getNodesQuery()
-      .where(
-        conditions,
-        // and(
-        //   and(
-        //     gte(nodes.x, Math.ceil(fov.xLeft)),
-        //     lte(nodes.x, Math.ceil(fov.xRight)),
-        //     gte(nodes.y, Math.ceil(fov.yTop)),
-        //     lte(nodes.y, Math.ceil(fov.yBottom)),
-        //   ),
-        // ),
-      )
+      .where(conditions)
       .orderBy(desc(nodes.updatedAt))
-
-    console.log("nodes", n.length)
 
     return n as SelectNodeWithCreatorAndStats[]
   } catch (e) {

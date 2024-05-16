@@ -6,7 +6,7 @@ import { getNodes } from "@actions"
 
 import { Canvas2 } from "@components"
 
-import { CanvasProvider2 } from "../../../../../context/CanvasProvider"
+import { CanvasProvider2 } from "@context"
 
 type CanvasPageProps = {
   params: { canvas_id: string; node_id: string }
@@ -32,12 +32,11 @@ export default async function CanvasPage({
 }: CanvasPageProps) {
   const parsedSearchParams =
     canvasAppStateSchema.parse(searchParams)
+
   const initialAppState: AppState =
     parsedSearchParams as AppState
 
   const initialNodes = await getNodes()
-
-  console.log("num nodes", initialNodes?.length)
 
   return (
     <CanvasProvider2

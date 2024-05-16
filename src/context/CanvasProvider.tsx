@@ -70,9 +70,11 @@ export function CanvasProvider2({
 }: CanvasProviderProps) {
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI>()
+
   const [nodes, setNodes] = useState<NodesRecords>(
     nodesArrayToRecords2(initialNodes),
   )
+
   const [excalElements, setExcalElements] = useState<
     ExcalidrawElement[]
   >(
@@ -80,6 +82,7 @@ export function CanvasProvider2({
       (n) => n.excalData as ExcalidrawElement,
     ),
   )
+
   const [excalAppState, setExcalAppState] =
     useState<AppState>(initialAppState)
 
