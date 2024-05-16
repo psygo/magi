@@ -30,6 +30,7 @@ import {
   nodesArrayToRecords,
   useCanvas2,
 } from "../../context/CanvasProvider"
+import { point } from "@excalidraw/excalidraw/types/ga"
 
 const Excalidraw = dynamic(
   async () => {
@@ -75,7 +76,7 @@ export function Canvas2() {
   const debouncedScrollAndZoom = useDebouncedCallback(
     (newScrollAndZoom: ScrollAndZoom) =>
       setScrollAndZoom({ ...newScrollAndZoom }),
-    100,
+    1_000,
   )
 
   function updateSearchParams() {
@@ -111,9 +112,9 @@ export function Canvas2() {
     const appState = excalidrawAPI.getAppState()
     setFov({
       xLeft: 0,
-      xRight: appState.width,
+      xRight: appState.width / appState.zoom.value,
       yTop: 0,
-      yBottom: appState.height,
+      yBottom: appState.height / appState.zoom.value,
     })
   }, [excalidrawAPI])
 
@@ -125,12 +126,13 @@ export function Canvas2() {
     const scrollY = scrollAndZoom.scrollY
     const height = appState.height
     const width = appState.width
+    const zoom = scrollAndZoom.zoom
 
     const currentScreen = {
       xLeft: -scrollX,
-      xRight: -scrollX + width,
+      xRight: -scrollX + width / zoom,
       yTop: -scrollY,
-      yBottom: -scrollY + height,
+      yBottom: -scrollY + height / zoom,
     }
 
     const fieldOfView: FieldOfView = fov!
@@ -160,65 +162,86 @@ export function Canvas2() {
             : fieldOfView.yBottom,
       }
 
-      const newDeltaFovVertical: FieldOfView = {
+      const newDeltaFovVerticalLeft: FieldOfView = {
         xLeft:
           currentScreen.xLeft < fieldOfView.xLeft
             ? currentScreen.xLeft
-            : fieldOfView.xRight,
-        xRight:
-          currentScreen.xRight > fieldOfView.xRight
-            ? currentScreen.xRight
             : fieldOfView.xLeft,
-        yTop:
-          currentScreen.yTop < fieldOfView.yTop
-            ? currentScreen.yTop
-            : newFov.yTop,
-        yBottom:
-          currentScreen.yBottom > fieldOfView.yBottom
-            ? currentScreen.yBottom
-            : newFov.yBottom,
+        xRight: fieldOfView.xLeft,
+        yTop: newFov.yTop,
+        yBottom: newFov.yBottom,
       }
-      const newDeltaFovHorizontal: FieldOfView = {
-        xLeft:
-          currentScreen.xLeft < fieldOfView.xLeft
-            ? newFov.xLeft
-            : fieldOfView.xLeft,
-        xRight:
-          currentScreen.xRight > fieldOfView.xRight
-            ? newFov.xRight
-            : fieldOfView.xRight,
+      const newDeltaFovVerticalRight: FieldOfView = {
+        xLeft: fieldOfView.xRight,
+        xRight: newFov.xRight,
+        yTop: newFov.yTop,
+        yBottom: newFov.yBottom,
+      }
+      const newDeltaFovHorizontalTop: FieldOfView = {
+        xLeft: fieldOfView.xLeft,
+        xRight: fieldOfView.xRight,
         yTop:
           currentScreen.yTop < fieldOfView.yTop
             ? newFov.yTop
-            : fieldOfView.yBottom,
+            : fieldOfView.yTop,
+        yBottom: fieldOfView.yTop,
+      }
+      const newDeltaFovHorizontalBottom: FieldOfView = {
+        xLeft: fieldOfView.xLeft,
+        xRight: fieldOfView.xRight,
+        yTop: fieldOfView.yBottom,
         yBottom:
           currentScreen.yBottom > fieldOfView.yBottom
             ? newFov.yBottom
-            : fieldOfView.yTop,
+            : fieldOfView.yBottom,
       }
 
+      console.log("scroll", scrollX, scrollY)
+      console.log("w x h", appState.width, appState.height)
+      console.log(
+        "w x h / z",
+        appState.width / zoom,
+        appState.height / zoom,
+      )
       console.log("current screen", currentScreen)
       console.log("current fov frontend", fieldOfView)
-      console.log("new delta fov vert", newDeltaFovVertical)
       console.log(
-        "new delta fov hor",
-        newDeltaFovHorizontal,
+        "new delta fov left",
+        newDeltaFovVerticalLeft,
+      )
+      console.log(
+        "new delta fov right",
+        newDeltaFovVerticalRight,
+      )
+      console.log(
+        "new delta fov top",
+        newDeltaFovHorizontalTop,
+      )
+      console.log(
+        "new delta fov bottom",
+        newDeltaFovHorizontalBottom,
       )
       console.log("new fov", newFov)
 
       setFov(newFov)
 
-      await Promise.all([
-        getMoreNodes(newDeltaFovVertical),
-        getMoreNodes(newDeltaFovHorizontal),
+      await getMoreNodes([
+        newDeltaFovVerticalLeft,
+        newDeltaFovVerticalRight,
+        newDeltaFovHorizontalTop,
+        newDeltaFovHorizontalBottom,
       ])
+      // await getMoreNodes(newDeltaFovVerticalRight)
+      // await getMoreNodes(newDeltaFovVerticalLeft)
+      // await getMoreNodes(newDeltaFovHorizontalTop)
+      // await getMoreNodes(newDeltaFovHorizontalBottom)
     }
   }
 
-  async function getMoreNodes(fov: FieldOfView) {
+  async function getMoreNodes(fov: FieldOfView[]) {
     const newNodes = await getNodes(fov)
 
-    console.log("new nodes", newNodes)
+    console.log("new nodes", newNodes?.length)
 
     if (!newNodes) return
     excalidrawAPI!.updateScene({
@@ -238,6 +261,11 @@ export function Canvas2() {
 
   /*------------------------------------------------------*/
 
+  const [pointer, setPointer] = useState<{
+    x: number
+    y: number
+  }>({ x: 0, y: 0 })
+
   const Excal = useMemo(() => {
     return (
       <Excalidraw
@@ -255,6 +283,9 @@ export function Canvas2() {
           appState: excalAppState,
         }}
         excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        onPointerUpdate={({ pointer }) => {
+          setPointer(pointer)
+        }}
         onScrollChange={async () => {
           const appState = excalidrawAPI!.getAppState()
           debouncedScrollAndZoom({
@@ -323,10 +354,7 @@ export function Canvas2() {
   return (
     <div className="absolute w-screen h-screen">
       {Excal}
-      <Coordinates
-        x={excalAppState.scrollX}
-        y={excalAppState.scrollY}
-      />
+      <Coordinates x={pointer.x} y={pointer.y} />
     </div>
   )
 }

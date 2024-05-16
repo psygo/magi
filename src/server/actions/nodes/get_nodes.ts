@@ -64,19 +64,31 @@ const defaultFov: FieldOfView = {
 }
 
 export async function getNodes(
-  fov: FieldOfView = defaultFov,
+  fovs: FieldOfView[] = [defaultFov],
 ) {
   try {
+    const conditions = or(
+      ...fovs.map((f) => {
+        return and(
+          gte(nodes.x, Math.ceil(f.xLeft)),
+          lte(nodes.x, Math.ceil(f.xRight)),
+          gte(nodes.y, Math.ceil(f.yTop)),
+          lte(nodes.y, Math.ceil(f.yBottom)),
+        )
+      }),
+    )
+
     const n = await getNodesQuery()
       .where(
-        and(
-          and(
-            gte(nodes.x, fov.xLeft),
-            lte(nodes.x, fov.xRight),
-            gte(nodes.y, fov.yTop),
-            lte(nodes.y, fov.yBottom),
-          ),
-        ),
+        conditions,
+        // and(
+        //   and(
+        //     gte(nodes.x, Math.ceil(fov.xLeft)),
+        //     lte(nodes.x, Math.ceil(fov.xRight)),
+        //     gte(nodes.y, Math.ceil(fov.yTop)),
+        //     lte(nodes.y, Math.ceil(fov.yBottom)),
+        //   ),
+        // ),
       )
       .orderBy(desc(nodes.updatedAt))
 
