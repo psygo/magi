@@ -8,10 +8,3 @@ export type WithReactChildren = {
 
 export const colorSchema = z.string()
 export type Color = z.infer<typeof colorSchema>
-
-export type FieldOfView = {
-  xLeft: number
-  xRight: number
-  yTop: number
-  yBottom: number
-}

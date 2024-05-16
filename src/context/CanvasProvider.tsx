@@ -14,6 +14,8 @@ import {
   type NodesRecords,
 } from "@types"
 
+import { PaginationProvider } from "./PaginationProvider"
+
 type CanvasContext = {
   excalidrawAPI: ExcalidrawImperativeAPI | undefined
   setExcalidrawAPI: React.Dispatch<
@@ -35,11 +37,11 @@ type CanvasContext = {
   >
 }
 
-const CanvasContext = createContext<CanvasContext | null>(
+const CanvasContext2 = createContext<CanvasContext | null>(
   null,
 )
 
-export const standardInitialAppState: AppState = {
+export const standardInitialAppState2: AppState = {
   scrollX: 0,
   scrollY: 0,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -47,7 +49,7 @@ export const standardInitialAppState: AppState = {
   zoom: { value: 1 },
 }
 
-export function nodesArrayToRecords(
+export function nodesArrayToRecords2(
   nodes: SelectNodeWithCreatorAndStats[],
 ) {
   const records: NodesRecords = {}
@@ -55,20 +57,20 @@ export function nodesArrayToRecords(
   return records
 }
 
-export type CanvasProviderProps = WithReactChildren & {
+type CanvasProviderProps = WithReactChildren & {
   initialNodes?: SelectNodeWithCreatorAndStats[]
   initialAppState?: AppState
 }
 
 export function CanvasProvider2({
   initialNodes = [],
-  initialAppState = standardInitialAppState,
+  initialAppState = standardInitialAppState2,
   children,
 }: CanvasProviderProps) {
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI>()
   const [nodes, setNodes] = useState<NodesRecords>(
-    nodesArrayToRecords(initialNodes),
+    nodesArrayToRecords2(initialNodes),
   )
   const [excalElements, setExcalElements] = useState<
     ExcalidrawElement[]
@@ -81,7 +83,7 @@ export function CanvasProvider2({
     useState<AppState>(initialAppState)
 
   return (
-    <CanvasContext.Provider
+    <CanvasContext2.Provider
       value={{
         excalidrawAPI,
         setExcalidrawAPI,
@@ -93,13 +95,13 @@ export function CanvasProvider2({
         setExcalAppState,
       }}
     >
-      {children}
-    </CanvasContext.Provider>
+      <PaginationProvider>{children}</PaginationProvider>
+    </CanvasContext2.Provider>
   )
 }
 
 export function useCanvas2() {
-  const context = useContext(CanvasContext)
+  const context = useContext(CanvasContext2)
 
   if (!context) {
     throw new Error(
