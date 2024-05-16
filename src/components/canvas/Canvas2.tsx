@@ -76,7 +76,7 @@ export function Canvas2() {
   const debouncedScrollAndZoom = useDebouncedCallback(
     (newScrollAndZoom: ScrollAndZoom) =>
       setScrollAndZoom({ ...newScrollAndZoom }),
-    1_000,
+    100,
   )
 
   function updateSearchParams() {
@@ -162,66 +162,31 @@ export function Canvas2() {
             : fieldOfView.yBottom,
       }
 
+      const extraDelta = 100
       const newDeltaFovVerticalLeft: FieldOfView = {
-        xLeft:
-          currentScreen.xLeft < fieldOfView.xLeft
-            ? currentScreen.xLeft
-            : fieldOfView.xLeft,
+        xLeft: newFov.xLeft - extraDelta,
         xRight: fieldOfView.xLeft,
         yTop: newFov.yTop,
         yBottom: newFov.yBottom,
       }
       const newDeltaFovVerticalRight: FieldOfView = {
         xLeft: fieldOfView.xRight,
-        xRight: newFov.xRight,
+        xRight: newFov.xRight + extraDelta,
         yTop: newFov.yTop,
         yBottom: newFov.yBottom,
       }
       const newDeltaFovHorizontalTop: FieldOfView = {
         xLeft: fieldOfView.xLeft,
         xRight: fieldOfView.xRight,
-        yTop:
-          currentScreen.yTop < fieldOfView.yTop
-            ? newFov.yTop
-            : fieldOfView.yTop,
+        yTop: newFov.yTop + extraDelta,
         yBottom: fieldOfView.yTop,
       }
       const newDeltaFovHorizontalBottom: FieldOfView = {
         xLeft: fieldOfView.xLeft,
         xRight: fieldOfView.xRight,
         yTop: fieldOfView.yBottom,
-        yBottom:
-          currentScreen.yBottom > fieldOfView.yBottom
-            ? newFov.yBottom
-            : fieldOfView.yBottom,
+        yBottom: newFov.yBottom - extraDelta,
       }
-
-      console.log("scroll", scrollX, scrollY)
-      console.log("w x h", appState.width, appState.height)
-      console.log(
-        "w x h / z",
-        appState.width / zoom,
-        appState.height / zoom,
-      )
-      console.log("current screen", currentScreen)
-      console.log("current fov frontend", fieldOfView)
-      console.log(
-        "new delta fov left",
-        newDeltaFovVerticalLeft,
-      )
-      console.log(
-        "new delta fov right",
-        newDeltaFovVerticalRight,
-      )
-      console.log(
-        "new delta fov top",
-        newDeltaFovHorizontalTop,
-      )
-      console.log(
-        "new delta fov bottom",
-        newDeltaFovHorizontalBottom,
-      )
-      console.log("new fov", newFov)
 
       setFov(newFov)
 
@@ -231,10 +196,6 @@ export function Canvas2() {
         newDeltaFovHorizontalTop,
         newDeltaFovHorizontalBottom,
       ])
-      // await getMoreNodes(newDeltaFovVerticalRight)
-      // await getMoreNodes(newDeltaFovVerticalLeft)
-      // await getMoreNodes(newDeltaFovHorizontalTop)
-      // await getMoreNodes(newDeltaFovHorizontalBottom)
     }
   }
 
