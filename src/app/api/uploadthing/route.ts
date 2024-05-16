@@ -2,8 +2,8 @@ import "server-only"
 
 import { createRouteHandler } from "uploadthing/next"
 
-import { ourFileRouter } from "./core"
+import { magiFileRouter } from "./core"
 
 export const { GET, POST } = createRouteHandler({
-  router: ourFileRouter,
+  router: magiFileRouter,
 })

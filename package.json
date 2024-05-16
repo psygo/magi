@@ -51,7 +51,7 @@
     "svix": "^1.21.0",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
-    "uploadthing": "^6.10.1",
+    "uploadthing": "^6.10.4",
     "use-debounce": "^10.0.0",
     "zod": "^3.22.4"
   },

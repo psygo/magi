@@ -23,6 +23,7 @@ import { useCanvas2 } from "./CanvasProvider"
 
 type ShapesContext = {
   setIsDragging: (v: boolean) => void
+  uploadShape: (els: ExcalidrawElement[]) => Promise<void>
 }
 
 const ShapesContext = createContext<ShapesContext | null>(
@@ -83,7 +84,9 @@ export function ShapesProvider({
   }, [excalElements, lastUpdatedShapes, isSignedIn])
 
   return (
-    <ShapesContext.Provider value={{ setIsDragging }}>
+    <ShapesContext.Provider
+      value={{ setIsDragging, uploadShape }}
+    >
       {children}
     </ShapesContext.Provider>
   )

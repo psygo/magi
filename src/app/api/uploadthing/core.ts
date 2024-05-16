@@ -10,8 +10,14 @@ import { userIdFromClerk } from "@server"
 
 const f = createUploadthing()
 
-export const ourFileRouter = {
+export const magiFileRouter = {
   imageUploader: f({ image: { maxFileSize: "2MB" } })
+    .onUploadError(({ error }) => {
+      console.error(
+        "UploadThing Router Error: ",
+        error.message,
+      )
+    })
     .middleware(async () => {
       const userId = await userIdFromClerk()
 
@@ -24,4 +30,4 @@ export const ourFileRouter = {
     .onUploadComplete(async () => {}),
 } satisfies FileRouter
 
-export type OurFileRouter = typeof ourFileRouter
+export type OurFileRouter = typeof magiFileRouter
