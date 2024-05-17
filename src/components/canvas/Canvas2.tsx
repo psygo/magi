@@ -6,14 +6,28 @@ import { useMemo, useState } from "react"
 
 import dynamic from "next/dynamic"
 
-import { type Pointer } from "@types"
+import { MainMenu } from "@excalidraw/excalidraw"
+
+import {
+  Braces,
+  Grid3X3,
+  Moon,
+  Move3D,
+  Sun,
+  X,
+} from "lucide-react"
+
+import { Theme, type Pointer } from "@types"
 
 import {
   useCanvas2,
   useFiles,
   usePagination,
   useShapes,
+  useTheme,
 } from "@context"
+
+import { saveTheme } from "@actions"
 
 import { Progress } from "../common/exports"
 
@@ -33,6 +47,11 @@ const Excalidraw = dynamic(
 )
 
 export function Canvas2() {
+  /*------------------------------------------------------*/
+  /* Providers */
+
+  const { theme, cycleTheme } = useTheme()
+
   const {
     excalidrawAPI,
     setExcalidrawAPI,
@@ -48,6 +67,17 @@ export function Canvas2() {
 
   const { setFiles } = useFiles()
 
+  /*------------------------------------------------------*/
+  /* Preferences */
+
+  const [showMeta, setShowMeta] = useState(true)
+  const [gridModeEnabled, setGridModeEnabled] =
+    useState(true)
+  const [showCoords, setShowCoords] = useState(true)
+
+  /*------------------------------------------------------*/
+  /* Extra UI */
+
   const [pointer, setPointer] = useState<Pointer>({
     x: 0,
     y: 0,
@@ -58,10 +88,13 @@ export function Canvas2() {
     [pointer],
   )
 
+  /*------------------------------------------------------*/
+
   const Excal = useMemo(() => {
     return (
       <Excalidraw
         name="Magi"
+        theme={theme}
         UIOptions={{
           canvasActions: {
             clearCanvas: false,
@@ -101,15 +134,82 @@ export function Canvas2() {
           setExcalAppState(appState)
           setFiles(files)
         }}
-      />
+      >
+        <MainMenu>
+          <MainMenu.Item
+            onSelect={async () => {
+              const nextTheme = cycleTheme()
+              await saveTheme(nextTheme)
+            }}
+            icon={
+              theme === Theme.light ? (
+                <Sun style={{ height: 14, width: 14 }} />
+              ) : (
+                <Moon style={{ height: 14, width: 14 }} />
+              )
+            }
+          >
+            Toggle Theme
+          </MainMenu.Item>
+          <MainMenu.Item
+            onSelect={() => setShowMeta(!showMeta)}
+            icon={
+              showMeta ? (
+                <Braces style={{ height: 14, width: 14 }} />
+              ) : (
+                <X style={{ height: 14, width: 14 }} />
+              )
+            }
+          >
+            Show Metadata
+          </MainMenu.Item>
+          <MainMenu.Item
+            onSelect={() =>
+              setGridModeEnabled(!gridModeEnabled)
+            }
+            icon={
+              gridModeEnabled ? (
+                <Grid3X3
+                  style={{ height: 14, width: 14 }}
+                />
+              ) : (
+                <X style={{ height: 14, width: 14 }} />
+              )
+            }
+          >
+            Show Grid
+          </MainMenu.Item>
+          <MainMenu.Item
+            onSelect={() => setShowCoords(!showCoords)}
+            icon={
+              showCoords ? (
+                <Move3D style={{ height: 14, width: 14 }} />
+              ) : (
+                <X style={{ height: 14, width: 14 }} />
+              )
+            }
+          >
+            Show Coordinates
+          </MainMenu.Item>
+          <MainMenu.DefaultItems.Export />
+          <MainMenu.DefaultItems.SaveAsImage />
+          <MainMenu.DefaultItems.Help />
+        </MainMenu>
+      </Excalidraw>
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [excalidrawAPI])
+  }, [
+    excalidrawAPI,
+    theme,
+    showMeta,
+    gridModeEnabled,
+    showCoords,
+  ])
 
   return (
     <div className="absolute w-screen h-screen">
       {Excal}
-      {PointerCoords}
+      {showCoords && PointerCoords}
     </div>
   )
 }
