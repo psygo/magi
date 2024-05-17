@@ -1,6 +1,7 @@
 export * from "./CanvasContext"
 export * from "./CanvasProvider"
 export * from "./CommentsContext"
+export * from "./FilesProvider"
 export * from "./NodeContext"
 export * from "./PaginationProvider"
 export * from "./ShapeProvider"
