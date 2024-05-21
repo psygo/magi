@@ -16,6 +16,11 @@
   z-index: 10 !important;
 }
 
+.main-menu-trigger,
+.sidebar-trigger {
+  margin-top: 5px;
+}
+
 /*--------------------------------------------------------*/
 /* Clerk */
 

@@ -1,1 +1,1 @@
-export * from "./Canvas2"
+export * from "./Canvas"

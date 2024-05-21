@@ -6,6 +6,8 @@ import { useMemo, useState } from "react"
 
 import dynamic from "next/dynamic"
 
+import { useUser as useClerkUser } from "@clerk/nextjs"
+
 import { MainMenu } from "@excalidraw/excalidraw"
 
 import {
@@ -35,6 +37,7 @@ import { AccountButton } from "../users/exports"
 
 import { Coordinates } from "./Coordinates"
 import { ShapeInfoButtons } from "./ShapeInfoButton"
+import { CanvasModal } from "./CanvasModal"
 
 const Excalidraw = dynamic(
   async () => {
@@ -50,6 +53,7 @@ const Excalidraw = dynamic(
 export function Canvas2() {
   /*------------------------------------------------------*/
   /* Providers */
+  const { isSignedIn } = useClerkUser()
 
   const { theme, cycleTheme } = useTheme()
 
@@ -106,7 +110,12 @@ export function Canvas2() {
           },
         }}
         gridModeEnabled
-        renderTopRightUI={() => <AccountButton />}
+        renderTopRightUI={() => (
+          <>
+            {isSignedIn && <CanvasModal />}
+            <AccountButton />
+          </>
+        )}
         initialData={{
           elements: excalElements,
           appState: excalAppState,
@@ -211,6 +220,7 @@ export function Canvas2() {
   }, [
     excalidrawAPI,
     theme,
+    isSignedIn,
     showMeta,
     gridModeEnabled,
     showCoords,
