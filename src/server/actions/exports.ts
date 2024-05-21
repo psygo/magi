@@ -1,3 +1,4 @@
+export * from "./canvases/exports"
 export * from "./comments/exports"
 export * from "./nodes/exports"
 export * from "./theme/exports"

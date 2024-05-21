@@ -81,7 +81,7 @@ export const canvases = createTable("canvases", {
   title: varchar("title", { length: 256 }).notNull(),
   description: varchar("description", {
     length: 4096,
-  }).notNull(),
+  }),
   isDeleted: boolean("is_deleted").notNull().default(false),
   isPrivate: boolean("is_private").notNull().default(false),
   isUnlisted: boolean("is_unlisted")

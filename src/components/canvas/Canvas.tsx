@@ -109,7 +109,7 @@ export function Canvas2() {
             toggleTheme: true,
           },
         }}
-        gridModeEnabled
+        gridModeEnabled={gridModeEnabled}
         renderTopRightUI={() => (
           <>
             {isSignedIn && <CanvasModal />}

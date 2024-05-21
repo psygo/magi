@@ -1,18 +1,34 @@
+"use client"
+
+import { useState } from "react"
+
 import { useUser as useClerkUser } from "@clerk/nextjs"
 
 import { FolderKanban } from "lucide-react"
+
+import { postCanvas } from "@actions"
 
 import {
   Button,
   Dialog,
   DialogContent,
+  DialogHeader,
   DialogTrigger,
+  Input,
+  Label,
 } from "@shad"
 
 export function CanvasModal() {
   const { user, isSignedIn } = useClerkUser()
 
+  const [canvasTitle, setCanvasTitle] = useState("")
+
   if (!isSignedIn) return
+
+  async function handleSubmit() {
+    const newCanvas = await postCanvas(canvasTitle)
+    console.log("new canvas", newCanvas)
+  }
 
   return (
     <Dialog>
@@ -25,9 +41,30 @@ export function CanvasModal() {
         </Button>
       </DialogTrigger>
       <DialogContent className="border-2 border-gray-700 overflow-y-scroll h-[90vh] rounded-md">
-        <h2 className="text-lg font-semibold">
-          @{user.username}&apos;s Canvases
-        </h2>
+        <DialogHeader>
+          <h2 className="text-lg font-semibold">
+            @{user.username}&apos;s Canvases
+          </h2>
+        </DialogHeader>
+
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault()
+            await handleSubmit()
+          }}
+          className="flex flex-col items-start gap-2"
+        >
+          <Label htmlFor="canvas-title">Canvas Title</Label>
+          <Input
+            id="canvas-title"
+            placeholder="My Canvas"
+            value={canvasTitle}
+            onChange={(e) => setCanvasTitle(e.target.value)}
+          />
+          <Button type="submit" className="w-max">
+            Create Canvas
+          </Button>
+        </form>
       </DialogContent>
     </Dialog>
   )
