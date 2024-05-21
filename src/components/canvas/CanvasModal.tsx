@@ -8,6 +8,8 @@ import { FolderKanban } from "lucide-react"
 
 import { postCanvas } from "@actions"
 
+import { useCanvases } from "@providers"
+
 import {
   Button,
   Dialog,
@@ -19,6 +21,8 @@ import {
 } from "@shad"
 
 export function CanvasModal() {
+  const { canvases } = useCanvases()
+
   const { user, isSignedIn } = useClerkUser()
 
   const [canvasTitle, setCanvasTitle] = useState("")
@@ -46,6 +50,12 @@ export function CanvasModal() {
             @{user.username}&apos;s Canvases
           </h2>
         </DialogHeader>
+
+        {canvases &&
+          canvases.length > 0 &&
+          canvases.map((c) => {
+            return <h3 key={c.nanoId}>{c.title}</h3>
+          })}
 
         <form
           onSubmit={async (e) => {

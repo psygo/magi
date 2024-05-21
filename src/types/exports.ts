@@ -1,3 +1,4 @@
+export * from "./canvases"
 export * from "./comments"
 export * from "./excalidraw"
 export * from "./id"

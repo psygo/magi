@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-indexed-object-style */
-import { type InferSelectModel } from "drizzle-orm"
+import {
+  type InferInsertModel,
+  type InferSelectModel,
+} from "drizzle-orm"
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { nodes } from "@server"
@@ -11,7 +14,7 @@ import {
 import { type ExcalId } from "./id"
 
 export type SelectNode = InferSelectModel<typeof nodes>
-export type InsertNode = InferSelectModel<typeof nodes>
+export type InsertNode = InferInsertModel<typeof nodes>
 
 export type WithNodeStats = {
   stats?: {

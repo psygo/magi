@@ -1,3 +1,4 @@
+export * from "./CanvasesProvider"
 export * from "./CanvasProvider"
 export * from "./CommentsProvider"
 export * from "./FilesProvider"
