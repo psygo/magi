@@ -6,7 +6,7 @@ import "@utils/array"
 
 import { Card, CardContent } from "@shad"
 
-import { useNodeData } from "@context"
+import { useNodeData } from "@providers"
 
 export function NodeLink() {
   const { node } = useNodeData()

@@ -25,8 +25,8 @@ import {
 } from "@types"
 
 import {
-  nodesArrayToRecords2,
-  useCanvas2,
+  nodesArrayToRecords,
+  useCanvas,
 } from "./CanvasProvider"
 
 type PaginationContext = {
@@ -44,7 +44,7 @@ export function PaginationProvider({
   children,
 }: PaginationProviderProps) {
   const { excalidrawAPI, excalAppState, nodes, setNodes } =
-    useCanvas2()
+    useCanvas()
 
   const [scrollAndZoom, setScrollAndZoom] =
     useState<ScrollAndZoom>({
@@ -194,7 +194,7 @@ export function PaginationProvider({
     })
     setNodes({
       ...nodes,
-      ...nodesArrayToRecords2(newNodes),
+      ...nodesArrayToRecords(newNodes),
     })
   }
 

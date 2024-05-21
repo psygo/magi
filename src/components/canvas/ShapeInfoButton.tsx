@@ -1,6 +1,8 @@
 "use client"
 
-import { useUser } from "@clerk/nextjs"
+import { useState } from "react"
+
+import { useUser as useClerkUser } from "@clerk/nextjs"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
 
@@ -8,12 +10,13 @@ import "@utils/array"
 
 import { type Point } from "@types"
 
-import { useCanvas } from "@context"
+import { useCanvas } from "@providers"
+
+import { Button } from "@shad"
 
 import { NodeModal } from "../nodes/exports"
 
 import { UserAvatar } from "../users/exports"
-import { useState } from "react"
 
 type ShapeInfoButtonsProps = {
   excalEl: ExcalidrawElement
@@ -22,12 +25,13 @@ type ShapeInfoButtonsProps = {
 export function ShapeInfoButtons({
   excalEl,
 }: ShapeInfoButtonsProps) {
-  const { user } = useUser()
+  const { user } = useClerkUser()
 
   const { nodes, excalAppState } = useCanvas()
   const node = nodes[excalEl.id]
 
   const [isHovered, setIsHovered] = useState(false)
+  const [showUser, setShowUser] = useState(false)
 
   if (excalEl.isDeleted) return
   if (excalEl.type === "text" && excalEl.containerId) return
@@ -65,7 +69,7 @@ export function ShapeInfoButtons({
   const [x, y] = getXY()
 
   return (
-    <section
+    <div
       className="flex gap-1 items-center shadow-md border-gray-500 hover:border-2 rounded-md bg-gray-200 dark:bg-gray-600"
       style={{
         position: "fixed",
@@ -79,12 +83,33 @@ export function ShapeInfoButtons({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <UserAvatar
-        username={node?.creator?.username ?? user?.username}
-        imageUrl={node?.creator?.imageUrl ?? user?.imageUrl}
-        zoom={zoom}
-      />
-      <NodeModal excalId={excalEl.id} />
-    </section>
+      <button onClick={() => setShowUser(!showUser)}>
+        <UserAvatar
+          username={
+            node?.creator?.username ?? user?.username
+          }
+          imageUrl={
+            node?.creator?.imageUrl ?? user?.imageUrl
+          }
+          zoom={zoom}
+        />
+      </button>
+      {showUser && (
+        <div
+          className="flex gap-1 items-center shadow-md border-gray-500 hover:border-2 rounded-md bg-gray-200 dark:bg-gray-600"
+          style={{
+            position: "fixed",
+            zIndex: isHovered ? 50 : 5,
+            left: x,
+            top: y! + 40 * zoom,
+            paddingLeft: 10,
+            paddingRight: 10,
+          }}
+        >
+          User
+        </div>
+      )}
+      {/* <NodeModal excalId={excalEl.id} /> */}
+    </div>
   )
 }

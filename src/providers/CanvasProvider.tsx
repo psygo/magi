@@ -39,11 +39,11 @@ type CanvasContext = {
   >
 }
 
-const CanvasContext2 = createContext<CanvasContext | null>(
+const CanvasContext = createContext<CanvasContext | null>(
   null,
 )
 
-export const standardInitialAppState2: AppState = {
+export const standardInitialAppState: AppState = {
   scrollX: 0,
   scrollY: 0,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -51,7 +51,7 @@ export const standardInitialAppState2: AppState = {
   zoom: { value: 1 },
 }
 
-export function nodesArrayToRecords2(
+export function nodesArrayToRecords(
   nodes: SelectNodeWithCreatorAndStats[],
 ) {
   const records: NodesRecords = {}
@@ -64,16 +64,16 @@ type CanvasProviderProps = WithReactChildren & {
   initialAppState?: AppState
 }
 
-export function CanvasProvider2({
+export function CanvasProvider({
   initialNodes = [],
-  initialAppState = standardInitialAppState2,
+  initialAppState = standardInitialAppState,
   children,
 }: CanvasProviderProps) {
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI>()
 
   const [nodes, setNodes] = useState<NodesRecords>(
-    nodesArrayToRecords2(initialNodes),
+    nodesArrayToRecords(initialNodes),
   )
 
   const [excalElements, setExcalElements] = useState<
@@ -88,7 +88,7 @@ export function CanvasProvider2({
     useState<AppState>(initialAppState)
 
   return (
-    <CanvasContext2.Provider
+    <CanvasContext.Provider
       value={{
         excalidrawAPI,
         setExcalidrawAPI,
@@ -105,12 +105,12 @@ export function CanvasProvider2({
           <FilesProvider>{children}</FilesProvider>
         </ShapesProvider>
       </PaginationProvider>
-    </CanvasContext2.Provider>
+    </CanvasContext.Provider>
   )
 }
 
-export function useCanvas2() {
-  const context = useContext(CanvasContext2)
+export function useCanvas() {
+  const context = useContext(CanvasContext)
 
   if (!context) {
     throw new Error(

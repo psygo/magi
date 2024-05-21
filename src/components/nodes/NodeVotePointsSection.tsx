@@ -4,7 +4,7 @@ import { useUser } from "@clerk/nextjs"
 
 import { cn, pointsColor } from "@styles"
 
-import { useNodeData } from "@context"
+import { useNodeData } from "@providers"
 
 import { VoteButton } from "../votes/exports"
 

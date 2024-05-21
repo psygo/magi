@@ -12,7 +12,7 @@ import {
   type NanoId,
 } from "@types"
 
-import { useComments, useNodeData } from "@context"
+import { useComments, useNodeData } from "@providers"
 
 import { Button, Card, CardContent, Textarea } from "@shad"
 

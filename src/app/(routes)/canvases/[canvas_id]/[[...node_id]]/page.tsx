@@ -6,7 +6,7 @@ import { getNodes } from "@actions"
 
 import { Canvas2 } from "@components"
 
-import { CanvasProvider2 } from "@context"
+import { CanvasProvider } from "@providers"
 
 type CanvasPageProps = {
   params: { canvas_id: string; node_id: string }
@@ -39,11 +39,11 @@ export default async function CanvasPage({
   const initialNodes = await getNodes()
 
   return (
-    <CanvasProvider2
+    <CanvasProvider
       initialNodes={initialNodes}
       initialAppState={initialAppState}
     >
       <Canvas2 />
-    </CanvasProvider2>
+    </CanvasProvider>
   )
 }

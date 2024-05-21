@@ -23,7 +23,7 @@ import {
   NodeProvider,
   useCanvas,
   useNodeData,
-} from "@context"
+} from "@providers"
 
 import { cn, pointsColor } from "@styles"
 

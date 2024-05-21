@@ -17,15 +17,15 @@ import {
   X,
 } from "lucide-react"
 
-import { Theme, type Pointer } from "@types"
+import { LoadingState, Theme, type Pointer } from "@types"
 
 import {
-  useCanvas2,
+  useCanvas,
   useFiles,
   usePagination,
   useShapes,
   useTheme,
-} from "@context"
+} from "@providers"
 
 import { saveTheme } from "@actions"
 
@@ -34,6 +34,7 @@ import { Progress } from "../common/exports"
 import { AccountButton } from "../users/exports"
 
 import { Coordinates } from "./Coordinates"
+import { ShapeInfoButtons } from "./ShapeInfoButton"
 
 const Excalidraw = dynamic(
   async () => {
@@ -59,7 +60,7 @@ export function Canvas2() {
     setExcalElements,
     excalAppState,
     setExcalAppState,
-  } = useCanvas2()
+  } = useCanvas()
 
   const { debouncedScrollAndZoom } = usePagination()
 
@@ -78,6 +79,9 @@ export function Canvas2() {
   /*------------------------------------------------------*/
   /* Extra UI */
 
+  const [loading, setLoading] = useState(
+    LoadingState.NotYet,
+  )
   const [pointer, setPointer] = useState<Pointer>({
     x: 0,
     y: 0,
@@ -133,6 +137,12 @@ export function Canvas2() {
           setExcalElements([...elements])
           setExcalAppState(appState)
           setFiles(files)
+
+          setLoading(
+            appState.isLoading
+              ? LoadingState.Loading
+              : LoadingState.Loaded,
+          )
         }}
       >
         <MainMenu>
@@ -209,6 +219,13 @@ export function Canvas2() {
   return (
     <div className="absolute w-screen h-screen">
       {Excal}
+      <section>
+        {loading === LoadingState.Loaded &&
+          showMeta &&
+          excalElements.map((excalEl, i) => (
+            <ShapeInfoButtons key={i} excalEl={excalEl} />
+          ))}
+      </section>
       {showCoords && PointerCoords}
     </div>
   )

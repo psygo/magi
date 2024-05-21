@@ -8,7 +8,7 @@ import { ClerkProvider } from "@clerk/nextjs"
 
 import { type WithReactChildren, Theme } from "@types"
 
-import { ThemeProvider } from "@context"
+import { ThemeProvider } from "@providers"
 
 import { App } from "./App"
 

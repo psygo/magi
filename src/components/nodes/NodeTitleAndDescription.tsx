@@ -4,7 +4,7 @@ import { useUser } from "@clerk/nextjs"
 
 import { LoadingState } from "@types"
 
-import { useNodeData } from "@context"
+import { useNodeData } from "@providers"
 
 import { Card, CardContent } from "@shad"
 

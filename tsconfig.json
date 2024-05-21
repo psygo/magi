@@ -49,11 +49,11 @@
       "@components": [
         "./src/components/exports"
       ],
-      "@context/*": [
-        "./src/context/*"
+      "@providers/*": [
+        "src/providers/*"
       ],
-      "@context": [
-        "./src/context/exports"
+      "@providers": [
+        "src/providers/exports"
       ],
       "@db/*": [
         "./src/server/db/*"
@@ -112,8 +112,9 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
-, "src/components/comments"  ],
+    ".next/types/**/*.ts",
+    "src/components/comments"
+  ],
   "exclude": [
     "node_modules"
   ]

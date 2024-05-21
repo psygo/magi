@@ -2,7 +2,7 @@
 
 import { Inter } from "next/font/google"
 
-import { useTheme } from "@context"
+import { useTheme } from "@providers"
 
 import { type WithReactChildren } from "@types"
 

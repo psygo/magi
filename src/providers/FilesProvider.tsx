@@ -18,7 +18,7 @@ import { useUploadThing } from "@utils/uploadthing"
 
 import { type WithReactChildren } from "@types"
 
-import { useCanvas2 } from "./CanvasProvider"
+import { useCanvas } from "./CanvasProvider"
 import { useShapes } from "./ShapeProvider"
 
 type FilesContext = {
@@ -36,7 +36,7 @@ type FilesProviderProps = WithReactChildren
 export function FilesProvider({
   children,
 }: FilesProviderProps) {
-  const { excalidrawAPI, excalElements } = useCanvas2()
+  const { excalidrawAPI, excalElements } = useCanvas()
   const { uploadShape } = useShapes()
 
   const [files, setFiles] = useState<BinaryFiles>({})

@@ -17,7 +17,7 @@ import { type WithReactChildren } from "@types"
 
 import { postNodes } from "@actions"
 
-import { useCanvas2 } from "./CanvasProvider"
+import { useCanvas } from "./CanvasProvider"
 import { useLocalStorage } from "../hooks/use_local_storage"
 
 type ShapesContext = {
@@ -36,7 +36,7 @@ export function ShapesProvider({
 }: ShapesProviderProps) {
   const { isSignedIn } = useClerkUser()
 
-  const { excalElements } = useCanvas2()
+  const { excalElements } = useCanvas()
 
   const [lastUpdatedShapes, setLastUpdatedShapes] =
     useState<Date>(new Date())
