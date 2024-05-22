@@ -21,7 +21,7 @@ export async function postCanvas(
       })
       .returning()
 
-    return canvasInsertData
+    return canvasInsertData.first()
   } catch (e) {
     console.error(e)
   }

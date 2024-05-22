@@ -35,7 +35,8 @@ export function CanvasModal() {
 
   async function handleSubmit() {
     const newCanvas = await postCanvas(canvasTitle)
-    console.log("new canvas", newCanvas)
+    if (!newCanvas) return
+    router.push(`/canvases/${newCanvas.nanoId}`)
   }
 
   return (
@@ -50,9 +51,9 @@ export function CanvasModal() {
       </DialogTrigger>
       <DialogContent className="border-2 border-gray-700 overflow-y-scroll h-[90vh] rounded-md">
         <DialogHeader className="h-max">
-          <h2 className="text-lg font-semibold">
+          <p className="text-lg font-semibold">
             @{user.username}&apos;s Canvases
-          </h2>
+          </p>
         </DialogHeader>
 
         <div className="flex flex-col gap-6">
@@ -61,9 +62,9 @@ export function CanvasModal() {
               e.preventDefault()
               await handleSubmit()
             }}
-            className="flex gap-2 items-end w-full"
+            className="grid grid-cols-3 gap-x-2 items-end"
           >
-            <div className="flex flex-col gap-3">
+            <div className="col-span-2 flex flex-col gap-3">
               <Label
                 htmlFor="canvas-title"
                 className="pl-3"
@@ -80,9 +81,11 @@ export function CanvasModal() {
                 }
               />
             </div>
-            <Button type="submit" className="w-max">
-              Create Canvas
-            </Button>
+            <div className="col-span-1 flex w-full justify-end">
+              <Button type="submit" className="w-max">
+                Create Canvas
+              </Button>
+            </div>
           </form>
 
           <div className="flex flex-col gap-2">

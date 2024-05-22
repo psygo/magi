@@ -229,13 +229,13 @@ export function Canvas() {
   return (
     <div className="absolute w-screen h-screen">
       {Excal}
-      {/* <section>
+      <section>
         {loading === LoadingState.Loaded &&
           showMeta &&
           excalElements.map((excalEl, i) => (
             <ShapeInfoButtons key={i} excalEl={excalEl} />
           ))}
-      </section> */}
+      </section>
       {showCoords && PointerCoords}
     </div>
   )
