@@ -7,6 +7,8 @@ import {
   useState,
 } from "react"
 
+import { useParams } from "next/navigation"
+
 import { useUser as useClerkUser } from "@clerk/nextjs"
 
 import { type ExcalidrawElement } from "@excalidraw/excalidraw/types/element/types"
@@ -17,8 +19,9 @@ import { type WithReactChildren } from "@types"
 
 import { postNodes } from "@actions"
 
+import { useLocalStorage } from "@hooks"
+
 import { useCanvas } from "./CanvasProvider"
-import { useLocalStorage } from "../hooks/use_local_storage"
 
 type ShapesContext = {
   setIsDragging: (v: boolean) => void
@@ -34,6 +37,8 @@ type ShapesProviderProps = WithReactChildren
 export function ShapesProvider({
   children,
 }: ShapesProviderProps) {
+  const params = useParams()
+
   const { isSignedIn } = useClerkUser()
 
   const { excalElements } = useCanvas()
@@ -55,7 +60,10 @@ export function ShapesProvider({
     if (isUploadingShape || isDragging) return
 
     setIsUploadingShape(true)
-    const newNodes = await postNodes(els)
+    const newNodes = await postNodes(
+      els,
+      (params.canvas_id as string) ?? "open-public",
+    )
     setIsUploadingShape(false)
 
     if (!newNodes) return

@@ -11,10 +11,13 @@ import {
 
 import { toInt } from "@utils"
 
+import { type NanoId } from "@types"
+
 import { userIdFromClerk } from "../../utils/exports"
 
 export async function postNodes(
   excalElements: ExcalidrawElement[],
+  canvasId: NanoId = "open-public",
 ) {
   try {
     const userId = await userIdFromClerk()
@@ -35,6 +38,7 @@ export async function postNodes(
               : {}
 
           return {
+            canvasId,
             excalId: el.id,
             title: "",
             description: "",
