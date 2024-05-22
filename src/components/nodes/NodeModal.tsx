@@ -1,6 +1,6 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
+import { useParams, useSearchParams } from "next/navigation"
 
 // import { Share2, Star } from "lucide-react"
 
@@ -55,6 +55,8 @@ export function NodeModal({
   const pathname = location.pathname
   const defaultOpen = pathname.includes(excalId)
 
+  const params = useParams()
+  const canvasId = params.canvas_id as string
   const searchParams = useSearchParams()
 
   return (
@@ -63,7 +65,7 @@ export function NodeModal({
       onOpenChange={(open) => {
         const searchParamsString = `?${searchParams.toString()}`
         const nodePath = open ? `/nodes/${excalId}` : ""
-        const route = `/canvases/open-public${nodePath}${searchParamsString}`
+        const route = `/canvases/${canvasId}${nodePath}${searchParamsString}`
         history.pushState(null, "", route)
       }}
     >

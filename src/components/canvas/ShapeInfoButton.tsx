@@ -12,8 +12,6 @@ import { type Point } from "@types"
 
 import { useCanvas } from "@providers"
 
-import { Button } from "@shad"
-
 import { NodeModal } from "../nodes/exports"
 
 import { UserAvatar } from "../users/exports"
@@ -109,7 +107,7 @@ export function ShapeInfoButtons({
           User
         </div>
       )}
-      {/* <NodeModal excalId={excalEl.id} /> */}
+      <NodeModal excalId={excalEl.id} />
     </div>
   )
 }
