@@ -19,6 +19,7 @@ import {
   type SelectNodeWithCreatorAndStats,
   type FieldOfView,
   type NanoId,
+  defaultFov,
 } from "@types"
 
 import {
@@ -53,13 +54,6 @@ function getNodesQuery() {
     .leftJoin(votes, eq(nodes.excalId, votes.nodeId))
     .leftJoin(comments, eq(nodes.excalId, comments.nodeId))
     .groupBy(nodes.id, users.id)
-}
-
-const defaultFov: FieldOfView = {
-  xLeft: 0,
-  xRight: 1_000,
-  yTop: 0,
-  yBottom: 1_000,
 }
 
 export async function getNodes(

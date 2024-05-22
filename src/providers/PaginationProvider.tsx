@@ -7,6 +7,8 @@ import {
   useState,
 } from "react"
 
+import { useParams } from "next/navigation"
+
 import {
   type DebouncedState,
   useDebouncedCallback,
@@ -43,6 +45,8 @@ type PaginationProviderProps = WithReactChildren
 export function PaginationProvider({
   children,
 }: PaginationProviderProps) {
+  const params = useParams()
+
   const { excalidrawAPI, excalAppState, nodes, setNodes } =
     useCanvas()
 
@@ -70,10 +74,11 @@ export function PaginationProvider({
     searchParams.set("zoom", zoom.toString())
 
     const searchParamsString = `?${searchParams.toString()}`
+    const canvasId = params.canvas_id as string
     history.replaceState(
       {},
       "",
-      `/canvases/open-public${searchParamsString}`,
+      `/canvases/${canvasId}${searchParamsString}`,
     )
   }
 

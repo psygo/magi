@@ -2,6 +2,8 @@ import { z } from "zod"
 
 import { type AppState } from "@excalidraw/excalidraw/types/types"
 
+import { defaultFov } from "@types"
+
 import { getNodes } from "@actions"
 
 import { Canvas } from "@components"
@@ -39,18 +41,9 @@ export default async function CanvasPage({
     parsedSearchParams as AppState
 
   const initialNodes = await getNodes(
-    [
-      {
-        xLeft: 0,
-        xRight: 1_000,
-        yTop: 0,
-        yBottom: 1_000,
-      },
-    ],
+    [defaultFov],
     canvas_id,
   )
-
-  console.log("canvas id", canvas_id)
 
   return (
     <CanvasProvider

@@ -13,8 +13,6 @@ export function useCanvases() {
     async function getCanvasesData() {
       const canvasesData = await getCanvases()
 
-      console.log("canvases data", canvasesData)
-
       if (canvasesData) setCanvases(canvasesData)
     }
 
