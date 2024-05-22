@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 
+import { useRouter } from "next/navigation"
+
 import { useUser as useClerkUser } from "@clerk/nextjs"
 
 import { FolderKanban } from "lucide-react"
@@ -25,6 +27,8 @@ export function CanvasModal() {
 
   const { user, isSignedIn } = useClerkUser()
 
+  const router = useRouter()
+
   const [canvasTitle, setCanvasTitle] = useState("")
 
   if (!isSignedIn) return
@@ -45,36 +49,62 @@ export function CanvasModal() {
         </Button>
       </DialogTrigger>
       <DialogContent className="border-2 border-gray-700 overflow-y-scroll h-[90vh] rounded-md">
-        <DialogHeader>
+        <DialogHeader className="h-max">
           <h2 className="text-lg font-semibold">
             @{user.username}&apos;s Canvases
           </h2>
         </DialogHeader>
 
-        {canvases &&
-          canvases.length > 0 &&
-          canvases.map((c) => {
-            return <h3 key={c.nanoId}>{c.title}</h3>
-          })}
+        <div className="flex flex-col gap-6">
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault()
+              await handleSubmit()
+            }}
+            className="flex gap-2 items-end w-full"
+          >
+            <div className="flex flex-col gap-3">
+              <Label
+                htmlFor="canvas-title"
+                className="pl-3"
+              >
+                Create a New Canvas
+              </Label>
+              <Input
+                id="canvas-title"
+                className="w-full"
+                placeholder="My Canvas Title"
+                value={canvasTitle}
+                onChange={(e) =>
+                  setCanvasTitle(e.target.value)
+                }
+              />
+            </div>
+            <Button type="submit" className="w-max">
+              Create Canvas
+            </Button>
+          </form>
 
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault()
-            await handleSubmit()
-          }}
-          className="flex flex-col items-start gap-2"
-        >
-          <Label htmlFor="canvas-title">Canvas Title</Label>
-          <Input
-            id="canvas-title"
-            placeholder="My Canvas"
-            value={canvasTitle}
-            onChange={(e) => setCanvasTitle(e.target.value)}
-          />
-          <Button type="submit" className="w-max">
-            Create Canvas
-          </Button>
-        </form>
+          <div className="flex flex-col gap-2">
+            <h3 className="pl-3">Your Canvases</h3>
+            {canvases &&
+              canvases.length > 0 &&
+              canvases.map((c) => {
+                return (
+                  <Button
+                    key={c.nanoId}
+                    className="justify-start"
+                    variant="outline"
+                    onClick={() => {
+                      router.push(`/canvases/${c.nanoId}`)
+                    }}
+                  >
+                    {c.title}
+                  </Button>
+                )
+              })}
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )

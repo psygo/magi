@@ -122,7 +122,7 @@ export const nodes = createTable("nodes", {
   isDeleted: boolean("is_deleted").notNull().default(false),
   // Relationships
   creatorId: integer("creator_id").notNull(),
-  canvasId: integer("canvas_id"),
+  canvasId: varchar("canvas_id"),
   fromId: varchar("from_id"),
   toId: varchar("to_id"),
 })
@@ -136,7 +136,7 @@ export const nodesRelations = relations(
     }),
     canvas: one(canvases, {
       fields: [nodes.canvasId],
-      references: [canvases.id],
+      references: [canvases.nanoId],
     }),
     votes: many(votes),
     comments: many(comments),

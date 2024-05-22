@@ -18,6 +18,7 @@ import {
   type ExcalId,
   type SelectNodeWithCreatorAndStats,
   type FieldOfView,
+  type NanoId,
 } from "@types"
 
 import {
@@ -63,6 +64,7 @@ const defaultFov: FieldOfView = {
 
 export async function getNodes(
   fovs: FieldOfView[] = [defaultFov],
+  canvasId: NanoId = "open-public",
 ) {
   try {
     const conditions = or(
@@ -77,7 +79,7 @@ export async function getNodes(
     )
 
     const n = await getNodesQuery()
-      .where(conditions)
+      .where(and(conditions, eq(nodes.canvasId, canvasId)))
       .orderBy(desc(nodes.updatedAt))
 
     return n as SelectNodeWithCreatorAndStats[]
