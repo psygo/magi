@@ -90,6 +90,15 @@ export function CanvasModal() {
 
           <div className="flex flex-col gap-2">
             <h3 className="pl-3">Your Canvases</h3>
+            <Button
+              className="justify-start"
+              variant="outline"
+              onClick={() => {
+                router.push(`/canvases/open-public`)
+              }}
+            >
+              Open Public (Default for Everyone)
+            </Button>
             {canvases &&
               canvases.length > 0 &&
               canvases.map((c) => {

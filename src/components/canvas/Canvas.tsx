@@ -35,9 +35,9 @@ import { Progress } from "../common/exports"
 
 import { AccountButton } from "../users/exports"
 
+import { CanvasModal } from "./CanvasModal"
 import { Coordinates } from "./Coordinates"
 import { ShapeInfoButtons } from "./ShapeInfoButton"
-import { CanvasModal } from "./CanvasModal"
 
 const Excalidraw = dynamic(
   async () => {
