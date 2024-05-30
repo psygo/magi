@@ -4,8 +4,9 @@
 
 ## Second Version
 
+1. [ ] Bubbles instead of modals for node clicking
 1. [ ] List connections on a node on the info card
-2. [ ] Migrate to EdgeDB
+1. [ ] Migrate to EdgeDB
 
 ## Deployment
 

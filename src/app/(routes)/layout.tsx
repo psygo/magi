@@ -14,7 +14,8 @@ import { App } from "./App"
 
 export const metadata = {
   title: "Magi",
-  description: "Magi",
+  description: "Draw the Internet",
+  icons: [{ rel: "icon", url: "/favicon.ico" }],
 }
 
 export default function RootLayout({
