@@ -1,13 +1,52 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
 
-import { type SelectCanvas } from "@types"
+import {
+  type SelectCanvas,
+  type WithReactChildren,
+} from "@types"
 
 import { getCanvases } from "@actions"
 
-export function useCanvases() {
-  const [canvases, setCanvases] = useState<SelectCanvas[]>()
+// export function useCanvases() {
+//   const [canvases, setCanvases] = useState<SelectCanvas[]>()
+
+//   useEffect(() => {
+//     async function getCanvasesData() {
+//       const canvasesData = await getCanvases()
+
+//       if (canvasesData) setCanvases(canvasesData)
+//     }
+
+//     // eslint-disable-next-line @typescript-eslint/no-floating-promises
+//     getCanvasesData()
+//   }, [])
+
+//   return { canvases, setCanvases }
+// }
+
+type CanvasesContext = {
+  canvases: SelectCanvas[]
+  setCanvases: React.Dispatch<
+    React.SetStateAction<SelectCanvas[]>
+  >
+}
+
+const CanvasesContext =
+  createContext<CanvasesContext | null>(null)
+
+export function CanvasesProvider({
+  children,
+}: WithReactChildren) {
+  const [canvases, setCanvases] = useState<SelectCanvas[]>(
+    [],
+  )
 
   useEffect(() => {
     async function getCanvasesData() {
@@ -20,5 +59,22 @@ export function useCanvases() {
     getCanvasesData()
   }, [])
 
-  return { canvases, setCanvases }
+  return (
+    <CanvasesContext.Provider
+      value={{ canvases, setCanvases }}
+    >
+      {children}
+    </CanvasesContext.Provider>
+  )
+}
+
+export function useCanvases() {
+  const context = useContext(CanvasesContext)
+
+  if (!context)
+    throw new Error(
+      "`useCanvases` must be used within a `CanvasesProvider`.",
+    )
+
+  return context
 }

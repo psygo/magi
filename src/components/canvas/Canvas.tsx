@@ -9,6 +9,7 @@ import { useUser as useClerkUser } from "@clerk/nextjs"
 import { LoadingState, type Pointer } from "@types"
 
 import {
+  CanvasesProvider,
   useCanvas,
   useFiles,
   usePagination,
@@ -84,7 +85,11 @@ export function Canvas() {
         gridModeEnabled={gridModeEnabled}
         renderTopRightUI={() => (
           <>
-            {isSignedIn && <CanvasesModal />}
+            {isSignedIn && (
+              <CanvasesProvider>
+                <CanvasesModal />
+              </CanvasesProvider>
+            )}
             <AccountButton />
           </>
         )}
