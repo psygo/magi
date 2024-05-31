@@ -1,9 +1,5 @@
+export * from "./canvas/exports"
+export * from "./nodes/exports"
+
 export * from "./CanvasesProvider"
-export * from "./CanvasProvider"
-export * from "./CommentsProvider"
-export * from "./FilesProvider"
-export * from "./NodeContext"
-export * from "./PaginationProvider"
-export * from "./PreferencesProvider"
-export * from "./ShapeProvider"
 export * from "./ThemeProvider"

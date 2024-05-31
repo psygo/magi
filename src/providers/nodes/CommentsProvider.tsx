@@ -20,7 +20,7 @@ import {
   putComment,
 } from "@actions"
 
-import { useNodeData } from "./NodeContext"
+import { useNodeData } from "./NodeProvider"
 
 type CommentsContext = {
   comments: CommentsRecords

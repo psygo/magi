@@ -16,7 +16,7 @@ import { useNode } from "@hooks"
 import {
   nodesArrayToRecords,
   useCanvas,
-} from "./CanvasProvider"
+} from "../canvas/exports"
 
 type NodeContext = {
   node:

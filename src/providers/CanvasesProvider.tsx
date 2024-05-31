@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-import { type SelectCanvas } from "../types/canvases"
+import { type SelectCanvas } from "@types"
 
 import { getCanvases } from "@actions"
 
