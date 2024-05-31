@@ -6,9 +6,9 @@ import { defaultFov } from "@types"
 
 import { getNodes } from "@actions"
 
-import { Canvas } from "@components"
-
 import { CanvasProvider } from "@providers"
+
+import { Canvas } from "@components"
 
 type CanvasPageProps = {
   params: { canvas_id: string; node_id: string }

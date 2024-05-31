@@ -112,11 +112,10 @@ export function CanvasProvider({
 export function useCanvas() {
   const context = useContext(CanvasContext)
 
-  if (!context) {
+  if (!context)
     throw new Error(
       "`useCanvas` must be used within a `CanvasProvider`.",
     )
-  }
 
   return context
 }

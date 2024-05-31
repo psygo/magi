@@ -104,11 +104,10 @@ export function NodeProvider({
 export function useNodeData() {
   const context = useContext(NodeContext)
 
-  if (!context) {
+  if (!context)
     throw new Error(
       "`useNodeData` must be used within a `NodeProvider`.",
     )
-  }
 
   return context
 }

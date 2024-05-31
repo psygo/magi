@@ -191,11 +191,10 @@ export function FilesProvider({
 export function useFiles() {
   const context = useContext(FilesContext)
 
-  if (!context) {
+  if (!context)
     throw new Error(
       "`useFiles` must be used within a `FilesProvider`.",
     )
-  }
 
   return context
 }

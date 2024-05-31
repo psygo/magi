@@ -101,11 +101,10 @@ export function ShapesProvider({
 export function useShapes() {
   const context = useContext(ShapesContext)
 
-  if (!context) {
+  if (!context)
     throw new Error(
       "`useShapes` must be used within a `ShapeProvider`.",
     )
-  }
 
   return context
 }

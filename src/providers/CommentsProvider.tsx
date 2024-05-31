@@ -138,11 +138,10 @@ export function CommentsProvider({
 export function useComments() {
   const context = useContext(CommentsContext)
 
-  if (!context) {
+  if (!context)
     throw new Error(
       "`useComments` must be used within a `CommentsProvider`.",
     )
-  }
 
   return context
 }
