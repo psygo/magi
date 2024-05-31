@@ -15,7 +15,7 @@ import "@styles/globals.css"
 export const metadata = {
   title: "Magi",
   description: "Draw the Internet",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/favicon.png" }],
 }
 
 export default function RootLayout({

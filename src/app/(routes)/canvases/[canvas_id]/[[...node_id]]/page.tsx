@@ -36,9 +36,7 @@ export default async function CanvasPage({
   const { canvas_id } = params
   const parsedSearchParams =
     canvasAppStateSchema.parse(searchParams)
-
-  const initialAppState: AppState =
-    parsedSearchParams as AppState
+  const initialAppState = parsedSearchParams as AppState
 
   const initialNodes = await getNodes(
     [defaultFov],
