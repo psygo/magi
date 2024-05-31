@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Braces,
   Grid3X3,
@@ -38,33 +40,35 @@ export function CanvasMenu() {
           theme === Theme.light ? (
             <Sun className="h-[14px] w-[14px]" />
           ) : (
-            <Moon style={{ height: 14, width: 14 }} />
+            <Moon className="h-[14px] w-[14px]" />
           )
         }
       >
         Toggle Theme
       </MainMenu.Item>
+
       <MainMenu.Item
         onSelect={() => setShowMeta(!showMeta)}
         icon={
           showMeta ? (
-            <Braces style={{ height: 14, width: 14 }} />
+            <Braces className="h-[14px] w-[14px]" />
           ) : (
-            <X style={{ height: 14, width: 14 }} />
+            <X className="h-[14px] w-[14px]" />
           )
         }
       >
         Show Metadata
       </MainMenu.Item>
+
       <MainMenu.Item
         onSelect={() =>
           setGridModeEnabled(!gridModeEnabled)
         }
         icon={
           gridModeEnabled ? (
-            <Grid3X3 style={{ height: 14, width: 14 }} />
+            <Grid3X3 className="h-[14px] w-[14px]" />
           ) : (
-            <X style={{ height: 14, width: 14 }} />
+            <X className="h-[14px] w-[14px]" />
           )
         }
       >
@@ -74,14 +78,15 @@ export function CanvasMenu() {
         onSelect={() => setShowCoords(!showCoords)}
         icon={
           showCoords ? (
-            <Move3D style={{ height: 14, width: 14 }} />
+            <Move3D className="h-[14px] w-[14px]" />
           ) : (
-            <X style={{ height: 14, width: 14 }} />
+            <X className="h-[14px] w-[14px]" />
           )
         }
       >
         Show Coordinates
       </MainMenu.Item>
+
       <MainMenu.DefaultItems.Export />
       <MainMenu.DefaultItems.SaveAsImage />
       <MainMenu.DefaultItems.Help />
