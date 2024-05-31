@@ -12,6 +12,7 @@ import {
   useCanvas,
   useFiles,
   usePagination,
+  usePreferences,
   useShapes,
   useTheme,
 } from "@providers"
@@ -40,10 +41,10 @@ export function Canvas() {
     setExcalElements,
     excalAppState,
     setExcalAppState,
-    gridModeEnabled,
-    showMeta,
-    showCoords,
   } = useCanvas()
+
+  const { showMeta, showCoords, gridModeEnabled } =
+    usePreferences()
 
   const { debouncedScrollAndZoom } = usePagination()
 

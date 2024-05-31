@@ -17,9 +17,9 @@ import {
 import { PaginationProvider } from "./PaginationProvider"
 import { ShapesProvider } from "./ShapeProvider"
 import { FilesProvider } from "./FilesProvider"
+import { PreferencesProvider } from "./PreferencesProvider"
 
 type CanvasContext = {
-  /* Excalidraw */
   excalidrawAPI: ExcalidrawImperativeAPI | undefined
   setExcalidrawAPI: React.Dispatch<
     React.SetStateAction<
@@ -37,17 +37,6 @@ type CanvasContext = {
   excalAppState: AppState
   setExcalAppState: React.Dispatch<
     React.SetStateAction<AppState>
-  >
-  /* Preferences */
-  showMeta: boolean
-  setShowMeta: React.Dispatch<React.SetStateAction<boolean>>
-  gridModeEnabled: boolean
-  setGridModeEnabled: React.Dispatch<
-    React.SetStateAction<boolean>
-  >
-  showCoords: boolean
-  setShowCoords: React.Dispatch<
-    React.SetStateAction<boolean>
   >
 }
 
@@ -81,9 +70,6 @@ export function CanvasProvider({
   initialAppState = standardInitialAppState,
   children,
 }: CanvasProviderProps) {
-  /*------------------------------------------------------*/
-  /* Excalidraw */
-
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI>()
 
@@ -102,16 +88,6 @@ export function CanvasProvider({
   const [excalAppState, setExcalAppState] =
     useState<AppState>(initialAppState)
 
-  /*------------------------------------------------------*/
-  /* Preferences */
-
-  const [showMeta, setShowMeta] = useState(true)
-  const [gridModeEnabled, setGridModeEnabled] =
-    useState(true)
-  const [showCoords, setShowCoords] = useState(true)
-
-  /*------------------------------------------------------*/
-
   return (
     <CanvasContext.Provider
       value={{
@@ -123,19 +99,15 @@ export function CanvasProvider({
         setExcalElements,
         excalAppState,
         setExcalAppState,
-        showMeta,
-        setShowMeta,
-        gridModeEnabled,
-        setGridModeEnabled,
-        showCoords,
-        setShowCoords,
       }}
     >
-      <PaginationProvider>
-        <ShapesProvider>
-          <FilesProvider>{children}</FilesProvider>
-        </ShapesProvider>
-      </PaginationProvider>
+      <PreferencesProvider>
+        <PaginationProvider>
+          <ShapesProvider>
+            <FilesProvider>{children}</FilesProvider>
+          </ShapesProvider>
+        </PaginationProvider>
+      </PreferencesProvider>
     </CanvasContext.Provider>
   )
 }

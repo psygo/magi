@@ -13,7 +13,7 @@ import { Theme } from "@types"
 
 import { saveTheme } from "@actions"
 
-import { useCanvas, useTheme } from "@providers"
+import { usePreferences, useTheme } from "@providers"
 
 export function CanvasMenu() {
   const { theme, cycleTheme } = useTheme()
@@ -25,7 +25,7 @@ export function CanvasMenu() {
     setGridModeEnabled,
     showCoords,
     setShowCoords,
-  } = useCanvas()
+  } = usePreferences()
 
   return (
     <MainMenu>
