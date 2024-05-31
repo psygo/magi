@@ -43,6 +43,12 @@
       "@actions": [
         "./src/server/actions/exports"
       ],
+      "@common/*": [
+        "./src/components/common/*"
+      ],
+      "@common": [
+        "./src/components/common/exports"
+      ],
       "@components/*": [
         "./src/components/*"
       ],

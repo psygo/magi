@@ -16,3 +16,8 @@
 
 1. [ ] PostHog
 1. [ ] Sentry
+
+## Unsolved
+
+- [Hover on overlay should pass through when scrolling](https://stackoverflow.com/q/78556605/4756173)
+- Excalidraw's `<MainMenu>` components are apparently also being rendered on the server, even if I use Next.js' `dynamic` function without SSR.

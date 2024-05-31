@@ -4,7 +4,7 @@ import { useState } from "react"
 
 import { Loader2 } from "lucide-react"
 
-import { useUser } from "@clerk/nextjs"
+import { useUser as useClerkUser } from "@clerk/nextjs"
 
 import {
   LoadingState,
@@ -16,16 +16,12 @@ import { useComments, useNodeData } from "@providers"
 
 import { Button, Card, CardContent, Textarea } from "@shad"
 
-import {
-  EditableField,
-  FieldType,
-  Progress,
-} from "../common/exports"
+import { EditableField, FieldType, Progress } from "@common"
 
 import { NodeDate } from "../nodes/NodeAuthor"
 
 export function CommentSection() {
-  const { isSignedIn } = useUser()
+  const { isSignedIn } = useClerkUser()
 
   const { comments, loading } = useComments()
   const commentsAsArray = Object.values(comments)
@@ -87,7 +83,7 @@ function Comment({ nanoId }: CommentProps) {
     useComments()
   const comment = comments[nanoId]
 
-  const { user } = useUser()
+  const { user } = useClerkUser()
   const userIsAuthor = !!(
     user && user.id === node!.creator!.clerkId
   )

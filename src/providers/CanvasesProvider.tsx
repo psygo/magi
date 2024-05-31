@@ -14,23 +14,6 @@ import {
 
 import { getCanvases } from "@actions"
 
-// export function useCanvases() {
-//   const [canvases, setCanvases] = useState<SelectCanvas[]>()
-
-//   useEffect(() => {
-//     async function getCanvasesData() {
-//       const canvasesData = await getCanvases()
-
-//       if (canvasesData) setCanvases(canvasesData)
-//     }
-
-//     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-//     getCanvasesData()
-//   }, [])
-
-//   return { canvases, setCanvases }
-// }
-
 type CanvasesContext = {
   canvases: SelectCanvas[]
   setCanvases: React.Dispatch<
