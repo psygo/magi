@@ -4,22 +4,9 @@ import { nanoid } from "nanoid"
 
 import { useMemo, useState } from "react"
 
-import dynamic from "next/dynamic"
-
 import { useUser as useClerkUser } from "@clerk/nextjs"
 
-import { MainMenu } from "@excalidraw/excalidraw"
-
-import {
-  Braces,
-  Grid3X3,
-  Moon,
-  Move3D,
-  Sun,
-  X,
-} from "lucide-react"
-
-import { LoadingState, Theme, type Pointer } from "@types"
+import { LoadingState, type Pointer } from "@types"
 
 import {
   useCanvas,
@@ -29,33 +16,22 @@ import {
   useTheme,
 } from "@providers"
 
-import { saveTheme } from "@actions"
-
-import { Progress } from "../common/exports"
-
 import { AccountButton } from "../users/exports"
 
-import { CanvasesModal } from "../canvases_modal/CanvasesModal"
-import { Coordinates } from "./Coordinates"
-import { ShapeInfoButtons } from "./ShapeInfoButton"
+import { CanvasesModal } from "../canvases_modal/exports"
 
-const Excalidraw = dynamic(
-  async () => {
-    const mod = await import("@excalidraw/excalidraw")
-    return mod.Excalidraw
-  },
-  {
-    loading: () => <Progress />,
-    ssr: false,
-  },
-)
+import { CanvasMenu } from "./CanvasMenu"
+import { Coordinates } from "./Coordinates"
+import { Excalidraw } from "./DynamicExcalidraw"
+import { ShapeInfoButtons } from "./ShapeInfoButton"
 
 export function Canvas() {
   /*------------------------------------------------------*/
   /* Providers */
+
   const { isSignedIn } = useClerkUser()
 
-  const { theme, cycleTheme } = useTheme()
+  const { theme } = useTheme()
 
   const {
     excalidrawAPI,
@@ -64,6 +40,9 @@ export function Canvas() {
     setExcalElements,
     excalAppState,
     setExcalAppState,
+    gridModeEnabled,
+    showMeta,
+    showCoords,
   } = useCanvas()
 
   const { debouncedScrollAndZoom } = usePagination()
@@ -71,14 +50,6 @@ export function Canvas() {
   const { setIsDragging } = useShapes()
 
   const { setFiles } = useFiles()
-
-  /*------------------------------------------------------*/
-  /* Preferences */
-
-  const [showMeta, setShowMeta] = useState(true)
-  const [gridModeEnabled, setGridModeEnabled] =
-    useState(true)
-  const [showCoords, setShowCoords] = useState(true)
 
   /*------------------------------------------------------*/
   /* Extra UI */
@@ -154,66 +125,7 @@ export function Canvas() {
           )
         }}
       >
-        <MainMenu>
-          <MainMenu.Item
-            onSelect={async () => {
-              const nextTheme = cycleTheme()
-              await saveTheme(nextTheme)
-            }}
-            icon={
-              theme === Theme.light ? (
-                <Sun style={{ height: 14, width: 14 }} />
-              ) : (
-                <Moon style={{ height: 14, width: 14 }} />
-              )
-            }
-          >
-            Toggle Theme
-          </MainMenu.Item>
-          <MainMenu.Item
-            onSelect={() => setShowMeta(!showMeta)}
-            icon={
-              showMeta ? (
-                <Braces style={{ height: 14, width: 14 }} />
-              ) : (
-                <X style={{ height: 14, width: 14 }} />
-              )
-            }
-          >
-            Show Metadata
-          </MainMenu.Item>
-          <MainMenu.Item
-            onSelect={() =>
-              setGridModeEnabled(!gridModeEnabled)
-            }
-            icon={
-              gridModeEnabled ? (
-                <Grid3X3
-                  style={{ height: 14, width: 14 }}
-                />
-              ) : (
-                <X style={{ height: 14, width: 14 }} />
-              )
-            }
-          >
-            Show Grid
-          </MainMenu.Item>
-          <MainMenu.Item
-            onSelect={() => setShowCoords(!showCoords)}
-            icon={
-              showCoords ? (
-                <Move3D style={{ height: 14, width: 14 }} />
-              ) : (
-                <X style={{ height: 14, width: 14 }} />
-              )
-            }
-          >
-            Show Coordinates
-          </MainMenu.Item>
-          <MainMenu.DefaultItems.Export />
-          <MainMenu.DefaultItems.SaveAsImage />
-          <MainMenu.DefaultItems.Help />
-        </MainMenu>
+        <CanvasMenu />
       </Excalidraw>
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -226,17 +138,27 @@ export function Canvas() {
     showCoords,
   ])
 
+  function isLoaded() {
+    return loading === LoadingState.Loaded
+  }
+
   return (
     <div className="absolute w-screen h-screen">
       {Excal}
-      <section>
-        {loading === LoadingState.Loaded &&
-          showMeta &&
-          excalElements.map((excalEl, i) => (
-            <ShapeInfoButtons key={i} excalEl={excalEl} />
-          ))}
-      </section>
-      {showCoords && PointerCoords}
+      {isLoaded() && (
+        <>
+          <section>
+            {showMeta &&
+              excalElements.map((excalEl, i) => (
+                <ShapeInfoButtons
+                  key={i}
+                  excalEl={excalEl}
+                />
+              ))}
+          </section>
+          {showCoords && PointerCoords}
+        </>
+      )}
     </div>
   )
 }
