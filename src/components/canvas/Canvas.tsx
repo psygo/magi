@@ -35,7 +35,7 @@ import { Progress } from "../common/exports"
 
 import { AccountButton } from "../users/exports"
 
-import { CanvasModal } from "./CanvasModal"
+import { CanvasesModal } from "../canvases_modal/CanvasesModal"
 import { Coordinates } from "./Coordinates"
 import { ShapeInfoButtons } from "./ShapeInfoButton"
 
@@ -112,7 +112,7 @@ export function Canvas() {
         gridModeEnabled={gridModeEnabled}
         renderTopRightUI={() => (
           <>
-            {isSignedIn && <CanvasModal />}
+            {isSignedIn && <CanvasesModal />}
             <AccountButton />
           </>
         )}

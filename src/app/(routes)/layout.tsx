@@ -1,5 +1,3 @@
-import "@styles/globals.css"
-
 import { cookies } from "next/headers"
 
 import { CookiesProvider } from "next-client-cookies/server"
@@ -11,6 +9,8 @@ import { type WithReactChildren, Theme } from "@types"
 import { ThemeProvider } from "@providers"
 
 import { App } from "./App"
+
+import "@styles/globals.css"
 
 export const metadata = {
   title: "Magi",

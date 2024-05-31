@@ -5,13 +5,18 @@ import {
   UserButton,
 } from "@clerk/nextjs"
 
-import { Button } from "~/components/common/shad/exports"
+import { Button } from "@shad"
 
 export function AccountButton() {
   return (
     <div className="pt-[6px]">
       <SignedOut>
-        <Button asChild>
+        <Button
+          asChild
+          size="sm"
+          variant="secondary"
+          className="mt-[-2px]"
+        >
           <SignInButton />
         </Button>
       </SignedOut>
