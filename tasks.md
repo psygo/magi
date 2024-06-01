@@ -9,6 +9,7 @@
 
 ## Second Version
 
+1. [ ] About Modal
 1. [ ] Bubbles instead of modals for node clicking
 1. [ ] List connections on a node on the info card
 

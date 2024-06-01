@@ -4,9 +4,11 @@ import { useState } from "react"
 
 import { useRouter } from "next/navigation"
 
-import { Pencil, Save } from "lucide-react"
+import { Loader2, Pencil, Save } from "lucide-react"
 
-import { type SelectCanvas } from "@types"
+import { LoadingState, type SelectCanvas } from "@types"
+
+import { putCanvas } from "@actions"
 
 import { useCanvases } from "@providers"
 
@@ -47,9 +49,18 @@ function EditableCanvas({ canvas }: EditableCanvasProps) {
   const [canvasTitle, setCanvasTitle] = useState(
     canvas.title,
   )
+  const [loading, setLoading] = useState(
+    LoadingState.NotYet,
+  )
 
   async function onSubmit() {
-    console.log("here")
+    setLoading(LoadingState.Loading)
+
+    const res = await putCanvas(canvasTitle, canvas.nanoId)
+
+    if (!res) setLoading(LoadingState.Errored)
+    setLoading(LoadingState.Loaded)
+    setIsEditing(false)
   }
 
   return (
@@ -68,7 +79,7 @@ function EditableCanvas({ canvas }: EditableCanvasProps) {
           className="w-full justify-start"
           onClick={onSubmit}
         >
-          {canvas.title}
+          {canvasTitle}
         </Button>
       )}
 
@@ -76,9 +87,13 @@ function EditableCanvas({ canvas }: EditableCanvasProps) {
         <Button
           className="text-green-400 border-green-400"
           variant="outline"
-          onClick={() => setIsEditing(false)}
+          onClick={onSubmit}
         >
-          <Save className="h-5 w-5" />
+          {loading === LoadingState.Loading ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <Save className="h-5 w-5" />
+          )}
         </Button>
       ) : (
         <Button

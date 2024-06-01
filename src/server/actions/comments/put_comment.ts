@@ -23,7 +23,7 @@ export async function putComment(
     const userId = await userIdFromClerk()
     if (!userId) return
 
-    const commentInsertData = await db
+    const commentPutData = await db
       .update(comments)
       .set({
         content,
@@ -38,7 +38,7 @@ export async function putComment(
       .returning()
 
     const commentData = await getComment(
-      commentInsertData.first().nanoId,
+      commentPutData.first().nanoId,
     )
 
     // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
