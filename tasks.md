@@ -1,8 +1,5 @@
 # Tasks
 
-1. [ ] Canvases Provider
-1. [ ] Ability to edit the canvas title
-
 ## Code Improvements
 
 1. [ ] Migrate to EdgeDB
