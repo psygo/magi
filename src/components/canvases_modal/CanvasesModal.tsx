@@ -27,14 +27,14 @@ export function CanvasesModal() {
           <FolderKanban className="h-5 w-5" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-2 border-gray-700 overflow-y-scroll h-[90vh] rounded-md">
-        <DialogHeader className="h-max">
+      <DialogContent className=" flex flex-col border-2 border-gray-700 overflow-y-scroll h-[90vh] rounded-md">
+        <DialogHeader className="h-max pl-3">
           <p className="text-lg font-semibold">
             @{user.username}&apos;s Canvases
           </p>
         </DialogHeader>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 mt-4">
           <NewCanvasForm />
           <UserCanvases />
         </div>

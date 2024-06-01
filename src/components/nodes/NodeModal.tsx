@@ -81,7 +81,7 @@ export function NodeModal({
           {voteTotal}
         </Button>
       </DialogTrigger>
-      <DialogContent className="border-2 border-gray-700 overflow-y-scroll h-[90vh] rounded-md">
+      <DialogContent className="flex flex-col border-2 border-gray-700 overflow-y-scroll h-[90vh] rounded-md">
         <NodeProvider excalId={excalId}>
           <NodeModalContent />
         </NodeProvider>
@@ -104,7 +104,7 @@ function NodeModalContent() {
           <p className="text-gray-400">{node?.excalId}</p>
         </DialogTitle>
       </DialogHeader>
-      <div className="flex flex-col gap-3 mt-2">
+      <div className="flex flex-col gap-3 mt-3">
         <NodeTitle />
         <NodeDescription />
         <NodeLink />
