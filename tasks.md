@@ -7,8 +7,9 @@
 ## Second Version
 
 1. [ ] About Modal
-1. [ ] Bubbles instead of modals for node clicking
-1. [ ] List connections on a node on the info card
+2. [ ] User Preferences should be stored in the DB
+3. [ ] Bubbles instead of modals for node clicking
+4. [ ] List connections on a node on the info card
 
 ## Deployment
 
