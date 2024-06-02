@@ -10,9 +10,13 @@ import "@utils/array"
 
 import { type Point } from "@types"
 
-import { useCanvas } from "@providers"
+import { NodeProvider, useCanvas } from "@providers"
 
-import { NodeModal } from "../nodes/exports"
+import { cn, pointsColor } from "@styles"
+
+import { Button, Card } from "@shad"
+
+import { NodePopoverContent } from "../nodes/NodePopover"
 
 import { UserAvatar } from "../users/exports"
 
@@ -27,9 +31,13 @@ export function ShapeInfoButtons({
 
   const { nodes, excalAppState } = useCanvas()
   const node = nodes[excalEl.id]
+  const voteTotal = node?.stats?.voteTotal ?? 0
 
   const [isHovered, setIsHovered] = useState(false)
   const [showUser, setShowUser] = useState(false)
+
+  const [showNodePopover, setShowNodePopover] =
+    useState(false)
 
   if (excalEl.isDeleted) return
   if (excalEl.type === "text" && excalEl.containerId) return
@@ -107,7 +115,35 @@ export function ShapeInfoButtons({
           User
         </div>
       )}
-      <NodeModal excalId={excalEl.id} />
+
+      <Button
+        variant="link"
+        className={cn(
+          "p-0 px-[2px] font-bold text-base",
+          pointsColor(voteTotal),
+        )}
+        style={{ fontSize: 20 * zoom }}
+        onClick={() => setShowNodePopover(!showNodePopover)}
+      >
+        {voteTotal}
+      </Button>
+
+      {showNodePopover && (
+        <NodeProvider excalId={node!.excalId}>
+          <Card
+            className="overflow-x-auto max-h-[400px]"
+            style={{
+              position: "fixed",
+              left: x! + 60 * zoom,
+              top: y!,
+              zIndex: 100,
+            }}
+          >
+            <NodePopoverContent />
+          </Card>
+        </NodeProvider>
+      )}
+      {/* <NodeModal excalId={excalEl.id} /> */}
     </div>
   )
 }
