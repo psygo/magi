@@ -45,7 +45,7 @@ export function NodePopoverContent() {
         <NodeTitle />
         <NodeDescription />
         <NodeLink />
-        <div className="flex justify-between mt-3">
+        <div className="flex justify-between gap-3 mt-3">
           <div className="flex flex-col gap-1 mt-[6px]">
             <NodeVotePointsSection />
             <div className="flex gap-1 mt-2 ml-[2px]">
