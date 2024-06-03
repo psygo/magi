@@ -65,7 +65,9 @@ export function EditableCanvas({
         <Button
           variant="outline"
           className="w-full justify-start"
-          onClick={onSubmit}
+          onClick={() => {
+            router.push(`/canvases/${canvas.nanoId}`)
+          }}
         >
           {canvasTitle}{" "}
           {canvas.isDeleted ? "(deleted)" : ""}
