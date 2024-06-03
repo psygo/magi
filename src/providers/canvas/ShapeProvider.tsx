@@ -62,7 +62,7 @@ export function ShapesProvider({
     setIsUploadingShape(true)
     const newNodes = await postNodes(
       els,
-      (params.canvas_id as string) ?? "open-public",
+      (params.canvas_id as string) ?? "open-canvas",
     )
     setIsUploadingShape(false)
 

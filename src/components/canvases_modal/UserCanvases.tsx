@@ -21,7 +21,7 @@ export function UserCanvases() {
         className="justify-start"
         variant="outline"
         onClick={() => {
-          router.push(`/canvases/open-public`)
+          router.push(`/canvases/open-canvas`)
         }}
       >
         Open Public (Default for Everyone)

@@ -58,7 +58,7 @@ function getNodesQuery() {
 
 export async function getNodes(
   fovs: FieldOfView[] = [defaultFov],
-  canvasId: NanoId = "open-public",
+  canvasId: NanoId = "open-canvas",
 ) {
   try {
     const conditions = or(

@@ -17,7 +17,7 @@ import { userIdFromClerk } from "../../utils/exports"
 
 export async function postNodes(
   excalElements: ExcalidrawElement[],
-  canvasId: NanoId = "open-public",
+  canvasId: NanoId = "open-canvas",
 ) {
   try {
     const userId = await userIdFromClerk()
