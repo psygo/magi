@@ -34,7 +34,7 @@ export function UserAvatar({
       }}
     >
       <AvatarImage
-        src={`${imageUrl}?${params.toString()}` ?? ""}
+        src={`${imageUrl}?${params.toString()}`}
         alt={`@${username}`}
       />
       <AvatarFallback style={{ fontSize: zoomedFontSize }}>
