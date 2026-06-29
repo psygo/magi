@@ -1,5 +1,7 @@
 # Magi
 
+A 2D graph exploration of the internet.
+
 A 2D Reddit?
 
 ![Magi Demo 1](/public/demo/magi_demo_1.png)
