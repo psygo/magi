@@ -16,6 +16,17 @@ export const metadata = {
   title: "Magi",
   description: "Draw the Internet",
   icons: [{ rel: "icon", url: "/favicon.png" }],
+  openGraph: {
+    title: "neofanaro.io",
+    description: "Philippe Fanaro's Blog",
+    url: "neofanaroio.vercel.app",
+    siteName: "neofanaro.io",
+    images: [
+      {
+        url: "/metadata/magi_demo_1.png",
+      },
+    ],
+},
 }
 
 export default function RootLayout({
