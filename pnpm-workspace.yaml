@@ -1,5 +1,5 @@
 allowBuilds:
-  '@clerk/shared': false
-  es5-ext: false
-  esbuild: false
+  '@clerk/shared': true
+  es5-ext: true
+  esbuild: true
   unrs-resolver: true
