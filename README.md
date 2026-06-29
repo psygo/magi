@@ -1,5 +1,8 @@
 # Magnus Index
 
+![Magi Demo 1](/public/demo/magi_demo_1.png)
+![Magi Demo 2](/public/demo/magi_demo_3.png)
+
 ## Services Used
 
 - [Vercel](https://vercel.com) for handling deployment.
