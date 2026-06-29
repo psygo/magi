@@ -1,0 +1,4 @@
+allowBuilds:
+  '@clerk/shared': false
+  es5-ext: false
+  esbuild: false
