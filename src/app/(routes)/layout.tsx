@@ -23,7 +23,7 @@ export const metadata = {
     siteName: "neofanaro.io",
     images: [
       {
-        url: "/metadata/magi_demo_1.png",
+        url: "/demo/magi_demo_1.png",
       },
     ],
 },
