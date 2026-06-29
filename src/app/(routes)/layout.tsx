@@ -17,13 +17,13 @@ export const metadata = {
   description: "Draw the Internet",
   icons: [{ rel: "icon", url: "/favicon.png" }],
   openGraph: {
-    title: "neofanaro.io",
-    description: "Philippe Fanaro's Blog",
-    url: "neofanaroio.vercel.app",
-    siteName: "neofanaro.io",
+    title: "Magi",
+    description: "Magnus Index",
+    url: "magi-phi.vercel.app",
+    siteName: "magi",
     images: [
       {
-        url: "/demo/magi_demo_1.png",
+        url: "favicon.png",
       },
     ],
 },
