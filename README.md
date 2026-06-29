@@ -1,4 +1,6 @@
-# Magnus Index
+# Magi
+
+A 2D Reddit?
 
 ![Magi Demo 1](/public/demo/magi_demo_1.png)
 ![Magi Demo 2](/public/demo/magi_demo_3.png)
